@@ -49,6 +49,7 @@
 | --- | --- |
 | ドキュメント基盤 | 構築済み |
 | 要求仕様 | ドラフト（[docs/spec/requirements.md](docs/spec/requirements.md)） |
+| 公開方針 | OSS 公開（[ADR-0005](docs/adr/0005-publish-as-oss.md)）。ライセンスは未選定 |
 | 技術構成 | **未決定**（論点整理中: [docs/notes/2026-08-01-tech-stack-open-questions.md](docs/notes/2026-08-01-tech-stack-open-questions.md)） |
 | 実装 | 未着手 |
 
@@ -61,5 +62,8 @@
 
 - 本プロジェクトは非公式のサードパーティ製ツールであり、DMM.com、株式会社 C2 プレパラート、
   その他「艦隊これくしょん」の権利者とは一切関係ありません。
+- 本プロジェクトは **OSS として公開します**（[ADR-0005](docs/adr/0005-publish-as-oss.md)）。
+  **ライセンスは未選定です。** 決定時に ADR を起票し `LICENSE` を追加します。
+  それまでは、法的には作者の著作権が留保された状態であることにご留意ください。
 - 利用にあたっての制約・方針は [docs/spec/constraints.md](docs/spec/constraints.md) に定義しています。
-- ライセンスは未定です（決定時に ADR を起票し `LICENSE` を追加します）。
+  特に、本アプリは**ゲームプレイの自動化を行わず、通信を読み取り専用として扱います**。

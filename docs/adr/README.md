@@ -40,5 +40,6 @@
 | [0002](0002-documentation-structure.md) | ドキュメントを notes / spec / adr の 3 層で管理する | Accepted | 2026-08-01 |
 | [0003](0003-agent-driven-development.md) | 実装はすべて AI エージェントが行う | Accepted | 2026-08-01 |
 | [0004](0004-defer-tech-stack-decision.md) | 技術構成の決定を要求定義のあとに延期する | Accepted | 2026-08-01 |
+| [0005](0005-publish-as-oss.md) | OSS として公開する | Accepted | 2026-08-01 |
 
 > 新しい ADR を追加したら、この一覧にも 1 行足すこと。
