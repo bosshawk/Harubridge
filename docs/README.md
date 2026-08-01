@@ -65,9 +65,9 @@ docs/notes/   暫定    「まだ分からない / 検討中」   → 使い捨�
 | `internal/` | 外部仕様を変えない限り、エージェントの判断で更新してよい |
 | `guidelines/` | **人間の承認が必要**（影響が全体に及ぶ） |
 
-外部仕様と内部仕様の切り分けに迷ったら:
-**「実装を全部書き直しても、この記述は変わらないか？」**
-変わらないなら外部仕様、変わるなら内部仕様。
+外部仕様と内部仕様の切り分け基準は
+**[spec/README.md](spec/README.md#外部仕様と内部仕様の切り分け) の 1 箇所を正とする**
+（[ADR-0007](adr/0007-observability-based-spec-boundary.md)）。ここには再掲しない。
 
 ## 3. adr（Architecture Decision Record）
 

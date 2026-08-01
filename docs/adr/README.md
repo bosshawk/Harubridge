@@ -42,5 +42,6 @@
 | [0004](0004-defer-tech-stack-decision.md) | 技術構成の決定を要求定義のあとに延期する | Accepted | 2026-08-01 |
 | [0005](0005-publish-as-oss.md) | OSS として公開する | Accepted | 2026-08-01 |
 | [0006](0006-split-external-and-internal-spec.md) | 仕様を外部仕様・内部仕様・ガイドラインに分割する | Accepted | 2026-08-01 |
+| [0007](0007-observability-based-spec-boundary.md) | 外部仕様と内部仕様の切り分けを可観測性で判断する | Accepted | 2026-08-02 |
 
 > 新しい ADR を追加したら、この一覧にも 1 行足すこと。
