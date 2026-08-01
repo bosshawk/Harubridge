@@ -11,7 +11,7 @@
 > 切り分け基準は [docs/spec/README.md](../README.md#文書とコードの境界)。
 > 該当しない節には `該当なし: 理由` を 1 行書く（`TODO(未確定)` と混同しない）。
 >
-> **この文書の変更には人間の承認が必要**（[ADR-0006](../../adr/0006-split-external-and-internal-spec.md)）。
+> **この文書の変更には人間の承認が必要**（[ADR-0015](../../adr/0015-documentation-layout.md)）。
 
 - 対応要求: FR-nnn, NFR-nnn
 - 関連 ADR: ADR-nnnn

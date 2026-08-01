@@ -1,6 +1,6 @@
 # ADR-0007: 外部仕様と内部仕様の切り分けを可観測性で判断する
 
-- ステータス: Accepted
+- ステータス: Superseded by [ADR-0015](0015-documentation-layout.md)（構成に関する 6 本を統合。本文は履歴として残す）
 - 日付: 2026-08-02
 - 決定者: プロジェクトオーナー
 - 関連: [ADR-0006](0006-split-external-and-internal-spec.md)（本 ADR は 0006 を置き換えず、判断基準を差し替える）

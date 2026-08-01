@@ -1,9 +1,8 @@
 # ドキュメント運用ガイド
 
 このリポジトリのドキュメントを「どこに・どう書き・いつ捨てるか」のルール。
-判断の背景は [ADR-0002](adr/0002-documentation-structure.md)、
-[ADR-0008](adr/0008-code-as-source-of-truth.md)、[ADR-0009](adr/0009-notes-as-github-issues.md)、
-[ADR-0010](adr/0010-top-level-doc-layout.md)。
+判断の背景は [ADR-0015](adr/0015-documentation-layout.md)（構成）と
+[ADR-0008](adr/0008-code-as-source-of-truth.md)（何を書かないか）。
 
 ## 1. 何を残し、何を流すか
 
@@ -65,7 +64,7 @@ GitHub Issue   その場の方針・検討・調査   → 閉じたら終わり
 | [`external/`](spec/external/) | 外部仕様: ユーザーへの約束と受け入れ条件 | 最小限 |
 
 ガイドラインは仕様ではないため、[`docs/guidelines/`](guidelines/) に並列で置く
-（[ADR-0010](adr/0010-top-level-doc-layout.md)）。
+（[ADR-0015](adr/0015-documentation-layout.md)）。
 
 **機能ごとの内部仕様は存在しない。コードが正**
 （[ADR-0008](adr/0008-code-as-source-of-truth.md)）。
@@ -73,7 +72,7 @@ GitHub Issue   その場の方針・検討・調査   → 閉じたら終わり
 
 ### 変更時の承認境界
 
-（[ADR-0006](adr/0006-split-external-and-internal-spec.md)）
+（[ADR-0015](adr/0015-documentation-layout.md)）
 
 | 場所 | 変更するとき |
 | --- | --- |
@@ -87,7 +86,7 @@ GitHub Issue   その場の方針・検討・調査   → 閉じたら終わり
 
 何を文書にし何をコードに委ねるかの判断基準は
 **[spec/README.md](spec/README.md#文書とコードの境界) の 1 箇所を正とする**
-（[ADR-0007](adr/0007-observability-based-spec-boundary.md) /
+（[ADR-0015](adr/0015-documentation-layout.md) /
 [ADR-0008](adr/0008-code-as-source-of-truth.md)）。ここには再掲しない。
 
 ## 3. adr（Architecture Decision Record）
@@ -98,13 +97,15 @@ GitHub Issue   その場の方針・検討・調査   → 閉じたら終わり
 - ファイル名: `NNNN-english-kebab-title.md`（連番は欠番を作らない）
 - ステータス: `Proposed` → `Accepted` → （必要なら）`Superseded by ADR-NNNN` / `Deprecated`
 - **決定を覆すときは新しい ADR を書く。** 古い ADR の本文は歴史として残す。
-- 「技術構成」「外部依存」「データの持ち方」「配布形態」など、
-  **あとから変えるのが高くつく判断**は必ず ADR にする。
+- **ADR にする条件は 3 つすべてを満たすものだけ**（[adr/README.md](adr/README.md#adr-にする条件)）。
+  選択肢を実際に比較した / 覆すコストが高い / 事情を知らない人が再提案しうる。
+  技術構成・外部依存・データの持ち方・配布形態といった**技術的な判断が中心**になる。
+- **却下案を捏造しない。** 比較していない案をテンプレートを埋めるために書かない。
 
 ## 4. その場の方針・検討メモ（GitHub Issue）
 
 **リポジトリ内には置かない。** GitHub Issue を使う
-（[ADR-0009](adr/0009-notes-as-github-issues.md)）。
+（[ADR-0015](adr/0015-documentation-layout.md)）。
 
 - 論点が生じたら `gh issue create`。ラベルで種類を分ける
   （`question` / `research` / `decision`）。
@@ -116,7 +117,7 @@ GitHub Issue   その場の方針・検討・調査   → 閉じたら終わり
 ### 手元の作業メモ
 
 書き捨てのメモは [`docs/notes/`](notes/) に置く。**git 管理対象外であり共有されない**
-（[ADR-0012](adr/0012-local-notes-directory.md)）。
+（[ADR-0015](adr/0015-documentation-layout.md)）。
 
 判断基準はひとつ。**他人（将来の自分を含む）が読む必要があるか。**
 あるなら Issue、無いなら `docs/notes/`。迷ったら Issue。
@@ -127,7 +128,7 @@ GitHub Issue   その場の方針・検討・調査   → 閉じたら終わり
 **個別機能に属さないルール**。仕様（何を作るか）とは別の軸なので並列に置く。
 
 開発の**進め方**（誰が何をするか、依頼の書き方）は
-[CONTRIBUTING.md](../CONTRIBUTING.md) にある（[ADR-0010](adr/0010-top-level-doc-layout.md)）。
+[CONTRIBUTING.md](../CONTRIBUTING.md) にある（[ADR-0015](adr/0015-documentation-layout.md)）。
 
 ## 6. 変更時の同期義務
 

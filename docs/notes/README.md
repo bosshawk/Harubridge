@@ -2,7 +2,7 @@
 
 > **このディレクトリの中身は git の管理対象外です**（この README を除く）。
 > 置いたものは**コミットされず、他の人には共有されません**
-> （[ADR-0012](../adr/0012-local-notes-directory.md)）。
+> （[ADR-0015](../adr/0015-documentation-layout.md)）。
 
 ## 何を置くか
 

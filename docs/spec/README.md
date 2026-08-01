@@ -12,10 +12,10 @@ docs/spec/
 ```
 
 横断規約は仕様ではないため [`docs/guidelines/`](../guidelines/) に並列で置く
-（[ADR-0010](../adr/0010-top-level-doc-layout.md)）。
+（[ADR-0015](../adr/0015-documentation-layout.md)）。
 
 **機能ごとの内部仕様は存在しない。コードが正。**
-その場の方針・検討メモは GitHub Issue に置く（[ADR-0009](../adr/0009-notes-as-github-issues.md)）。
+その場の方針・検討メモは GitHub Issue に置く（[ADR-0015](../adr/0015-documentation-layout.md)）。
 
 | ファイル / ディレクトリ | 内容 | 変更するとき |
 | --- | --- | --- |

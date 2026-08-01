@@ -5,7 +5,7 @@
 > **最小限に保つ。** 実現方法はコードが正であり、ここには書かない
 > （[ADR-0008](../../adr/0008-code-as-source-of-truth.md)）。
 >
-> **この階層の変更には人間の承認が必要**（[ADR-0006](../../adr/0006-split-external-and-internal-spec.md)）。
+> **この階層の変更には人間の承認が必要**（[ADR-0015](../../adr/0015-documentation-layout.md)）。
 > ユーザーに見える振る舞いが変わるため、エージェントが独断で書き換えてはいけない。
 
 ## 書くこと / 書かないこと
@@ -21,7 +21,7 @@
 
 判断基準は
 **[docs/spec/README.md](../README.md#文書とコードの境界) の 1 箇所を正とする**
-（[ADR-0007](../../adr/0007-observability-based-spec-boundary.md)）。ここには再掲しない。
+（[ADR-0015](../../adr/0015-documentation-layout.md)）。ここには再掲しない。
 
 ## 書き方
 

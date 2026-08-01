@@ -1,6 +1,6 @@
 # ADR-0009: その場の方針・検討メモを GitHub Issue に移す
 
-- ステータス: Accepted（`docs/notes/` の廃止のみ Superseded by [ADR-0012](0012-local-notes-directory.md)。Issue 運用は有効）
+- ステータス: Superseded by [ADR-0015](0015-documentation-layout.md)（構成に関する 6 本を統合。本文は履歴として残す）
 - 日付: 2026-08-02
 - 決定者: プロジェクトオーナー
 - 関連: [ADR-0002](0002-documentation-structure.md)（本 ADR が notes 層に関する決定を置き換える）, [ADR-0005](0005-publish-as-oss.md), [ADR-0008](0008-code-as-source-of-truth.md)

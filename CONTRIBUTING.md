@@ -68,7 +68,7 @@ flowchart TD
 
 エージェントは推測で進めず、**GitHub Issue に論点を書き出して**確認を求めます。
 決着したら ADR を起票し、Issue にリンクを貼って閉じます
-（[ADR-0009](docs/adr/0009-notes-as-github-issues.md)）。
+（[ADR-0015](docs/adr/0015-documentation-layout.md)）。
 
 リポジトリ内に暫定メモのファイルは作りません。
 

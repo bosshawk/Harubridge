@@ -1,6 +1,6 @@
 # ADR-0010: ドキュメントの最上位構成を目的別の 3 ディレクトリに整理する
 
-- ステータス: Accepted
+- ステータス: Superseded by [ADR-0015](0015-documentation-layout.md)（構成に関する 6 本を統合。本文は履歴として残す）
 - 日付: 2026-08-02
 - 決定者: プロジェクトオーナー
 - 関連: [ADR-0002](0002-documentation-structure.md), [ADR-0006](0006-split-external-and-internal-spec.md)（`guidelines/` の配置を変更する）, [ADR-0008](0008-code-as-source-of-truth.md)

@@ -6,10 +6,10 @@ description: 検討中の論点・調査結果・その場の方針を GitHub Is
 # 論点を Issue に残す・閉じる
 
 **他人（将来の自分を含む）が読む必要がある**論点・検討・調査ログは **GitHub Issue** に置く
-（[ADR-0009](../../../docs/adr/0009-notes-as-github-issues.md)）。
+（[ADR-0015](../../../docs/adr/0015-documentation-layout.md)）。
 
 書き捨ての作業メモは `docs/notes/` に置いてよい。ここは **git 管理対象外で共有されない**
-（[ADR-0012](../../../docs/adr/0012-local-notes-directory.md)）。
+（[ADR-0015](../../../docs/adr/0015-documentation-layout.md)）。
 **それ以外の場所にリポジトリ内メモを作らない。**
 
 | 判断 | 置き場所 |

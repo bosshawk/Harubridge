@@ -35,7 +35,7 @@
 | 要求そのものの追加・変更 | `docs/spec/requirements.md` |
 | **個別機能の実現方法・処理フロー・データ構造** | **書かない。コードが正** |
 | 調査結果・その場の方針など、**他人が読む必要があるもの** | **GitHub Issue**（`gh issue create`） |
-| 書き捨ての作業メモ（**共有されない**） | `docs/notes/`（git 管理外。[ADR-0012](docs/adr/0012-local-notes-directory.md)） |
+| 書き捨ての作業メモ（**共有されない**） | `docs/notes/`（git 管理外。[ADR-0015](docs/adr/0015-documentation-layout.md)） |
 | 手順・進め方 | `CONTRIBUTING.md` |
 | 反復する作業の型 | `.claude/skills/<name>/SKILL.md` |
 

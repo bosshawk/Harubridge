@@ -29,14 +29,14 @@ description: docs/spec/ の仕様書と docs/guidelines/ の横断規約を新�
 | 新しい用語 | `glossary.md` | 要らない |
 | **個別機能の実現方法・処理フロー・データ構造** | **書かない（コードが正）** | — |
 
-承認境界の根拠は [ADR-0006](../../../docs/adr/0006-split-external-and-internal-spec.md)。
+承認境界の根拠は [ADR-0015](../../../docs/adr/0015-documentation-layout.md)。
 **承認が要る文書を、確認なしに書き換えてはいけない。** 変更案を提示して判断を仰ぐ。
 
 #### 何を文書にし、何をコードに委ねるか
 
 **判断基準は再掲しない。**
 [docs/spec/README.md](../../../docs/spec/README.md#文書とコードの境界) を
-**必ず読んでから**分類すること（[ADR-0007](../../../docs/adr/0007-observability-based-spec-boundary.md) /
+**必ず読んでから**分類すること（[ADR-0015](../../../docs/adr/0015-documentation-layout.md) /
 [ADR-0008](../../../docs/adr/0008-code-as-source-of-truth.md)）。
 
 そこに書かれた境界例（実行形態 / 保存場所と保存形式 / 性能の目標値と手段）は

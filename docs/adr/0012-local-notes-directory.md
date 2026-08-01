@@ -1,6 +1,6 @@
 # ADR-0012: `docs/notes/` をローカル専用のメモ置き場として残す（git 管理外）
 
-- ステータス: Accepted
+- ステータス: Superseded by [ADR-0015](0015-documentation-layout.md)（構成に関する 6 本を統合。本文は履歴として残す）
 - 日付: 2026-08-02
 - 決定者: プロジェクトオーナー
 - 関連: [ADR-0009](0009-notes-as-github-issues.md)（`docs/notes/` を廃止する決定を一部変更する）
