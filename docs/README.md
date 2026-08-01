@@ -39,15 +39,16 @@ GitHub Issue   その場の方針・検討・調査   → 閉じたら終わり
                       └ NO  → spec を更新する
 ```
 
-最後の分岐の詳細は [spec/README.md](spec/README.md#何を文書にし何をコードに委ねるか) を正とする。
+最後の分岐の詳細は [spec/README.md](spec/README.md#文書とコードの境界) を正とする。
 
 ## 2. spec（仕様書）
 
 `docs/spec/` 配下。**常に「現在の正解」だけ**が書かれている状態を保つ。
 
 - 経緯・却下案・議論の跡を残さない。それらは ADR / Issue の仕事。
-- 要求には ID を振る（`FR-001`, `NFR-001`）。エージェントへの実装依頼と
+- 要求には ID を振る（`FR-nnn` / `NFR-nnn`）。エージェントへの実装依頼と
   テストがこの ID で仕様を参照できるようにするため。
+  **要求そのものは現在 TBD**（[spec/requirements.md](spec/requirements.md)）。
 - 未確定部分は消さずに `TODO(未確定): …` として残す。**黙って空欄にしない。**
 - **迷ったら書かない。** 書いた分だけメンテ義務が増える
   （[ADR-0008](adr/0008-code-as-source-of-truth.md)）。
@@ -85,7 +86,7 @@ GitHub Issue   その場の方針・検討・調査   → 閉じたら終わり
 ただし**相互リンクの追記と一覧表の同期は承認不要**。ここで作業を止めない。
 
 何を文書にし何をコードに委ねるかの判断基準は
-**[spec/README.md](spec/README.md#何を文書にし何をコードに委ねるか) の 1 箇所を正とする**
+**[spec/README.md](spec/README.md#文書とコードの境界) の 1 箇所を正とする**
 （[ADR-0007](adr/0007-observability-based-spec-boundary.md) /
 [ADR-0008](adr/0008-code-as-source-of-truth.md)）。ここには再掲しない。
 

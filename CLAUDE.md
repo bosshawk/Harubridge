@@ -39,7 +39,7 @@
 | 手順・進め方 | `CONTRIBUTING.md` |
 | 反復する作業の型 | `.claude/skills/<name>/SKILL.md` |
 
-判断基準は [docs/spec/README.md](docs/spec/README.md#何を文書にし何をコードに委ねるか) を正とする。
+判断基準は [docs/spec/README.md](docs/spec/README.md#文書とコードの境界) を正とする。
 
 ### コードが正である
 

@@ -48,7 +48,7 @@ flowchart TD
 
 良い依頼には次が揃っています。
 
-1. **参照すべき文書**（`docs/spec/requirements.md` の FR-010、など）
+1. **参照すべき文書**（`docs/spec/requirements.md` の該当要求 ID、など）
 2. **完了条件**（何ができていれば終わりか）
 3. **触ってよい範囲**（どのファイルまで変更してよいか）
 
@@ -58,8 +58,11 @@ flowchart TD
 
 良い例:
 
-> FR-010 を実装して。仕様は `docs/spec/external/information-view.md`。
-> 表示だけでよく、通知（FR-020）は含めない。
+> FR-nnn を実装して。仕様は `docs/spec/external/information-view.md`。
+> 表示だけでよく、通知（FR-mmm）は含めない。
+
+> **要求（FR / NFR）は現在 TBD です。**
+> 確定するまで、この形の依頼はできません（[requirements.md](docs/spec/requirements.md)）。
 
 ## 意思決定が必要になったとき
 

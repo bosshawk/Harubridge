@@ -35,7 +35,7 @@ description: docs/spec/ の仕様書と docs/guidelines/ の横断規約を新�
 #### 何を文書にし、何をコードに委ねるか
 
 **判断基準は再掲しない。**
-[docs/spec/README.md](../../../docs/spec/README.md#何を文書にし何をコードに委ねるか) を
+[docs/spec/README.md](../../../docs/spec/README.md#文書とコードの境界) を
 **必ず読んでから**分類すること（[ADR-0007](../../../docs/adr/0007-observability-based-spec-boundary.md) /
 [ADR-0008](../../../docs/adr/0008-code-as-source-of-truth.md)）。
 
