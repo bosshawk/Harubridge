@@ -1,0 +1,35 @@
+# OS
+.DS_Store
+Thumbs.db
+
+# エディタ / IDE
+.vscode/
+.idea/
+*.swp
+*~
+
+# Claude Code のローカル設定（個人環境依存のため共有しない）
+.claude/settings.local.json
+
+# 秘密情報 — 絶対にコミットしない
+.env
+.env.*
+*.pem
+*.key
+secrets/
+
+# 艦これのゲームデータ・通信ログ
+# プレイヤー情報や認証情報を含みうるため、リポジトリには入れない
+# （docs/spec/constraints.md C-04 / C-05）
+*.har
+captures/
+gamedata/
+screenshots/
+
+# ビルド成果物（技術構成の決定後に必要に応じて追記する）
+dist/
+build/
+out/
+node_modules/
+target/
+__pycache__/
