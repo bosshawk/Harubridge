@@ -25,14 +25,14 @@
 | --- | --- | --- |
 | [`README.md`](README.md) | プロジェクトの入口。全体像とリンク集 | 低頻度更新 |
 | [`CLAUDE.md`](CLAUDE.md) | エージェントが常に従う作業規約 | 低頻度更新 |
+| [`CONTRIBUTING.md`](CONTRIBUTING.md) | 開発の進め方・役割分担・依頼の書き方 | 低頻度更新 |
 | [`docs/spec/`](docs/spec/) | **いま何を作るのか**（確定仕様・現在形で書く） | 上書き更新 |
 | ├ [`architecture.md`](docs/spec/architecture.md) | 基本設計: 機能をまたいで効く構造 | 維持・メンテ |
-| ├ [`guidelines/`](docs/spec/guidelines/) | ガイドライン: 機能に属さない横断ルール | 維持・メンテ |
 | └ [`external/`](docs/spec/external/) | 外部仕様: ユーザーへの約束と受け入れ条件 | 最小限 |
 | **コード** | 個別機能の実現方法 | **文書化しない** |
 | **GitHub Issue** | その場の方針・検討・調査 | 閉じたら終わり |
+| [`docs/guidelines/`](docs/guidelines/) | **どう書くか**（横断規約） | 維持・メンテ |
 | [`docs/adr/`](docs/adr/) | **なぜそう決めたのか**（意思決定の記録） | 追記のみ・不変 |
-| [`docs/guides/`](docs/guides/) | 開発の進め方・手順書 | 低頻度更新 |
 | [`.claude/skills/`](.claude/skills/) | Claude Code 用スキル（作業手順の型） | 低頻度更新 |
 
 判断に迷ったときの原則は 3 つだけです。
@@ -48,7 +48,7 @@
 - [docs/spec/overview.md](docs/spec/overview.md) — 何を作ろうとしているか
 - [docs/spec/constraints.md](docs/spec/constraints.md) — 前提と制約（**実装前に必読**）
 - [docs/adr/](docs/adr/) — これまでの意思決定
-- [docs/guides/agent-workflow.md](docs/guides/agent-workflow.md) — エージェント駆動開発の回し方
+- [CONTRIBUTING.md](CONTRIBUTING.md) — 開発の回し方（役割分担・依頼の書き方）
 
 ## 現在の状態
 

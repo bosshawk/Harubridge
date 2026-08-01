@@ -20,7 +20,7 @@
 1. [docs/spec/constraints.md](docs/spec/constraints.md) — 越えてはならない制約
 2. 該当機能の [docs/spec/external/](docs/spec/external/) — ユーザーへの約束
 3. [docs/spec/architecture.md](docs/spec/architecture.md) と
-   [docs/spec/guidelines/](docs/spec/guidelines/) — 従うべき構造と規約
+   [docs/guidelines/](docs/guidelines/) — 従うべき構造と規約
 4. **関連するコード** — 内部の作りはここでしか分からない
 5. 関連する [docs/adr/](docs/adr/) — 既に否決された案を蒸し返さないため
 
@@ -31,11 +31,11 @@
 | 「A ではなく B を採用する」という選択 | `docs/adr/NNNN-*.md`（新規作成） |
 | ユーザーから見える振る舞い（画面・操作・表示・設定・通知） | `docs/spec/external/<機能グループ>.md` |
 | 機能をまたいで効く構造（基本設計） | `docs/spec/architecture.md` |
-| 機能に属さない横断ルール（規約・エラー処理・テスト方針） | `docs/spec/guidelines/<名前>.md` |
+| 機能に属さない横断ルール（規約・エラー処理・テスト方針） | `docs/guidelines/<名前>.md` |
 | 要求そのものの追加・変更 | `docs/spec/requirements.md` |
 | **個別機能の実現方法・処理フロー・データ構造** | **書かない。コードが正** |
 | 調査結果・試行錯誤・その場の方針 | **GitHub Issue**（`gh issue create`） |
-| 手順・進め方 | `docs/guides/` |
+| 手順・進め方 | `CONTRIBUTING.md` |
 | 反復する作業の型 | `.claude/skills/<name>/SKILL.md` |
 
 判断基準は [docs/spec/README.md](docs/spec/README.md#何を文書にし何をコードに委ねるか) を正とする。
@@ -50,11 +50,11 @@
   「仕様書に書いていないから存在しない」は**外部から見える振る舞いにのみ**適用され、
   内部構造には適用されない。
 - 文書として維持するのは「古くなると誤解を生み、かつコードから読み取れないもの」だけ
-  —— 基本設計（`architecture.md`）とガイドライン（`guidelines/`）。
+  —— 基本設計（`docs/spec/architecture.md`）とガイドライン（`docs/guidelines/`）。
 
 ### 変更してよい範囲
 
-仕様（要求層 / `architecture.md` / `external/` / `guidelines/`）の変更には
+仕様（要求層 / `architecture.md` / `external/`）とガイドライン（`docs/guidelines/`）の変更には
 **人間の承認が必要**。承認なしに書き換えず、変更案を提示して確認を求めること。
 ただし**相互リンクの追記と一覧表の同期は承認不要**（ここで作業を止めない）。
 

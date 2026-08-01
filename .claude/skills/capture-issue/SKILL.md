@@ -57,7 +57,7 @@ EOF
 - **1 Issue 1 論点。** 長くなったら分ける。
 - **事実と推測を分ける。** 出典が無い記述には `TODO(要検証)` を付ける。
 - **意思決定はしない。** 選択肢とトレードオフを並べるところまでが仕事。
-  決めるのは人間（[docs/guides/agent-workflow.md](../../../docs/guides/agent-workflow.md)）。
+  決めるのは人間（[CONTRIBUTING.md](../../../CONTRIBUTING.md)）。
 - 艦これの API 仕様は非公開。推測を事実として書かない
   （[constraints.md](../../../docs/spec/constraints.md) C-03）。
 - **公開リポジトリである。** 提督名・認証情報・通信ログを Issue に貼らない（C-07）。
@@ -71,7 +71,7 @@ EOF
 | 案を比較して 1 つ選んだ | ADR を起票 | `write-adr` |
 | ユーザーへの約束が決まった | `docs/spec/external/` を更新 | `write-spec` |
 | 機能をまたぐ構造が決まった | `docs/spec/architecture.md` を更新 | `write-spec` |
-| 横断ルールが決まった | `docs/spec/guidelines/` を更新 | `write-spec` |
+| 横断ルールが決まった | `docs/guidelines/` を更新 | `write-spec` |
 | 実装の詳細が決まっただけ | **何も文書化しない**（コードが正） | — |
 | 不要になった | そのまま閉じる | — |
 

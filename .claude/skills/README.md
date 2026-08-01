@@ -20,7 +20,7 @@
 - 「1 回きりの作業」はスキルにしない。**2 回以上繰り返す手順**だけを型にする。
 - `description` は「何をするか」だけでなく **「どういう場面で使うか」** を書く。
 - 手順はチェックリスト形式にする。エージェントが抜けを自己検出できるようにするため。
-- 追加したらこの一覧と [docs/guides/agent-workflow.md](../../docs/guides/agent-workflow.md) を更新する。
+- 追加したらこの一覧と [CONTRIBUTING.md](../../CONTRIBUTING.md) を更新する。
 
 ## 他のエージェント（Codex など）との関係
 

@@ -46,5 +46,6 @@
 | [0007](0007-observability-based-spec-boundary.md) | 外部仕様と内部仕様の切り分けを可観測性で判断する | Accepted | 2026-08-02 |
 | [0008](0008-code-as-source-of-truth.md) | 詳細仕様はコードを正とし、文書は基本設計とガイドラインに絞る | Accepted | 2026-08-02 |
 | [0009](0009-notes-as-github-issues.md) | その場の方針・検討メモを GitHub Issue に移す | Accepted | 2026-08-02 |
+| [0010](0010-top-level-doc-layout.md) | ドキュメントの最上位構成を目的別の 3 ディレクトリに整理する | Accepted | 2026-08-02 |
 
 > 新しい ADR を追加したら、この一覧にも 1 行足すこと。

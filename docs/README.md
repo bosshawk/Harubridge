@@ -2,7 +2,8 @@
 
 このリポジトリのドキュメントを「どこに・どう書き・いつ捨てるか」のルール。
 判断の背景は [ADR-0002](adr/0002-documentation-structure.md)、
-[ADR-0008](adr/0008-code-as-source-of-truth.md)、[ADR-0009](adr/0009-notes-as-github-issues.md)。
+[ADR-0008](adr/0008-code-as-source-of-truth.md)、[ADR-0009](adr/0009-notes-as-github-issues.md)、
+[ADR-0010](adr/0010-top-level-doc-layout.md)。
 
 ## 1. 何を残し、何を流すか
 
@@ -58,8 +59,10 @@ GitHub Issue   その場の方針・検討・調査   → 閉じたら終わり
 | [`requirements.md`](spec/requirements.md) | 機能要求 (FR) / 非機能要求 (NFR) | 維持 |
 | [`glossary.md`](spec/glossary.md) | 用語集（艦これ用語 + 本プロジェクト用語） | 維持 |
 | [`architecture.md`](spec/architecture.md) | **基本設計**: 機能をまたいで効く構造 | **維持・メンテ** |
-| [`guidelines/`](spec/guidelines/) | **ガイドライン**: 個別機能に属さない横断ルール | **維持・メンテ** |
 | [`external/`](spec/external/) | 外部仕様: ユーザーへの約束と受け入れ条件 | 最小限 |
+
+ガイドラインは仕様ではないため、[`docs/guidelines/`](guidelines/) に並列で置く
+（[ADR-0010](adr/0010-top-level-doc-layout.md)）。
 
 **機能ごとの内部仕様は存在しない。コードが正**
 （[ADR-0008](adr/0008-code-as-source-of-truth.md)）。
@@ -72,8 +75,8 @@ GitHub Issue   その場の方針・検討・調査   → 閉じたら終わり
 | 場所 | 変更するとき |
 | --- | --- |
 | 要求層（overview / requirements / constraints） | **人間の承認が必要** |
-| `architecture.md` | 構造を変える変更は**承認が必要** |
-| `external/` | **人間の承認が必要**（ユーザーに見える振る舞いが変わる） |
+| `spec/architecture.md` | 構造を変える変更は**承認が必要** |
+| `spec/external/` | **人間の承認が必要**（ユーザーに見える振る舞いが変わる） |
 | `guidelines/` | **人間の承認が必要**（影響が全体に及ぶ） |
 | コード | 外部仕様と基本設計を変えない限り、エージェントの判断で書いてよい |
 
@@ -109,14 +112,13 @@ GitHub Issue   その場の方針・検討・調査   → 閉じたら終わり
 
 `docs/notes/` は廃止済み。GitHub リポジトリ作成後、残存メモを Issue 化して削除する。
 
-## 5. guides（手順書）
+## 5. guidelines（横断規約）
 
-`docs/guides/` 配下。「どう進めるか」の話。仕様（何を作るか）とは分ける。
+[`docs/guidelines/`](guidelines/) 配下。コーディング規約・エラー処理方針・テスト方針など、
+**個別機能に属さないルール**。仕様（何を作るか）とは別の軸なので並列に置く。
 
-[`docs/spec/guidelines/`](spec/guidelines/) と紛らわしいので区別すること。
-
-- `docs/guides/` = **開発の進め方**（プロセス・手順・誰が何をするか）
-- `docs/spec/guidelines/` = **成果物のルール**（コードや UI が従うべき規約）
+開発の**進め方**（誰が何をするか、依頼の書き方）は
+[CONTRIBUTING.md](../CONTRIBUTING.md) にある（[ADR-0010](adr/0010-top-level-doc-layout.md)）。
 
 ## 6. 変更時の同期義務
 

@@ -1,6 +1,6 @@
 ---
 name: write-spec
-description: docs/spec/ の仕様書を新規作成または更新する。ユーザーに見える振る舞いを external/ に定義するとき、機能をまたぐ構造を architecture.md に書くとき、横断ルールを guidelines/ に書くとき、要求 (FR/NFR) を追加・変更するときに使う。個別機能の実現方法はコードが正であり文書化しない。
+description: docs/spec/ の仕様書と docs/guidelines/ の横断規約を新規作成または更新する。ユーザーに見える振る舞いを spec/external/ に定義するとき、機能をまたぐ構造を spec/architecture.md に書くとき、横断ルールを docs/guidelines/ に書くとき、要求 (FR/NFR) を追加・変更するときに使う。個別機能の実現方法はコードが正であり文書化しない。
 ---
 
 # 仕様書を書く
@@ -25,7 +25,7 @@ description: docs/spec/ の仕様書を新規作成または更新する。ユ�
 | 要求の追加・変更 | `requirements.md` | 要る |
 | ユーザーから見える振る舞い | `external/<機能グループ>.md` | **要る** |
 | 機能をまたいで効く構造（基本設計） | `architecture.md` | 要る |
-| 機能に属さない横断ルール | `guidelines/<名前>.md` | 要る |
+| 機能に属さない横断ルール | `docs/guidelines/<名前>.md` | 要る |
 | 新しい用語 | `glossary.md` | 要らない |
 | **個別機能の実現方法・処理フロー・データ構造** | **書かない（コードが正）** | — |
 

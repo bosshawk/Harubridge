@@ -7,10 +7,12 @@
 ```
 docs/spec/
 ├── overview.md / requirements.md / constraints.md / glossary.md   要求層: 何が必要か
-├── architecture.md   基本設計: 機能をまたいで効く構造        ← 維持・メンテする
-├── guidelines/       ガイドライン: 個別機能に属さない横断ルール ← 維持・メンテする
-└── external/         外部仕様: ユーザーへの約束と受け入れ条件   ← 最小限に保つ
+├── architecture.md   基本設計: 機能をまたいで効く構造      ← 維持・メンテする
+└── external/         外部仕様: ユーザーへの約束と受け入れ条件 ← 最小限に保つ
 ```
+
+横断規約は仕様ではないため [`docs/guidelines/`](../guidelines/) に並列で置く
+（[ADR-0010](../adr/0010-top-level-doc-layout.md)）。
 
 **機能ごとの内部仕様は存在しない。コードが正。**
 その場の方針・検討メモは GitHub Issue に置く（[ADR-0009](../adr/0009-notes-as-github-issues.md)）。
@@ -22,10 +24,9 @@ docs/spec/
 | [`requirements.md`](requirements.md) | 機能要求 (FR) / 非機能要求 (NFR) | **人間の承認が必要** |
 | [`glossary.md`](glossary.md) | 用語集 | 承認不要 |
 | [`architecture.md`](architecture.md) | 基本設計。全体構造・データの持ち方・外部との接点 | 構造を変える変更は**承認が必要** |
-| [`guidelines/`](guidelines/) | コーディング規約・エラー処理・テスト方針など | **人間の承認が必要** |
 | [`external/`](external/) | 画面・操作・表示・設定・通知 | **人間の承認が必要** |
 
-`architecture.md` と `guidelines/` は、技術構成が決まるまで骨子のみ
+`architecture.md` と [`../guidelines/`](../guidelines/) は、技術構成が決まるまで骨子のみ
 （[ADR-0004](../adr/0004-defer-tech-stack-decision.md)）。
 
 ## 何を文書にし、何をコードに委ねるか
@@ -54,7 +55,7 @@ docs/spec/
 > **「その記述が実装とずれたとき、読んだ人が誤った前提を持つか？」**
 
 - **持つ、かつ機能をまたいで効く** → [`architecture.md`](architecture.md)（基本設計）
-- **持つ、かつ書き方の規約である** → [`guidelines/`](guidelines/)
+- **持つ、かつ書き方の規約である** → [`../guidelines/`](../guidelines/)
 - **それ以外** → **書かない。コードが正。**
 
 処理フロー・クラス構成・データ構造・個別 API のパースは書かない。
@@ -73,7 +74,7 @@ docs/spec/
 3. [`requirements.md`](requirements.md) — 要求一覧
 4. [`architecture.md`](architecture.md) — 全体構造
 5. [`external/`](external/) — 対象機能の外部仕様
-6. [`guidelines/`](guidelines/) — 書き方の規約
+6. [`../guidelines/`](../guidelines/) — 書き方の規約
 7. **関連するコード** — 内部の作りはここでしか分からない
 
 ## 書き方のルール
