@@ -50,5 +50,6 @@
 | [0011](0011-license-mit.md) | ライセンスに MIT License を採用する | Accepted | 2026-08-02 |
 | [0012](0012-local-notes-directory.md) | `docs/notes/` をローカル専用のメモ置き場として残す | Accepted | 2026-08-02 |
 | [0013](0013-copyright-holder.md) | 著作権表記を `bosshawk` とする | Accepted | 2026-08-02 |
+| [0014](0014-trunk-based-on-main.md) | 当分の間 `main` に直接コミットする | Accepted | 2026-08-02 |
 
 > 新しい ADR を追加したら、この一覧にも 1 行足すこと。

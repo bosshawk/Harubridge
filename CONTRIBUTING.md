@@ -97,3 +97,8 @@ Claude Code / Codex など複数のエージェントを使う前提です。そ
 
 規約は [CLAUDE.md](CLAUDE.md) §4（Conventional Commits）に従います。
 **仕様変更と実装を同じコミットに混ぜません。** 順序は仕様が先です。
+
+**当分の間、ブランチは切らず `main` に直接コミットします**
+（[ADR-0014](docs/adr/0014-trunk-based-on-main.md)）。
+並行作業も外部からの Pull Request もまだ無く、レビューは対話で完結しているためです。
+並行作業・外部貢献・CI 導入のいずれかが始まった時点で見直します。
