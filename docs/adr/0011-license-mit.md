@@ -1,6 +1,6 @@
 # ADR-0011: ライセンスに MIT License を採用する
 
-- ステータス: Accepted
+- ステータス: Accepted（著作権表記のみ Superseded by [ADR-0013](0013-copyright-holder.md)。MIT の採用は有効）
 - 日付: 2026-08-02
 - 決定者: プロジェクトオーナー
 - 関連: [ADR-0005](0005-publish-as-oss.md)（未解決事項だったライセンス選定に決着をつける）

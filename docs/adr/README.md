@@ -49,5 +49,6 @@
 | [0010](0010-top-level-doc-layout.md) | ドキュメントの最上位構成を目的別の 3 ディレクトリに整理する | Accepted | 2026-08-02 |
 | [0011](0011-license-mit.md) | ライセンスに MIT License を採用する | Accepted | 2026-08-02 |
 | [0012](0012-local-notes-directory.md) | `docs/notes/` をローカル専用のメモ置き場として残す | Accepted | 2026-08-02 |
+| [0013](0013-copyright-holder.md) | 著作権表記を `bosshawk` とする | Accepted | 2026-08-02 |
 
 > 新しい ADR を追加したら、この一覧にも 1 行足すこと。
