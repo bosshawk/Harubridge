@@ -1,73 +1,88 @@
 # ドキュメント運用ガイド
 
 このリポジトリのドキュメントを「どこに・どう書き・いつ捨てるか」のルール。
-判断の背景は [ADR-0002](adr/0002-documentation-structure.md) にある。
+判断の背景は [ADR-0002](adr/0002-documentation-structure.md)、
+[ADR-0008](adr/0008-code-as-source-of-truth.md)、[ADR-0009](adr/0009-notes-as-github-issues.md)。
 
-## 1. 3 層モデル
+## 1. 何を残し、何を流すか
 
-ドキュメントは**変化の速さ**で 3 層に分ける。層をまたいで同じことを書かない。
+**残すのは、コードから読み取れず、古くなると誤解を生むものだけ。**
+それ以外は流す（Issue）か、書かない（コード）。
 
 ```
-docs/notes/   暫定    「まだ分からない / 検討中」   → 使い捨て、破棄前提
-   │ 決まったら昇格
-   ├─────────────→ docs/adr/    決定    「なぜそう決めたか」  → 追記のみ・不変
-   └─────────────→ docs/spec/   仕様    「いまどうなっているか」→ 上書き更新
+GitHub Issue   その場の方針・検討・調査   → 閉じたら終わり
+   │ 決まったら
+   ├──→ docs/adr/    決定「なぜそう決めたか」        → 追記のみ・不変
+   ├──→ docs/spec/   仕様「いまどうなっているか」    → 維持・メンテ
+   └──→ コード       実装の詳細                      → 文書化しない
 ```
 
-| | notes | spec | adr |
-| --- | --- | --- | --- |
-| 時制 | 過去形・疑問形 | **現在形**（〜する / 〜である） | 決定時点の記録 |
-| 更新 | 自由。放置せず畳む | 常に最新へ上書き | **書き換えない**（状態欄のみ変更可） |
-| 読者 | 書いた本人と数日後の自分 | 実装するエージェント | 将来の意思決定者 |
-| 寿命 | 数日〜数週間 | プロジェクトと同じ | 永久 |
+| | Issue | spec | adr | コード |
+| --- | --- | --- | --- | --- |
+| 内容 | 検討中の論点 | 約束・構造・規約 | 決定と却下案 | 実現方法 |
+| 時制 | 疑問形 | **現在形** | 決定時点の記録 | — |
+| 更新 | 閉じて終わり | 常に最新へ上書き | **書き換えない**（状態欄のみ） | 随時 |
+| 寿命 | 決着まで | プロジェクトと同じ | 永久 | — |
 
 ### どこに書くかの判断
 
 ```
 その情報は「選択」か？（他の案を捨てて 1 つを選んだ）
   ├ YES → ADR を起票する
-  └ NO  → それは「実装が従うべき決まりごと」か？
-            ├ YES → spec を更新する
-            └ NO  → notes に書く
+  └ NO  → まだ決まっていないことか？
+            ├ YES → GitHub Issue を立てる
+            └ NO  → コードを読めば分かることか？
+                      ├ YES → 書かない（コードが正）
+                      └ NO  → spec を更新する
 ```
+
+最後の分岐の詳細は [spec/README.md](spec/README.md#何を文書にし何をコードに委ねるか) を正とする。
 
 ## 2. spec（仕様書）
 
 `docs/spec/` 配下。**常に「現在の正解」だけ**が書かれている状態を保つ。
 
-- 経緯・却下案・議論の跡を残さない。それらは ADR / notes の仕事。
+- 経緯・却下案・議論の跡を残さない。それらは ADR / Issue の仕事。
 - 要求には ID を振る（`FR-001`, `NFR-001`）。エージェントへの実装依頼と
   テストがこの ID で仕様を参照できるようにするため。
 - 未確定部分は消さずに `TODO(未確定): …` として残す。**黙って空欄にしない。**
-- **同じ事実を外部仕様と内部仕様の両方に書かない。** 片方が必ず古くなる。リンクする。
+- **迷ったら書かない。** 書いた分だけメンテ義務が増える
+  （[ADR-0008](adr/0008-code-as-source-of-truth.md)）。
 
 構成（詳細は [spec/README.md](spec/README.md)）:
 
-| 場所 | 内容 |
-| --- | --- |
-| [`overview.md`](spec/overview.md) | 何を作るか・対象ユーザー・スコープと非スコープ |
-| [`constraints.md`](spec/constraints.md) | 前提と制約。**実装前に必ず読む** |
-| [`requirements.md`](spec/requirements.md) | 機能要求 (FR) / 非機能要求 (NFR) の一覧 |
-| [`glossary.md`](spec/glossary.md) | 用語集（艦これ用語 + 本プロジェクト用語） |
-| [`external/`](spec/external/) | 外部仕様: ユーザーから見える振る舞い |
-| [`internal/`](spec/internal/) | 内部仕様: それをどう実現するか |
-| [`guidelines/`](spec/guidelines/) | ガイドライン: 個別機能に属さない横断ルール |
+| 場所 | 内容 | 扱い |
+| --- | --- | --- |
+| [`overview.md`](spec/overview.md) | 何を作るか・スコープと非スコープ | 維持 |
+| [`constraints.md`](spec/constraints.md) | 前提と制約。**実装前に必ず読む** | 維持 |
+| [`requirements.md`](spec/requirements.md) | 機能要求 (FR) / 非機能要求 (NFR) | 維持 |
+| [`glossary.md`](spec/glossary.md) | 用語集（艦これ用語 + 本プロジェクト用語） | 維持 |
+| [`architecture.md`](spec/architecture.md) | **基本設計**: 機能をまたいで効く構造 | **維持・メンテ** |
+| [`guidelines/`](spec/guidelines/) | **ガイドライン**: 個別機能に属さない横断ルール | **維持・メンテ** |
+| [`external/`](spec/external/) | 外部仕様: ユーザーへの約束と受け入れ条件 | 最小限 |
+
+**機能ごとの内部仕様は存在しない。コードが正**
+（[ADR-0008](adr/0008-code-as-source-of-truth.md)）。
+処理フロー・クラス構成・データ構造は文書化しない。
 
 ### 変更時の承認境界
 
-仕様の中でも、変更したときの重さは一様ではない
-（[ADR-0006](adr/0006-split-external-and-internal-spec.md)）。
+（[ADR-0006](adr/0006-split-external-and-internal-spec.md)）
 
 | 場所 | 変更するとき |
 | --- | --- |
 | 要求層（overview / requirements / constraints） | **人間の承認が必要** |
+| `architecture.md` | 構造を変える変更は**承認が必要** |
 | `external/` | **人間の承認が必要**（ユーザーに見える振る舞いが変わる） |
-| `internal/` | 外部仕様を変えない限り、エージェントの判断で更新してよい |
 | `guidelines/` | **人間の承認が必要**（影響が全体に及ぶ） |
+| コード | 外部仕様と基本設計を変えない限り、エージェントの判断で書いてよい |
 
-外部仕様と内部仕様の切り分け基準は
-**[spec/README.md](spec/README.md#外部仕様と内部仕様の切り分け) の 1 箇所を正とする**
-（[ADR-0007](adr/0007-observability-based-spec-boundary.md)）。ここには再掲しない。
+ただし**相互リンクの追記と一覧表の同期は承認不要**。ここで作業を止めない。
+
+何を文書にし何をコードに委ねるかの判断基準は
+**[spec/README.md](spec/README.md#何を文書にし何をコードに委ねるか) の 1 箇所を正とする**
+（[ADR-0007](adr/0007-observability-based-spec-boundary.md) /
+[ADR-0008](adr/0008-code-as-source-of-truth.md)）。ここには再掲しない。
 
 ## 3. adr（Architecture Decision Record）
 
@@ -80,23 +95,19 @@ docs/notes/   暫定    「まだ分からない / 検討中」   → 使い捨�
 - 「技術構成」「外部依存」「データの持ち方」「配布形態」など、
   **あとから変えるのが高くつく判断**は必ず ADR にする。
 
-## 4. notes（暫定メモ）
+## 4. その場の方針・検討メモ（GitHub Issue）
 
-`docs/notes/` 配下。**捨てる前提**で気軽に書く場所。
+**リポジトリ内には置かない。** GitHub Issue を使う
+（[ADR-0009](adr/0009-notes-as-github-issues.md)）。
 
-- ファイル名: `YYYY-MM-DD-english-kebab-topic.md`
-- 冒頭に必ずヘッダを置く（[`_template.md`](notes/_template.md) 参照）:
+- 論点が生じたら `gh issue create`。ラベルで種類を分ける
+  （`question` / `research` / `decision`）。
+- 決着したら **ADR を起票し、Issue に ADR へのリンクを貼って閉じる。**
+  Issue の本文を仕様書に転記しない。
+- エージェントは `gh issue list` / `gh issue view` で読む。
+- 手順は `.claude/skills/capture-issue/SKILL.md`。
 
-  ```markdown
-  - 状態: 進行中 | 昇格済み | 破棄
-  - 昇格先: docs/adr/0005-xxx.md（昇格済みの場合）
-  ```
-
-- **昇格ルール**: メモの内容が確定したら
-  - 選択 → ADR を起票 → メモを `昇格済み` にして `docs/notes/archive/` へ移動
-  - 決まりごと → spec に反映 → 同上
-  - 不要になった → `破棄` にして archive へ、または削除
-- 進行中のメモが 1 か月以上放置されたら、棚卸しして畳む（`docs-audit` スキル）。
+`docs/notes/` は廃止済み。GitHub リポジトリ作成後、残存メモを Issue 化して削除する。
 
 ## 5. guides（手順書）
 
@@ -111,9 +122,11 @@ docs/notes/   暫定    「まだ分からない / 検討中」   → 使い捨�
 
 | 変更したもの | 一緒に更新するもの |
 | --- | --- |
-| 実装 | 対応する spec |
+| ユーザーに見える振る舞い | `docs/spec/external/` |
+| 機能をまたぐ構造 | `docs/spec/architecture.md` |
+| **上記に該当しない実装** | **何も更新しない**（コードが正） |
 | spec の重要な方針 | 根拠となる ADR（無ければ起票） |
-| ADR を Accepted にした | spec への反映、元になった notes の昇格処理 |
+| ADR を Accepted にした | spec への反映、元になった Issue のクローズ |
 | 用語を新しく使い始めた | `glossary.md` |
 
 この同期が取れているかは `.claude/skills/docs-audit` で点検できる。

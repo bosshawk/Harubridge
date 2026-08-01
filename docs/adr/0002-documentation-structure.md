@@ -1,6 +1,6 @@
 # ADR-0002: ドキュメントを notes / spec / adr の 3 層で管理する
 
-- ステータス: Accepted
+- ステータス: Accepted（notes 層のみ Superseded by [ADR-0009](0009-notes-as-github-issues.md)）
 - 日付: 2026-08-01
 - 決定者: プロジェクトオーナー
 - 関連: [ADR-0001](0001-record-architecture-decisions.md), [docs/README.md](../README.md)

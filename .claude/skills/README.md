@@ -12,7 +12,7 @@
 | --- | --- |
 | [`write-adr`](write-adr/SKILL.md) | 設計判断を ADR として記録する |
 | [`write-spec`](write-spec/SKILL.md) | `docs/spec/` の仕様書を書く・更新する |
-| [`capture-note`](capture-note/SKILL.md) | 暫定メモを残す・spec / ADR へ昇格させる |
+| [`capture-issue`](capture-issue/SKILL.md) | 論点を GitHub Issue に残す・ADR 化して閉じる |
 | [`docs-audit`](docs-audit/SKILL.md) | ドキュメントの整合性・鮮度を点検する |
 
 ## スキルを追加するとき

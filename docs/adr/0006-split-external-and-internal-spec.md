@@ -1,6 +1,6 @@
 # ADR-0006: 仕様を外部仕様・内部仕様・ガイドラインに分割する
 
-- ステータス: Accepted
+- ステータス: Accepted（`internal/` に関する部分のみ Superseded by [ADR-0008](0008-code-as-source-of-truth.md)）
 - 日付: 2026-08-01
 - 決定者: プロジェクトオーナー
 - 関連: [ADR-0002](0002-documentation-structure.md)（本 ADR は 0002 を置き換えず、`spec` 層を細分化する）, [ADR-0003](0003-agent-driven-development.md)

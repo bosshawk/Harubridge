@@ -21,6 +21,7 @@
 | `Superseded by ADR-NNNN` | 別の ADR に置き換えられた |
 | `Deprecated` | 前提が消滅し、置き換え先も無い |
 | `Rejected` | 検討したが採用しなかった（記録として残す） |
+| `Accepted（…のみ Superseded by …）` | 決定の一部だけが置き換えられた。残りは有効 |
 
 ## ADR を書くべき判断
 
@@ -43,5 +44,7 @@
 | [0005](0005-publish-as-oss.md) | OSS として公開する | Accepted | 2026-08-01 |
 | [0006](0006-split-external-and-internal-spec.md) | 仕様を外部仕様・内部仕様・ガイドラインに分割する | Accepted | 2026-08-01 |
 | [0007](0007-observability-based-spec-boundary.md) | 外部仕様と内部仕様の切り分けを可観測性で判断する | Accepted | 2026-08-02 |
+| [0008](0008-code-as-source-of-truth.md) | 詳細仕様はコードを正とし、文書は基本設計とガイドラインに絞る | Accepted | 2026-08-02 |
+| [0009](0009-notes-as-github-issues.md) | その場の方針・検討メモを GitHub Issue に移す | Accepted | 2026-08-02 |
 
 > 新しい ADR を追加したら、この一覧にも 1 行足すこと。

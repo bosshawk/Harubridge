@@ -12,8 +12,11 @@
 
 - **プログラムはすべて AI エージェント（Claude Code / Codex など）が作成します。**
   人間が担うのは「要求を出す」「意思決定する」「レビューして受け入れる」の 3 つです。
-- したがって **ドキュメントがエージェントへの唯一の入力**であり、仕様書の曖昧さ・古さは
-  そのまま実装の欠陥になります。「コードを直す前にドキュメントを直す」が原則です。
+- したがって **ユーザーに見える振る舞いは、必ず先にドキュメントで決めます**。
+  仕様書の曖昧さ・古さはそのまま実装の欠陥になるためです。
+- 一方で **実装の詳細はコードを正とし、文書化しません**
+  （[ADR-0008](docs/adr/0008-code-as-source-of-truth.md)）。二重管理された文書は必ず古くなり、
+  古い文書はエージェントにとって誤った前提として作用するためです。
 - エージェントが従うべき規約は [CLAUDE.md](CLAUDE.md) に集約しています。
 
 ## ドキュメントの置き場所
@@ -23,19 +26,20 @@
 | [`README.md`](README.md) | プロジェクトの入口。全体像とリンク集 | 低頻度更新 |
 | [`CLAUDE.md`](CLAUDE.md) | エージェントが常に従う作業規約 | 低頻度更新 |
 | [`docs/spec/`](docs/spec/) | **いま何を作るのか**（確定仕様・現在形で書く） | 上書き更新 |
-| ├ [`external/`](docs/spec/external/) | 外部仕様: ユーザーから見える振る舞い | 承認が必要 |
-| ├ [`internal/`](docs/spec/internal/) | 内部仕様: それをどう実現するか | エージェントが更新可 |
-| └ [`guidelines/`](docs/spec/guidelines/) | ガイドライン: 機能に属さない横断ルール | 承認が必要 |
+| ├ [`architecture.md`](docs/spec/architecture.md) | 基本設計: 機能をまたいで効く構造 | 維持・メンテ |
+| ├ [`guidelines/`](docs/spec/guidelines/) | ガイドライン: 機能に属さない横断ルール | 維持・メンテ |
+| └ [`external/`](docs/spec/external/) | 外部仕様: ユーザーへの約束と受け入れ条件 | 最小限 |
+| **コード** | 個別機能の実現方法 | **文書化しない** |
+| **GitHub Issue** | その場の方針・検討・調査 | 閉じたら終わり |
 | [`docs/adr/`](docs/adr/) | **なぜそう決めたのか**（意思決定の記録） | 追記のみ・不変 |
-| [`docs/notes/`](docs/notes/) | 暫定メモ・調査ログ・使い捨ての下書き | 高頻度・破棄前提 |
 | [`docs/guides/`](docs/guides/) | 開発の進め方・手順書 | 低頻度更新 |
 | [`.claude/skills/`](.claude/skills/) | Claude Code 用スキル（作業手順の型） | 低頻度更新 |
 
 判断に迷ったときの原則は 3 つだけです。
 
 1. **決めたこと**（そして捨てた選択肢）は ADR へ。あとから書き換えない。
-2. **今の正解**は spec へ。過去の経緯は書かず、常に最新状態だけを書く。
-3. **まだ決まっていないこと**は notes へ。決まったら spec / ADR へ昇格させて notes は畳む。
+2. **今の正解**は spec へ。ただし**コードを読めば分かることは書かない**。
+3. **まだ決まっていないこと**は GitHub Issue へ。決まったら ADR にして閉じる。
 
 詳しい運用ルールは [docs/README.md](docs/README.md) を参照してください。
 
@@ -53,7 +57,7 @@
 | ドキュメント基盤 | 構築済み |
 | 要求仕様 | ドラフト（[docs/spec/requirements.md](docs/spec/requirements.md)） |
 | 公開方針 | OSS 公開（[ADR-0005](docs/adr/0005-publish-as-oss.md)）。ライセンスは未選定 |
-| 技術構成 | **未決定**（論点整理中: [docs/notes/2026-08-01-tech-stack-open-questions.md](docs/notes/2026-08-01-tech-stack-open-questions.md)） |
+| 技術構成 | **未決定**（論点は [docs/notes/](docs/notes/) に暫定保管。GitHub リポジトリ作成後に Issue へ移行） |
 | 実装 | 未着手 |
 
 ## 名前について
