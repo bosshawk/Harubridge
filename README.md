@@ -31,6 +31,7 @@
 | └ [`external/`](docs/spec/external/) | 外部仕様: ユーザーへの約束と受け入れ条件 | 最小限 |
 | **コード** | 個別機能の実現方法 | **文書化しない** |
 | **GitHub Issue** | その場の方針・検討・調査 | 閉じたら終わり |
+| [`docs/notes/`](docs/notes/) | 手元の書き捨てメモ | **git 管理外・共有されない** |
 | [`docs/guidelines/`](docs/guidelines/) | **どう書くか**（横断規約） | 維持・メンテ |
 | [`docs/adr/`](docs/adr/) | **なぜそう決めたのか**（意思決定の記録） | 追記のみ・不変 |
 | [`.claude/skills/`](.claude/skills/) | Claude Code 用スキル（作業手順の型） | 低頻度更新 |
@@ -40,6 +41,7 @@
 1. **決めたこと**（そして捨てた選択肢）は ADR へ。あとから書き換えない。
 2. **今の正解**は spec へ。ただし**コードを読めば分かることは書かない**。
 3. **まだ決まっていないこと**は GitHub Issue へ。決まったら ADR にして閉じる。
+   他人が読む必要のない書き捨てメモだけ `docs/notes/`（共有されません）。
 
 詳しい運用ルールは [docs/README.md](docs/README.md) を参照してください。
 
@@ -56,8 +58,8 @@
 | --- | --- |
 | ドキュメント基盤 | 構築済み |
 | 要求仕様 | ドラフト（[docs/spec/requirements.md](docs/spec/requirements.md)） |
-| 公開方針 | OSS 公開（[ADR-0005](docs/adr/0005-publish-as-oss.md)）。ライセンスは未選定 |
-| 技術構成 | **未決定**（論点は [docs/notes/](docs/notes/) に暫定保管。GitHub リポジトリ作成後に Issue へ移行） |
+| 公開方針 | OSS 公開（[ADR-0005](docs/adr/0005-publish-as-oss.md)） / [MIT License](LICENSE) |
+| 技術構成 | **未決定**（[ADR-0004](docs/adr/0004-defer-tech-stack-decision.md) により要求承認まで保留） |
 | 実装 | 未着手 |
 
 ## 名前について
@@ -70,7 +72,8 @@
 - 本プロジェクトは非公式のサードパーティ製ツールであり、DMM.com、株式会社 C2 プレパラート、
   その他「艦隊これくしょん」の権利者とは一切関係ありません。
 - 本プロジェクトは **OSS として公開します**（[ADR-0005](docs/adr/0005-publish-as-oss.md)）。
-  **ライセンスは未選定です。** 決定時に ADR を起票し `LICENSE` を追加します。
-  それまでは、法的には作者の著作権が留保された状態であることにご留意ください。
+  ライセンスは **[MIT License](LICENSE)** です（[ADR-0011](docs/adr/0011-license-mit.md)）。
+  このライセンスは本リポジトリのコードとドキュメントにのみ及び、
+  ゲーム側の権利物には一切関係しません。
 - 利用にあたっての制約・方針は [docs/spec/constraints.md](docs/spec/constraints.md) に定義しています。
   特に、本アプリは**ゲームプレイの自動化を行わず、通信を読み取り専用として扱います**。

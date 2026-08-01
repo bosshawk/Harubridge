@@ -11,6 +11,8 @@
 それ以外は流す（Issue）か、書かない（コード）。
 
 ```
+docs/notes/    手元の書き捨てメモ         → git 管理外・共有されない
+   │ 共有すべきなら
 GitHub Issue   その場の方針・検討・調査   → 閉じたら終わり
    │ 決まったら
    ├──→ docs/adr/    決定「なぜそう決めたか」        → 追記のみ・不変
@@ -110,7 +112,13 @@ GitHub Issue   その場の方針・検討・調査   → 閉じたら終わり
 - エージェントは `gh issue list` / `gh issue view` で読む。
 - 手順は `.claude/skills/capture-issue/SKILL.md`。
 
-`docs/notes/` は廃止済み。GitHub リポジトリ作成後、残存メモを Issue 化して削除する。
+### 手元の作業メモ
+
+書き捨てのメモは [`docs/notes/`](notes/) に置く。**git 管理対象外であり共有されない**
+（[ADR-0012](adr/0012-local-notes-directory.md)）。
+
+判断基準はひとつ。**他人（将来の自分を含む）が読む必要があるか。**
+あるなら Issue、無いなら `docs/notes/`。迷ったら Issue。
 
 ## 5. guidelines（横断規約）
 

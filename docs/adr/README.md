@@ -47,5 +47,7 @@
 | [0008](0008-code-as-source-of-truth.md) | 詳細仕様はコードを正とし、文書は基本設計とガイドラインに絞る | Accepted | 2026-08-02 |
 | [0009](0009-notes-as-github-issues.md) | その場の方針・検討メモを GitHub Issue に移す | Accepted | 2026-08-02 |
 | [0010](0010-top-level-doc-layout.md) | ドキュメントの最上位構成を目的別の 3 ディレクトリに整理する | Accepted | 2026-08-02 |
+| [0011](0011-license-mit.md) | ライセンスに MIT License を採用する | Accepted | 2026-08-02 |
+| [0012](0012-local-notes-directory.md) | `docs/notes/` をローカル専用のメモ置き場として残す | Accepted | 2026-08-02 |
 
 > 新しい ADR を追加したら、この一覧にも 1 行足すこと。

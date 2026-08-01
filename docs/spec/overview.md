@@ -57,7 +57,7 @@
 | 項目 | 状態 |
 | --- | --- |
 | 要求定義 | ドラフト（[requirements.md](requirements.md)） |
-| 公開方針 | OSS 公開（[ADR-0005](../adr/0005-publish-as-oss.md)）。ライセンスは未選定 |
+| 公開方針 | OSS 公開（[ADR-0005](../adr/0005-publish-as-oss.md)） / MIT License（[ADR-0011](../adr/0011-license-mit.md)） |
 | 技術構成 | 未決定（[ADR-0004](../adr/0004-defer-tech-stack-decision.md)） |
 | 対応 OS | 未決定。技術構成の決定時に同時に決める |
 | 実装 | 未着手 |
@@ -65,7 +65,7 @@
 ## 未解決事項
 
 - `TODO(未確定)`: 正式なアプリケーション名。`Harubridge` はコードネーム。
-- `TODO(未確定)`: ライセンス。OSS 公開は決定済みだが、ライセンスは未選定
-  （[ADR-0005](../adr/0005-publish-as-oss.md) の未解決事項）。
+- `TODO(未確定)`: 著作権表記を実名・ハンドル名にするか
+  （[ADR-0011](../adr/0011-license-mit.md) の未解決事項）。ライセンス自体は MIT で決定。
 - `TODO(未確定)`: 対応 OS。**技術構成の検討時に同時に決定する**
   （[ADR-0004](../adr/0004-defer-tech-stack-decision.md)）。単独では決めない。
