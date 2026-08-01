@@ -65,17 +65,17 @@
 | No. | タイトル | ステータス | 日付 |
 | --- | --- | --- | --- |
 | [0001](0001-record-architecture-decisions.md) | 意思決定を ADR として記録する | Accepted | 2026-08-01 |
-| [0002](0015-documentation-layout.md) | ドキュメントを notes / spec / adr の 3 層で管理する | Superseded by ADR-0015 | 2026-08-01 |
+| [0002](0002-documentation-structure.md) | ドキュメントを notes / spec / adr の 3 層で管理する | Superseded by ADR-0015 | 2026-08-01 |
 | [0003](0003-agent-driven-development.md) | 実装はすべて AI エージェントが行う | Accepted | 2026-08-01 |
 | [0004](0004-defer-tech-stack-decision.md) | 技術構成の決定を要求定義のあとに延期する | Accepted | 2026-08-01 |
 | [0005](0005-publish-as-oss.md) | OSS として公開する | Accepted | 2026-08-01 |
-| [0006](0015-documentation-layout.md) | 仕様を外部仕様・内部仕様・ガイドラインに分割する | Superseded by ADR-0015 | 2026-08-01 |
-| [0007](0015-documentation-layout.md) | 外部仕様と内部仕様の切り分けを可観測性で判断する | Superseded by ADR-0015 | 2026-08-02 |
+| [0006](0006-split-external-and-internal-spec.md) | 仕様を外部仕様・内部仕様・ガイドラインに分割する | Superseded by ADR-0015 | 2026-08-01 |
+| [0007](0007-observability-based-spec-boundary.md) | 外部仕様と内部仕様の切り分けを可観測性で判断する | Superseded by ADR-0015 | 2026-08-02 |
 | [0008](0008-code-as-source-of-truth.md) | 詳細仕様はコードを正とし、文書は基本設計とガイドラインに絞る | Accepted | 2026-08-02 |
-| [0009](0015-documentation-layout.md) | その場の方針・検討メモを GitHub Issue に移す | Superseded by ADR-0015 | 2026-08-02 |
-| [0010](0015-documentation-layout.md) | ドキュメントの最上位構成を目的別の 3 ディレクトリに整理する | Superseded by ADR-0015 | 2026-08-02 |
+| [0009](0009-notes-as-github-issues.md) | その場の方針・検討メモを GitHub Issue に移す | Superseded by ADR-0015 | 2026-08-02 |
+| [0010](0010-top-level-doc-layout.md) | ドキュメントの最上位構成を目的別の 3 ディレクトリに整理する | Superseded by ADR-0015 | 2026-08-02 |
 | [0011](0011-license-mit.md) | ライセンスに MIT License を採用する | Accepted | 2026-08-02 |
-| [0012](0015-documentation-layout.md) | `docs/notes/` をローカル専用のメモ置き場として残す | Superseded by ADR-0015 | 2026-08-02 |
+| [0012](0012-local-notes-directory.md) | `docs/notes/` をローカル専用のメモ置き場として残す | Superseded by ADR-0015 | 2026-08-02 |
 | [0013](0013-copyright-holder.md) | 著作権表記を `bosshawk` とする | Accepted | 2026-08-02 |
 | [0014](0014-trunk-based-on-main.md) | 当分の間 `main` に直接コミットする | Accepted | 2026-08-02 |
 | [0015](0015-documentation-layout.md) | ドキュメント構成を確定する（0002/0006/0007/0009/0010/0012 を統合） | Accepted | 2026-08-02 |
