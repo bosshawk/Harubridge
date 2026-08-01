@@ -79,6 +79,6 @@
 | [0013](0013-copyright-holder.md) | 著作権表記を `bosshawk` とする | Accepted | 2026-08-02 |
 | [0014](0014-trunk-based-on-main.md) | 当分の間 `main` に直接コミットする | Accepted | 2026-08-02 |
 | [0015](0015-documentation-layout.md) | ドキュメント構成を確定する（0002/0006/0007/0009/0010/0012 を統合） | Accepted | 2026-08-02 |
-| [0016](0016-tech-stack.md) | 技術構成に Electron + TypeScript + React を採用する | **Proposed** | 2026-08-02 |
+| [0016](0016-tech-stack.md) | 技術構成を選定する | **Proposed** | 2026-08-02 |
 
 > 新しい ADR を追加したら、この一覧にも 1 行足すこと。
