@@ -23,6 +23,9 @@
 | [`README.md`](README.md) | プロジェクトの入口。全体像とリンク集 | 低頻度更新 |
 | [`CLAUDE.md`](CLAUDE.md) | エージェントが常に従う作業規約 | 低頻度更新 |
 | [`docs/spec/`](docs/spec/) | **いま何を作るのか**（確定仕様・現在形で書く） | 上書き更新 |
+| ├ [`external/`](docs/spec/external/) | 外部仕様: ユーザーから見える振る舞い | 承認が必要 |
+| ├ [`internal/`](docs/spec/internal/) | 内部仕様: それをどう実現するか | エージェントが更新可 |
+| └ [`guidelines/`](docs/spec/guidelines/) | ガイドライン: 機能に属さない横断ルール | 承認が必要 |
 | [`docs/adr/`](docs/adr/) | **なぜそう決めたのか**（意思決定の記録） | 追記のみ・不変 |
 | [`docs/notes/`](docs/notes/) | 暫定メモ・調査ログ・使い捨ての下書き | 高頻度・破棄前提 |
 | [`docs/guides/`](docs/guides/) | 開発の進め方・手順書 | 低頻度更新 |

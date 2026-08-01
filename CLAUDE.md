@@ -24,10 +24,20 @@
 | 書きたい内容 | 置き場所 |
 | --- | --- |
 | 「A ではなく B を採用する」という選択 | `docs/adr/NNNN-*.md`（新規作成） |
-| 「この機能はこう振る舞う」という確定仕様 | `docs/spec/` の該当ファイルを**上書き**更新 |
+| ユーザーから見える振る舞い（画面・操作・表示・設定） | `docs/spec/external/<機能名>.md` |
+| 実現方法（モジュール構成・データモデル・処理フロー） | `docs/spec/internal/<機能名>.md` |
+| 機能に属さない横断ルール（規約・エラー処理・テスト方針） | `docs/spec/guidelines/<名前>.md` |
+| 要求そのものの追加・変更 | `docs/spec/requirements.md` |
 | 調査結果・試行錯誤・未確定の案 | `docs/notes/YYYY-MM-DD-*.md` |
 | 手順・進め方 | `docs/guides/` |
 | 反復する作業の型 | `.claude/skills/<name>/SKILL.md` |
+
+### 変更してよい範囲
+
+[ADR-0006](docs/adr/0006-split-external-and-internal-spec.md) により、
+**`docs/spec/internal/` は外部仕様を変えない限り自分の判断で更新してよい。**
+それ以外の仕様（要求層 / `external/` / `guidelines/`）の変更には**人間の承認が必要**。
+承認なしに書き換えず、変更案を提示して確認を求めること。
 
 詳細な運用ルールは [docs/README.md](docs/README.md)。
 `.claude/skills/` に `write-adr` / `write-spec` / `capture-note` / `docs-audit` を用意しているので、

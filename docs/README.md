@@ -39,17 +39,35 @@ docs/notes/   暫定    「まだ分からない / 検討中」   → 使い捨�
 - 要求には ID を振る（`FR-001`, `NFR-001`）。エージェントへの実装依頼と
   テストがこの ID で仕様を参照できるようにするため。
 - 未確定部分は消さずに `TODO(未確定): …` として残す。**黙って空欄にしない。**
-- 機能単位の詳細仕様は [`_template-feature.md`](spec/_template-feature.md) をコピーして作る。
+- **同じ事実を外部仕様と内部仕様の両方に書かない。** 片方が必ず古くなる。リンクする。
 
-構成:
+構成（詳細は [spec/README.md](spec/README.md)）:
 
-| ファイル | 内容 |
+| 場所 | 内容 |
 | --- | --- |
 | [`overview.md`](spec/overview.md) | 何を作るか・対象ユーザー・スコープと非スコープ |
 | [`constraints.md`](spec/constraints.md) | 前提と制約。**実装前に必ず読む** |
 | [`requirements.md`](spec/requirements.md) | 機能要求 (FR) / 非機能要求 (NFR) の一覧 |
 | [`glossary.md`](spec/glossary.md) | 用語集（艦これ用語 + 本プロジェクト用語） |
-| `features/*.md` | 機能ごとの詳細仕様（必要になった時点で追加） |
+| [`external/`](spec/external/) | 外部仕様: ユーザーから見える振る舞い |
+| [`internal/`](spec/internal/) | 内部仕様: それをどう実現するか |
+| [`guidelines/`](spec/guidelines/) | ガイドライン: 個別機能に属さない横断ルール |
+
+### 変更時の承認境界
+
+仕様の中でも、変更したときの重さは一様ではない
+（[ADR-0006](adr/0006-split-external-and-internal-spec.md)）。
+
+| 場所 | 変更するとき |
+| --- | --- |
+| 要求層（overview / requirements / constraints） | **人間の承認が必要** |
+| `external/` | **人間の承認が必要**（ユーザーに見える振る舞いが変わる） |
+| `internal/` | 外部仕様を変えない限り、エージェントの判断で更新してよい |
+| `guidelines/` | **人間の承認が必要**（影響が全体に及ぶ） |
+
+外部仕様と内部仕様の切り分けに迷ったら:
+**「実装を全部書き直しても、この記述は変わらないか？」**
+変わらないなら外部仕様、変わるなら内部仕様。
 
 ## 3. adr（Architecture Decision Record）
 
@@ -83,6 +101,11 @@ docs/notes/   暫定    「まだ分からない / 検討中」   → 使い捨�
 ## 5. guides（手順書）
 
 `docs/guides/` 配下。「どう進めるか」の話。仕様（何を作るか）とは分ける。
+
+[`docs/spec/guidelines/`](spec/guidelines/) と紛らわしいので区別すること。
+
+- `docs/guides/` = **開発の進め方**（プロセス・手順・誰が何をするか）
+- `docs/spec/guidelines/` = **成果物のルール**（コードや UI が従うべき規約）
 
 ## 6. 変更時の同期義務
 

@@ -41,5 +41,6 @@
 | [0003](0003-agent-driven-development.md) | 実装はすべて AI エージェントが行う | Accepted | 2026-08-01 |
 | [0004](0004-defer-tech-stack-decision.md) | 技術構成の決定を要求定義のあとに延期する | Accepted | 2026-08-01 |
 | [0005](0005-publish-as-oss.md) | OSS として公開する | Accepted | 2026-08-01 |
+| [0006](0006-split-external-and-internal-spec.md) | 仕様を外部仕様・内部仕様・ガイドラインに分割する | Accepted | 2026-08-01 |
 
 > 新しい ADR を追加したら、この一覧にも 1 行足すこと。

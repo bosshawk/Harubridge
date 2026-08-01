@@ -44,7 +44,7 @@ flowchart TD
 3. **触ってよい範囲**（どのファイルまで変更してよいか）
 
 悪い例: 「遠征タイマーを作って」
-良い例: 「FR-010 を実装して。仕様は `docs/spec/features/expedition-timer.md`。
+良い例: 「FR-010 を実装して。仕様は `docs/spec/external/expedition-timer.md`。
 表示だけでよく、通知（FR-020）は含めない。」
 
 ## 意思決定が必要になったとき
