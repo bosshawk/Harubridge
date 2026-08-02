@@ -1,8 +1,8 @@
 # ADR-0022: 生の観測データを既定で保存せず、テストフィクスチャは生成器の出力に限る
 
-- ステータス: Proposed
+- ステータス: **Accepted**
 - 日付: 2026-08-02
-- 決定者: 承認待ち（`Accepted` にする時点で承認者名に書き換える）
+- 決定者: プロジェクトオーナー
 - 関連: [ADR-0005](0005-publish-as-oss.md), [ADR-0016](0016-tech-stack.md), [ADR-0018](0018-dependencies.md),
   [docs/spec/constraints.md](../spec/constraints.md)（C-03 / C-04 / C-07）,
   [docs/spec/requirements.md](../spec/requirements.md)（NFR-003 / NFR-004 / NFR-005 / NFR-008）,

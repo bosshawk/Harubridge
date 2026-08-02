@@ -85,6 +85,6 @@
 | [0019](0019-linter.md) | リンタに ESLint + Prettier を採用する | Accepted | 2026-08-02 |
 | [0020](0020-kancolle-reference.md) | 艦これ側の仕様を `docs/kancolle/` に記録する | **Proposed** | 2026-08-02 |
 | [0021](0021-data-persistence.md) | データの持ち方をプレーンファイルにする | **Proposed** | 2026-08-02 |
-| [0022](0022-observed-data-privacy.md) | 観測データの保存とテストデータの扱い | **Proposed** | 2026-08-02 |
+| [0022](0022-observed-data-privacy.md) | 観測データの保存とテストデータの扱い | Accepted | 2026-08-02 |
 
 > 新しい ADR を追加したら、この一覧にも 1 行足すこと。
