@@ -81,10 +81,10 @@
 | [0015](0015-documentation-layout.md) | ドキュメント構成を確定する（0002/0006/0007/0009/0010/0012 を統合） | Accepted | 2026-08-02 |
 | [0016](0016-tech-stack.md) | 技術構成に Tauri + Rust + React を採用する | Accepted | 2026-08-02 |
 | [0017](0017-llm-endpoint.md) | LLM 連携は OpenAI 互換エンドポイント 1 本に絞る | Accepted | 2026-08-02 |
-| [0018](0018-dependencies.md) | 依存ライブラリを選定する | Accepted（リンタのみ Superseded by ADR-0019） | 2026-08-02 |
+| [0018](0018-dependencies.md) | 依存ライブラリを選定する | Accepted（リンタ・永続化のみ Superseded） | 2026-08-02 |
 | [0019](0019-linter.md) | リンタに ESLint + Prettier を採用する | Accepted | 2026-08-02 |
 | [0020](0020-kancolle-reference.md) | 艦これ側の仕様を `docs/kancolle/` に記録する | **Proposed** | 2026-08-02 |
-| [0021](0021-data-persistence.md) | データの持ち方（状態は上書き・事象は追記） | **Proposed** | 2026-08-02 |
+| [0021](0021-data-persistence.md) | データの持ち方をプレーンファイルにする | **Proposed** | 2026-08-02 |
 | [0022](0022-observed-data-privacy.md) | 観測データの保存とテストデータの扱い | **Proposed** | 2026-08-02 |
 
 > 新しい ADR を追加したら、この一覧にも 1 行足すこと。

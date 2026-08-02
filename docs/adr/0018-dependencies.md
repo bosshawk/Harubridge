@@ -1,6 +1,6 @@
 # ADR-0018: 依存ライブラリを選定する
 
-- ステータス: **Accepted**（リンタの選定のみ Superseded by [ADR-0019](0019-linter.md)。他の依存は有効）
+- ステータス: **Accepted**（リンタは Superseded by [ADR-0019](0019-linter.md)、永続化は Superseded by [ADR-0021](0021-data-persistence.md)。他の依存は有効）
 - 日付: 2026-08-02
 - 決定者: プロジェクトオーナー
 - 関連: [ADR-0016](0016-tech-stack.md)（本 ADR が未解決事項「Rust と TypeScript の間の型の受け渡し方法」を解消する）,
