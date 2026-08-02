@@ -1,6 +1,6 @@
 # ADR-0015: ドキュメント構成を確定する（ADR-0002 / 0006 / 0007 / 0009 / 0010 / 0012 を統合）
 
-- ステータス: Accepted
+- ステータス: Accepted（`docs/kancolle/` の追加は [ADR-0020](0020-kancolle-reference.md) による）
 - 日付: 2026-08-02
 - 決定者: プロジェクトオーナー
 - 統合対象: [ADR-0002](0002-documentation-structure.md), [ADR-0006](0006-split-external-and-internal-spec.md),

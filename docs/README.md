@@ -89,6 +89,19 @@ GitHub Issue   その場の方針・検討・調査   → 閉じたら終わり
 （[ADR-0015](adr/0015-documentation-layout.md) /
 [ADR-0008](adr/0008-code-as-source-of-truth.md)）。ここには再掲しない。
 
+## 2b. kancolle（艦これ側の仕様）
+
+[`docs/kancolle/`](kancolle/) 配下。**外部システムの観測結果**を記録する
+（[ADR-0020](adr/0020-kancolle-reference.md)）。
+
+- `api/` — `/kcsapi/` のエンドポイントとレスポンスの構造
+- `formulas/` — 計算式（制空値・索敵値など）
+- `rules/` — ゲームのルール（枠数・回復時間など）
+
+**「コードが正」は自分たちの実装についてのルールであり、ここには当てはまらない。**
+コードには実装した範囲しか現れず、観測して分かったことのほうが広い。
+**出典と観測日を必ず書く**（[C-03](spec/constraints.md)）。
+
 ## 3. adr（Architecture Decision Record）
 
 `docs/adr/` 配下。形式は [MADR](https://adr.github.io/madr/) の簡略版。

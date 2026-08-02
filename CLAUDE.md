@@ -19,6 +19,7 @@
 
 1. [docs/spec/constraints.md](docs/spec/constraints.md) — 越えてはならない制約
 2. 該当機能の [docs/spec/external/](docs/spec/external/) — ユーザーへの約束
+2b. [docs/kancolle/](docs/kancolle/) — 艦これ側の仕様（観測結果）
 3. [docs/spec/architecture.md](docs/spec/architecture.md) と
    [docs/guidelines/](docs/guidelines/) — 従うべき構造と規約
 4. **関連するコード** — 内部の作りはここでしか分からない
@@ -34,6 +35,7 @@
 | 機能に属さない横断ルール（規約・エラー処理・テスト方針） | `docs/guidelines/<名前>.md` |
 | 要求そのものの追加・変更 | `docs/spec/requirements.md` |
 | **個別機能の実現方法・処理フロー・データ構造** | **書かない。コードが正** |
+| **艦これ側の仕様**（API 構造・計算式・ゲームのルール） | `docs/kancolle/`。**出典と観測日を必ず書く** |
 | 調査結果・その場の方針など、**他人が読む必要があるもの** | **GitHub Issue**（`gh issue create`） |
 | 書き捨ての作業メモ（**共有されない**） | `docs/notes/`（git 管理外。[ADR-0015](docs/adr/0015-documentation-layout.md)） |
 | 手順・進め方 | `CONTRIBUTING.md` |
@@ -52,6 +54,9 @@
   内部構造には適用されない。
 - 文書として維持するのは「古くなると誤解を生み、かつコードから読み取れないもの」だけ
   —— 基本設計（`docs/spec/architecture.md`）とガイドライン（`docs/guidelines/`）。
+- **ただしこれは自分たちの実装についてのルールである。**
+  艦これ側の仕様は外部の観測結果であり、コードには「実装した範囲」しか現れない。
+  `docs/kancolle/` に記録する（[ADR-0020](docs/adr/0020-kancolle-reference.md)）。
 
 ### 変更してよい範囲
 
