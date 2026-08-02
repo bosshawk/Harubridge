@@ -1,0 +1,26 @@
+{
+  "version": 1,
+  "note": "任務テーブル。これが正であり、docs/kancolle/rules/quests.md は説明のみを持つ。ビルド時に検証して埋め込む。",
+  "quests": [
+    {
+      "id": 337,
+      "name": "「十八駆」演習！",
+      "max": 3,
+      "period": "daily",
+      "shift": 2,
+      "count": { "event": "practice_result", "rank": ["S"] },
+      "source": "KancolleSniffer QuestCountList.cs (Apache-2.0) / 攻略 wiki 任務",
+      "verified": "2026-08-02"
+    },
+    {
+      "id": 201,
+      "name": "TODO(要検証)",
+      "max": 1,
+      "period": "daily",
+      "shift": 0,
+      "count": { "event": "sortie_boss_win" },
+      "source": "TODO(要検証)",
+      "verified": null
+    }
+  ]
+}
