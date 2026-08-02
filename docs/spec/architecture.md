@@ -103,5 +103,5 @@ Rust と WebView の橋渡しは Tauri が担う。
 ## 未解決事項
 
 - `TODO(未確定)`: データの持ち方（上記）
-- `TODO(未確定)`: Rust と TypeScript の間の型の受け渡し方法
+- ~~Rust と TypeScript の間の型の受け渡し方法~~ → [ADR-0018](../adr/0018-dependencies.md) で `tauri-specta` に決定
 - `TODO(要検証)`: Windows（WebView2）での動作確認。macOS のみ実測済み

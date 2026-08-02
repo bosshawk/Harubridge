@@ -81,5 +81,6 @@
 | [0015](0015-documentation-layout.md) | ドキュメント構成を確定する（0002/0006/0007/0009/0010/0012 を統合） | Accepted | 2026-08-02 |
 | [0016](0016-tech-stack.md) | 技術構成に Tauri + Rust + React を採用する | Accepted | 2026-08-02 |
 | [0017](0017-llm-endpoint.md) | LLM 連携は OpenAI 互換エンドポイント 1 本に絞る | Accepted | 2026-08-02 |
+| [0018](0018-dependencies.md) | 依存ライブラリを選定する | Accepted | 2026-08-02 |
 
 > 新しい ADR を追加したら、この一覧にも 1 行足すこと。
