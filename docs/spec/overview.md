@@ -1,7 +1,7 @@
 # プロダクト概要
 
-> ステータス: **大部分が TBD。**
-> 要求は別途オーナーと相談して作成する（[requirements.md](requirements.md)）。
+> ステータス: 要求は確定済み（[requirements.md](requirements.md)）。
+> 本書のうち対象ユーザー・スコープ・成功の条件は **TBD**。
 > ここに書かれていない範囲を推測で補わないこと。
 
 ## 1. これは何か
@@ -40,7 +40,7 @@
 
 | 項目 | 状態 |
 | --- | --- |
-| 要求定義 | **TBD**（[requirements.md](requirements.md)。別途相談して作成） |
+| 要求定義 | **承認済み**（[requirements.md](requirements.md)。FR 50 件 / NFR 11 件） |
 | 公開方針 | OSS 公開（[ADR-0005](../adr/0005-publish-as-oss.md)） / MIT License（[ADR-0011](../adr/0011-license-mit.md)） |
 | 技術構成 | **Tauri + Rust + React**（[ADR-0016](../adr/0016-tech-stack.md)） |
 | 対応 OS | **macOS / Windows**（macOS で実測済み。Windows は未検証） |
