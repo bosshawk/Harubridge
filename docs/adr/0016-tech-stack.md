@@ -1,8 +1,8 @@
 # ADR-0016: 技術構成を選定する
 
-- ステータス: **Proposed**
+- ステータス: **Accepted**
 - 日付: 2026-08-02
-- 決定者: 承認待ち（`Accepted` にする時点で承認者名に書き換える）
+- 決定者: プロジェクトオーナー
 - 関連: [ADR-0004](0004-defer-tech-stack-decision.md)（本 ADR が採択されれば置き換える）,
   [ADR-0003](0003-agent-driven-development.md), [ADR-0011](0011-license-mit.md),
   調査: Issue #1 / #2
@@ -103,9 +103,26 @@ XHR フックを注入した。結果:
 → **Tauri で実現できる。** かつて macOS でサブフレーム注入が無効化されていたが、
 現行版では設定として公開されている。
 
-**この検証の限界**: 実際の艦これではなく、**構造を模した環境での確認**である。
-本物のゲームでの動作確認には DMM のアカウントが要るため未実施。
-`TODO(要検証)`: 実環境での確認。
+**検証 3: 実際の艦これでの確認（オーナー環境で実施）**
+
+本物の艦これにログインし、母港まで進めて確認した。**18 件すべて捕捉に成功。**
+
+| エンドポイント | サイズ | 形式 |
+| --- | --- | --- |
+| `/kcsapi/api_start2/getData` | **2,332,462 bytes** | `svdata=`✓ JSON✓ |
+| `/kcsapi/api_port/port` | 271,824 bytes | `svdata=`✓ JSON✓ |
+| `/kcsapi/api_get_member/require_info` | 188,731 bytes | `svdata=`✓ JSON✓ |
+| `/kcsapi/api_get_member/picture_book` | 56,707 bytes | `svdata=`✓ JSON✓ |
+| ほか `ndock` / `preset_deck` / `payitem` など | — | すべて成功 |
+
+- **2.3MB のマスタデータを取りこぼしなく取得できた**
+- **全件 XHR 経由。`fetch` と WebSocket は 1 件も検出されなかった**
+- 注入されたフレームは 32。うちゲームサーバは
+  `w00g.kancolle-server.com` / `w13b.kancolle-server.com`。
+  ゲーム本体が `osapi.dmm.com` 配下の iframe で動く構造を実測で確認した
+- WKWebView 上でゲームの描画・音・操作に問題は無いとオーナーが確認
+
+`TODO(要検証)`: Windows（WebView2）での動作確認。macOS のみ実測済み。
 
 ## 検討した選択肢
 

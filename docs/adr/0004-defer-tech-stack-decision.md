@@ -1,6 +1,6 @@
 # ADR-0004: 技術構成の決定を要求定義のあとに延期する
 
-- ステータス: Accepted
+- ステータス: Superseded by [ADR-0016](0016-tech-stack.md)（技術構成の決定により保留を解除）
 - 日付: 2026-08-01
 - 決定者: プロジェクトオーナー
 - 関連: [docs/notes/2026-08-01-tech-stack-open-questions.md](../notes/2026-08-01-tech-stack-open-questions.md), [docs/spec/constraints.md](../spec/constraints.md)

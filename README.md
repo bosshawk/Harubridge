@@ -2,9 +2,9 @@
 
 艦隊これくしょん（艦これ）向けの**専用ブラウザ（専ブラ）**を開発するプロジェクトです。
 
-> **現在のフェーズ: 設計準備**
-> 技術構成（言語 / フレームワーク / 実行形態）は**まだ決定していません**。
-> 本リポジトリはまずドキュメント基盤から立ち上げています。実装コードはまだありません。
+> **現在のフェーズ: 要求定義**
+> 技術構成は決定済み（[Tauri + Rust + React](docs/adr/0016-tech-stack.md)）。
+> 要求は TBD で、実装コードはまだありません。
 
 ---
 
@@ -57,9 +57,9 @@
 | 項目 | 状態 |
 | --- | --- |
 | ドキュメント基盤 | 構築済み |
-| 要求仕様 | ドラフト（[docs/spec/requirements.md](docs/spec/requirements.md)） |
+| 要求仕様 | **TBD**（[docs/spec/requirements.md](docs/spec/requirements.md)。別途相談して作成） |
 | 公開方針 | OSS 公開（[ADR-0005](docs/adr/0005-publish-as-oss.md)） / [MIT License](LICENSE) |
-| 技術構成 | **未決定**（[ADR-0004](docs/adr/0004-defer-tech-stack-decision.md) により要求承認まで保留） |
+| 技術構成 | **Tauri + Rust + React**（[ADR-0016](docs/adr/0016-tech-stack.md)）。対応は macOS / Windows |
 | 実装 | 未着手 |
 
 ## 名前について

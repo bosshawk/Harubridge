@@ -26,8 +26,7 @@ docs/spec/
 | [`architecture.md`](architecture.md) | 基本設計。全体構造・データの持ち方・外部との接点 | 構造を変える変更は**承認が必要** |
 | [`external/`](external/) | 画面・操作・表示・設定・通知 | **人間の承認が必要** |
 
-`architecture.md` と [`../guidelines/`](../guidelines/) は、技術構成が決まるまで骨子のみ
-（[ADR-0004](../adr/0004-defer-tech-stack-decision.md)）。
+[`../guidelines/`](../guidelines/) は、実装の着手にあわせて Rust / TypeScript の規約を書き始める。
 
 ## 文書とコードの境界
 

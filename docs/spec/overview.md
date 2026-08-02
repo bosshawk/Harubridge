@@ -42,8 +42,8 @@
 | --- | --- |
 | 要求定義 | **TBD**（[requirements.md](requirements.md)。別途相談して作成） |
 | 公開方針 | OSS 公開（[ADR-0005](../adr/0005-publish-as-oss.md)） / MIT License（[ADR-0011](../adr/0011-license-mit.md)） |
-| 技術構成 | 未決定（[ADR-0004](../adr/0004-defer-tech-stack-decision.md)） |
-| 対応 OS | 未決定。技術構成の決定時に同時に決める |
+| 技術構成 | **Tauri + Rust + React**（[ADR-0016](../adr/0016-tech-stack.md)） |
+| 対応 OS | **macOS / Windows**（macOS で実測済み。Windows は未検証） |
 | 実装 | 未着手 |
 
 ## 未解決事項
