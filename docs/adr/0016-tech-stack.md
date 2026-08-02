@@ -15,52 +15,69 @@
 2. **ローカルの処理性能を重視する**
 3. Rust / Go / Kotlin / Web 系（React など）を比較対象に含めること
 
-### 前提の訂正: 本文取得能力は選定基準にならない
+### 前提の訂正 1: 本文取得能力は選定基準にならない
 
-本 ADR の初版では「`/kcsapi/` のレスポンス本文を取得する API があるか」でランタイムを絞り込み、
-Rust と Kotlin を実質的に排除していた。**これは誤りである。**
-
+初版は「レスポンス本文を取得する API があるか」でランタイムを絞り、Rust と Kotlin を排除していた。
 「Chromium が必要」と「CEF バインディングが必要」を混同していた。
-**ローカル MITM プロキシを自前で持つなら、ブラウザ側に本文取得能力は要らない。**
-ブラウザに要求されるのは次の 2 点だけである。
+自前 MITM プロキシを持つなら、ブラウザ側に本文取得能力は要らない。
 
-- プロキシを向けられること（`--proxy-server` 相当）
-- **自前の CA を、そのブラウザにだけ信頼させられること**
+### 前提の訂正 2: **TLS を終端する必要がない**（決定的）
 
-後者は次の手段で満たせる（いずれも文書化された機能）。
+さらに調べた結果、**poi は MITM もプロキシも CDP も使っていない。**
 
-- Electron: `session.setCertificateVerifyProc` で自前 CA をアプリ内でのみ許可
-- 単体起動の Chromium: `--ignore-certificate-errors-spki-list=<hash>` で特定証明書のみ信頼
+`assets/js/xhr-hack.js` を読むと、poi は `contextBridge.executeInMainWorld` で
+ページの main world に入り込み、**`window.XMLHttpRequest` を差し替えている。**
+差し替えた XHR のサブクラスが `load` / `loadend` を購読し、
+method / URL / リクエスト本文 / レスポンス本文をブリッジ経由で main プロセスへ送る。
+`lib/game-api-broadcaster.ts` 側が `/kcsapi` で絞り込み、`svdata=` を除去して JSON にする。
 
-→ **OS の信頼ストアに触れずに済む**という利点は Electron 固有ではない。
-→ CEF の filter API も CDP も WKWebView の制約も、**プロキシ方式では判断材料にならない。**
+**これは TLS より上のアプリケーション層で取る方式である。**
 
-### では何が判断軸か
+- **CA 証明書もプロキシも不要**
+- **HTTPS 化の影響を受けない。** poi が 2025-10 のセキュア化を越えて
+  2026 年現在も API 依存の機能（装備データ、基地航空隊など）を更新し続けている理由がこれである
+- **通信に一切介入しない。** XHR をサブクラス化してイベントを聞くだけであり、
+  リクエストの停止・改変・再送を行わない。**[C-02](../spec/constraints.md) に最も強く適合する**
+- 実装は 102 行
 
-**Chromium の配布・更新・コード署名を誰が引き受けるか。**
+→ **「TLS をどこで終端するか」という Issue #2 の問題設定自体が不要だった。**
 
-| 解決者 | 手段 | 使える言語 |
-| --- | --- | --- |
-| Electron | ランタイム同梱 | TypeScript / JavaScript |
-| **JetBrains** | **JCEF（JetBrains Runtime 同梱）/ KCEF** | **Kotlin / Java** |
-| Energy | CEF バイナリ同梱 | Go |
-| **自分** | Chromium を自前同梱、またはユーザーの Chrome を起動 | 任意（Rust を含む） |
+### 訂正後の判断軸
 
-macOS の署名・公証を含む Chromium の配布は、単独開発で背負うには重い。
-**これが実質的な選定軸である。**
+方式が「ページ読み込み前に JS を注入できるか」だけになったため、
+**ほぼすべてのランタイムが候補に戻る。**
+
+| ランタイム | 注入手段 | Chromium の配布 | 言語 |
+| --- | --- | --- | --- |
+| **Electron** | preload + `contextBridge.executeInMainWorld`（**poi で実証済み**） | Electron が同梱 | TypeScript |
+| **Tauri / wry** | `with_initialization_script`（macOS は `WKUserScript` の `AtDocumentStart`） | **不要（OS の WebView）** | **Rust** |
+| JCEF / KCEF | レンダラのコンテキスト生成時に JS 実行 | JetBrains | Kotlin |
+| 外部 Chromium + CDP | `Page.addScriptToEvaluateOnNewDocument` | 自前 or ユーザーの Chrome | 任意 |
+
+**Tauri は Chromium を同梱しないため、配布物が最小になり、Rust のネイティブ性能を活かせる。**
+オーナーの性能要求に最も直接的に応える構成である。
 
 ## 決定
 
-以下を採用する。
+観測方式は **ページ内での XHR フック（JS 注入）** とする。
+MITM プロキシ方式・CDP 方式・ブラウザ拡張方式は採らない。
 
-| レイヤ | 採用 |
+ランタイムと言語は、**次の 1 点の検証結果で決める**。
+
+> **艦これのゲーム画面が iframe を使っている場合、その iframe 内にも JS を注入できるか。**
+
+poi の `xhr-hack.js` には
+「Keep hack function in case child iframe failed to load xhr hack」というコメントがあり、
+**iframe が実在することを示唆している。**
+一方 wry は macOS でサブフレームへの注入を**セキュリティ修正のため無効化**しており、
+オプションとして再有効化する意向は示されているが現状は制限がある。
+
+| 検証結果 | 採用 |
 | --- | --- |
-| ブラウザランタイム | **Electron** |
-| 観測方式 | **アプリ内 MITM プロキシ**（自前 CA を同梱ブラウザにのみ信頼させる） |
-| コア言語 | **TypeScript** |
-| UI | **React** |
+| iframe 注入が不要、または Tauri で解決できる | **Rust + Tauri + React**（配布最小・性能最良） |
+| iframe 注入が必要で Tauri では困難 | **Electron + TypeScript + React**（poi で実証済み） |
 
-**OS の信頼ストアには触れない。** ユーザーに CA 証明書のインストールを求めない。
+**この検証を行うまで本 ADR は `Accepted` にしない。**
 
 ## 検討した選択肢
 
@@ -191,13 +208,12 @@ TypeScript で体感差が出る規模ではない（`TODO(要検証)`: 実測�
 
 差が出うるのは常駐メモリ・起動時間・大量の履歴集計だが、
 **Chromium を抱える時点で大半が決まる。**
-したがって**性能のみを根拠に案 B / C / C' / D を選ぶことはできない。**
+ただし **Tauri は Chromium を同梱しない**ため、この前提が当てはまらない。
+OS の WebView を使うぶん、配布サイズと常駐メモリで明確な差が出る。
+**性能を重視するなら Tauri + Rust が最も直接的な答えである。**
 
-ただし各案には性能以外の固有の価値がある。
-
-- **案 B（Kotlin）**: 型と言語の質。JVM の並行処理・永続化ライブラリ
-- **案 C'（Go）**: **プロキシ実装への適合度**。`goproxy` は HTTPS MITM を正面から
-  機能として持ち、本用途に直球で当たる。配布物と常駐メモリも最小
+なお **MITM プロキシが不要になったため、`goproxy` の成熟という Go の強みは
+本プロジェクトでは活きない。**
 
 ## 決め手
 
@@ -220,10 +236,9 @@ Kotlin の言語的な優位を上回ると判断した。
 
 ## 未解決事項
 
-- `TODO(要検証)`: **アプリ内プロキシで `/kcsapi/` のレスポンス本文を実際に取得できるか。**
-  採択後の最優先事項。ここが崩れると本 ADR は成立しない
-- `TODO(要検証)`: `session.setCertificateVerifyProc` で自前 CA のみを信頼させる実装が
-  期待どおり動くか
-- `TODO(要検証)`: poi の `lib/proxy.ts` の実装（同型の設計か）
+- `TODO(要検証)`: **艦これのゲーム画面の iframe 構成と、各ランタイムでの
+  サブフレームへの注入可否。** 本 ADR の採用可否を決める唯一の検証項目
+- `TODO(要検証)`: XHR 以外（`fetch` / WebSocket）を艦これが使っているか。
+  使っている場合はそちらのフックも要る
 - `TODO(未確定)`: 永続化の方式。データ量の見積もりが要求に依存するため保留
 - `TODO(未確定)`: 配布方法（署名・自動更新の有無）
