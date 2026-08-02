@@ -19,11 +19,15 @@
 
 ## 構成
 
-| ディレクトリ | 内容 |
+| ディレクトリ / ファイル | 内容 |
 | --- | --- |
+| [`sources.md`](sources.md) | **情報源の一覧と評価。調べる前にここを見る** |
 | [`api/`](api/) | `/kcsapi/` のエンドポイントとレスポンスの構造 |
 | [`formulas/`](formulas/) | 計算式（制空値・索敵値・攻撃力など） |
 | [`rules/`](rules/) | ゲームのルール（枠数・回復時間・上限など） |
+
+**何かを調べるときは、まず [`sources.md`](sources.md) を開く。**
+どこが速く、どこが正確で、どこが参照してよいかを評価してある。
 
 ## 書き方のルール
 
@@ -72,6 +76,7 @@
 
 | ファイル | 内容 | 最終観測 |
 | --- | --- | --- |
+| [sources.md](sources.md) | 情報源の一覧と評価（速さ・精度・扱いやすさ） | 2026-08-02 |
 | [api/overview.md](api/overview.md) | kcsapi 全体の概要 | 2026-08-02 |
 | [api/api_port_port.md](api/api_port_port.md) | `/kcsapi/api_port/port` — 母港情報 | 2026-08-02 |
 | [api/api_start2_getdata.md](api/api_start2_getdata.md) | `/kcsapi/api_start2/getData` — マスタデータ | 2026-08-02 |

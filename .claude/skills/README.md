@@ -13,7 +13,17 @@
 | [`write-adr`](write-adr/SKILL.md) | 設計判断を ADR として記録する |
 | [`write-spec`](write-spec/SKILL.md) | `docs/spec/` の仕様書を書く・更新する |
 | [`capture-issue`](capture-issue/SKILL.md) | 論点を GitHub Issue に残す・ADR 化して閉じる |
+| [`research-kancolle`](research-kancolle/SKILL.md) | 艦これ側の仕様を調べて `docs/kancolle/` に記録する |
 | [`docs-audit`](docs-audit/SKILL.md) | ドキュメントの整合性・鮮度を点検する |
+
+## サブエージェント
+
+`.claude/agents/` にエージェント定義を置く。スキルが「手順」であるのに対し、
+エージェントは「その手順を独立した文脈で実行する担当」である。
+
+| エージェント | 用途 |
+| --- | --- |
+| `kancolle-researcher` | 艦これの仕様調査。`research-kancolle` スキルに従う |
 
 ## スキルを追加するとき
 
