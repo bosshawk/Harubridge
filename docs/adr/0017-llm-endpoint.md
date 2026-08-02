@@ -1,8 +1,8 @@
 # ADR-0017: LLM 連携は OpenAI 互換エンドポイント 1 本に絞り、サーバはユーザーが管理する
 
-- ステータス: **Proposed**
+- ステータス: **Accepted**
 - 日付: 2026-08-02
-- 決定者: 承認待ち（`Accepted` にする時点で承認者名に書き換える）
+- 決定者: プロジェクトオーナー
 - 関連: [ADR-0016](0016-tech-stack.md), [constraints.md](../spec/constraints.md) C-04,
   検討: Issue #4
 
