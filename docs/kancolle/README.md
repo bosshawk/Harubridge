@@ -60,10 +60,21 @@
 
 ## テンプレート
 
-[`_template.md`](_template.md) をコピーして使う。
+種類ごとに分かれている。性質が違うため共用しない。
+
+| 種類 | テンプレート |
+| --- | --- |
+| API | [`api/_template.md`](api/_template.md) |
+| 計算式 | [`formulas/_template.md`](formulas/_template.md) |
+| ルール | [`rules/_template.md`](rules/_template.md) |
 
 ## 一覧
 
 | ファイル | 内容 | 最終観測 |
 | --- | --- | --- |
-| （まだ無い） | | |
+| [api/overview.md](api/overview.md) | kcsapi 全体の概要 | 2026-08-02 |
+| [api/api_port_port.md](api/api_port_port.md) | `/kcsapi/api_port/port` — 母港情報 | 2026-08-02 |
+| [api/api_start2_getdata.md](api/api_start2_getdata.md) | `/kcsapi/api_start2/getData` — マスタデータ | 2026-08-02 |
+| [rules/timers.md](rules/timers.md) | 遠征・入渠・建造の枠数と時間の決まり方 | 2026-08-02 |
+| [rules/fatigue.md](rules/fatigue.md) | 疲労度（コンディション）の区分と回復 | 2026-08-02 |
+| [formulas/fighter-power.md](formulas/fighter-power.md) | 制空値（艦隊・基地航空隊） | 2026-08-02 |
