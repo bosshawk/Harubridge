@@ -11,6 +11,11 @@ Thumbs.db
 # Claude Code のローカル設定（個人環境依存のため共有しない）
 .claude/settings.local.json
 
+# 開発中のアプリデータ（ADR-0021 / ADR-0022）
+# release では OS のアプリデータ領域を使う。ここは debug ビルド専用。
+# コミットされないことの保証は .gitignore ではなく CI の判定にある。
+.local/
+
 # ローカル専用のメモ置き場（ADR-0012）
 # ここに置いたものは共有されない。共有すべき論点は GitHub Issue に立てる。
 # 場所の説明である README.md だけは追跡する。
