@@ -36,4 +36,6 @@
 
 | ファイル | 対応要求 | ステータス |
 | --- | --- | --- |
-| （まだ無い） | | |
+| [`game-screen.md`](game-screen.md) | FR-001 〜 FR-007 | ドラフト |
+| [`fleet-view.md`](fleet-view.md) | FR-010 〜 FR-018 | ドラフト |
+| [`timers.md`](timers.md) | FR-020 〜 FR-027 | ドラフト |
