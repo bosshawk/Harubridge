@@ -59,25 +59,53 @@ method / URL / リクエスト本文 / レスポンス本文をブリッジ経�
 
 ## 決定
 
-観測方式は **ページ内での XHR フック（JS 注入）** とする。
+| レイヤ | 採用 |
+| --- | --- |
+| ランタイム | **Tauri（OS の WebView。Chromium を同梱しない）** |
+| 観測方式 | **ページ内での XHR フック**（`with_initialization_script_for_main_only(false)` で全フレームに注入） |
+| コア言語 | **Rust** |
+| UI | **TypeScript + React** |
+
 MITM プロキシ方式・CDP 方式・ブラウザ拡張方式は採らない。
 
-ランタイムと言語は、**次の 1 点の検証結果で決める**。
+### 検証結果（2026-08-02 実施）
 
-> **艦これのゲーム画面が iframe を使っている場合、その iframe 内にも JS を注入できるか。**
+本 ADR は「iframe への注入が可能か」の検証待ちとしていた。**検証の結果、可能である。**
 
-poi の `xhr-hack.js` には
-「Keep hack function in case child iframe failed to load xhr hack」というコメントがあり、
-**iframe が実在することを示唆している。**
-一方 wry は macOS でサブフレームへの注入を**セキュリティ修正のため無効化**しており、
-オプションとして再有効化する意向は示されているが現状は制限がある。
+**なぜ iframe が問題だったか**: DMM のゲームは、DMM 共通レイアウトの中に
+`gadget.xml` の指定に従って **iframe でゲーム本体を読み込む**構造である。
+`/kcsapi/` の XHR は iframe 内の window から発行されるため、
+メインフレームだけに注入しても捕捉できない。
 
-| 検証結果 | 採用 |
-| --- | --- |
-| iframe 注入が不要、または Tauri で解決できる | **Rust + Tauri + React**（配布最小・性能最良） |
-| iframe 注入が必要で Tauri では困難 | **Electron + TypeScript + React**（poi で実証済み） |
+**検証 1: WebKit がサブフレームに注入できるか（Swift + WKWebView で実測）**
 
-**この検証を行うまで本 ADR は `Accepted` にしない。**
+DMM の構造を模した 2 オリジン（outer :8801 / inner :8802）を用意し、
+`WKUserScript(injectionTime: .atDocumentStart, forMainFrameOnly: false)` で
+XHR フックを注入した。結果:
+
+```
+[注入]   frame=MAIN     origin=http://127.0.0.1:8801
+[注入]   frame=SUBFRAME origin=http://127.0.0.1:8802
+[XHR捕捉] frame=SUBFRAME status=200
+          url  = http://127.0.0.1:8802/kcsapi/api_get_member/basic
+          body = svdata={"api_result":1,"api_data":{...}}
+```
+
+**cross-origin の iframe に注入され、その中の XHR のレスポンス本文を取得できた。**
+
+**検証 2: wry がその機能を公開しているか（一次ソース）**
+
+- `wry::WebViewBuilder::with_initialization_script_for_main_only` が現行 API に存在する
+- `src/wkwebview/mod.rs` の `fn init(&self, js: &str, for_main_only: bool)` が
+  `WKUserScript::initWithSource_injectionTime_forMainFrameOnly(..., AtDocumentStart, for_main_only)`
+  を呼んでおり、**検証 1 と同じ WebKit API にそのまま渡している**
+
+→ **Tauri で実現できる。** かつて macOS でサブフレーム注入が無効化されていたが、
+現行版では設定として公開されている。
+
+**この検証の限界**: 実際の艦これではなく、**構造を模した環境での確認**である。
+本物のゲームでの動作確認には DMM のアカウントが要るため未実施。
+`TODO(要検証)`: 実環境での確認。
 
 ## 検討した選択肢
 
@@ -217,18 +245,31 @@ OS の WebView を使うぶん、配布サイズと常駐メモリで明確な�
 
 ## 決め手
 
-**エージェントが実装できることを、言語の質より優先した。**
+**メンテナンス性を、前例の多さより優先した。**
 
-[ADR-0003](0003-agent-driven-development.md) によりコードはすべてエージェントが書く。
-その体制では「同一ドメインの前例があること」が実装可能性を直接左右する。
-poi という**艦これで長期運用されている同一構成**の存在が、
-Kotlin の言語的な優位を上回ると判断した。
+当初は「艦これでの前例（poi）があること」を根拠に Electron を推していた。
+しかし本プロジェクトが扱う入力は**非公開・無保証・予告なく変わる JSON**であり
+（[C-03](../spec/constraints.md)）、未知の構造でも停止しない縮退動作が要件になる。
+
+- TypeScript では外部 JSON は実質 `any` であり、型注釈は実行時に何も守らない。
+  ズレは `undefined` として静かに伝播し、離れた場所で顕在化する
+- Rust では `serde` でのデシリアライズ時に構造の宣言を強制され、
+  欠損は `Option`、失敗は `Result` として**型で扱わされる**
+
+**信用できない入力を扱うことがこのアプリの本質である以上、
+そこに効く型システムを選ぶ価値がある。**
+
+加えて、[ADR-0003](0003-agent-driven-development.md)（コードはすべてエージェントが書く）は
+当初 TypeScript を支持する根拠として使ったが、**逆向きにも働く。**
+人間による常時レビューが無い体制では、**コンパイラが最後の防波堤になる。**
+
+前例の不足は、観測方式が 100 行程度の JS フックに閉じているため許容できると判断した。
 
 ## 影響
 
 - [ADR-0004](0004-defer-tech-stack-decision.md) を置き換える（`Accepted` になった時点）
 - [architecture.md](../spec/architecture.md) の骨子を埋められるようになる
-- [guidelines/](../guidelines/) に TypeScript 向けの規約を書き始められる
+- [guidelines/](../guidelines/) に Rust / TypeScript 向けの規約を書き始められる
 - 対応 OS は **macOS / Windows**（Linux は同一コードで動く見込みだが対象外）
 - 取り消す場合のコスト: **中**。実装着手前なら低い。
   **観測がプロキシ方式に閉じているため、ランタイムを変えても
@@ -236,9 +277,13 @@ Kotlin の言語的な優位を上回ると判断した。
 
 ## 未解決事項
 
-- `TODO(要検証)`: **艦これのゲーム画面の iframe 構成と、各ランタイムでの
-  サブフレームへの注入可否。** 本 ADR の採用可否を決める唯一の検証項目
-- `TODO(要検証)`: XHR 以外（`fetch` / WebSocket）を艦これが使っているか。
-  使っている場合はそちらのフックも要る
+- `TODO(要検証)`: **実際の艦これでの動作確認。** 上記の検証は構造を模した環境によるもので、
+  本物のゲームでは未確認。DMM アカウントが必要なため、オーナーの環境で実施する
+- `TODO(要検証)`: 艦これが `fetch` や WebSocket を使っているか。
+  poi が XHR フックのみで機能していることから XHR 主体と推測されるが、未確認
+- `TODO(要検証)`: WKWebView（macOS）でゲームが正常に描画・発音するか。
+  HTTPS 化以降 iPhone / iPad の Safari で動作しているため WebKit 互換性は高いと見るが、未確認
+- `TODO(未確定)`: Rust と TypeScript の間の型の受け渡し方法
+  （`tauri-specta` などによる型生成を使うか、手書きにするか）
 - `TODO(未確定)`: 永続化の方式。データ量の見積もりが要求に依存するため保留
 - `TODO(未確定)`: 配布方法（署名・自動更新の有無）
