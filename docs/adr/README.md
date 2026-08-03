@@ -92,5 +92,6 @@
 | [0026](0026-injection-script-build.md) | 注入スクリプトは生 JS 1 ファイルのまま持ち、型検査だけを TypeScript に任せる | **Proposed** | 2026-08-03 |
 | [0027](0027-repository-layout.md) | リポジトリのディレクトリ構成をコア／殻の 2 クレート＋機能別フロントエンドにする | **Proposed** | 2026-08-03 |
 | [0028](0028-quest-counter-schema.md) | 任務カウンタのデータ形式と `count` 条件の語彙 | **Proposed** | 2026-08-03 |
+| [0029](0029-injection-ipc-transport.md) | 注入スクリプトから Rust への転送は、Tauri の invoke に相乗りせず自前のハンドラで受ける | **Proposed** | 2026-08-03 |
 
 > 新しい ADR を追加したら、この一覧にも 1 行足すこと。
