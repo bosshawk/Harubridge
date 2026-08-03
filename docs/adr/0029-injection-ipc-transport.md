@@ -89,7 +89,54 @@ Microsoft の概念ドキュメント `concepts/frames` は
 第 1 階層しか拾わない。DMM はゲームが第 2 階層にあるため、
 `ICoreWebView2Frame7::add_FrameCreated` を**再帰的に**登録してフレーム木を歩く必要がある。
 
+> なおこの `concepts/frames` の一文は `ICoreWebView2Frame7` の出荷（2025-05）後に
+> 更新されておらず、**根拠としては古い。** ただし
+> 「`add_FrameCreated` は直接の子まで」という結論は下記のスペックと一致する。
+
 必要な束縛はすべて **webview2-com 0.38**（wry の依存、`wry/Cargo.toml:68`）に存在する。
+
+### この再帰は Microsoft 自身が示している用法である
+
+**自作の回避策ではない。** 公式のスペックとサンプルに、そのままの形で載っている。
+
+- **API スペック `specs/NestedFrame.md`**（`MicrosoftEdge/WebView2Feedback` PR #4982、
+  merged 2025-01-07、MIT）に **「Track entire WebView2 Frames Tree」という節**があり、
+  `frame7->add_FrameCreated(...)` の中で `OnFrameCreated(webviewFrame)` を
+  **再帰呼び出し**する C++ / C# のサンプルが書かれている。
+  Background 節も用途として **the full WebView2 frames tree** を明示している
+- **公式サンプル `WebView2Samples/SampleApps/WebView2APISample/ScenarioWebViewEventMonitor.cpp`**
+  （MIT、1127-1296 行）の `InitializeFrameEventView(frame, depth)` が、
+  各階層で `frame2->add_WebMessageReceived`（1212 行）を張りつつ
+  `frame7->add_FrameCreated` の中で `InitializeFrameEventView(frame, depth + 1)`（1267 行）を
+  **再帰呼び出し**している。**本 ADR の案 A（Windows 側）はこの構造と同じである**
+- **SDK 1.0.3240.44 のリリースノート**（2025-05-05 / Runtime 136）:
+  「giving the app access to **all properties, methods, and events** of
+  `CoreWebView2Frame` for the nested iframe」
+
+> ⚠️ 公式サンプルには**真似してはいけない箇所がある。**
+> `&m_frameCreatedToken` という単一のメンバ変数を全階層で使い回している。
+
+### 注入が入れ子に届くことの根拠
+
+`AddScriptToExecuteOnDocumentCreated` の文面は "all top-level document and
+**child frame** page navigations" とだけ書き、深さに言及がない。
+これを補う一次情報が 2 つある。
+
+- Microsoft のエンジニアが Issue #2440 で、`FrameCreated` が入れ子で発火しない件の
+  回避策として `AddScriptToExecuteOnDocumentCreated` を挙げ、
+  **「which should work for nested」**と述べている
+- Issue #2921 で Microsoft 側が、この API の実装が
+  **CDP の `Page.addScriptToEvaluateOnNewDocument`** に由来すると明かしている。
+  CDP 側の定義は **「Evaluates given script in **every frame** upon creation」**で、
+  深さの制限が無い
+
+`window.chrome.webview` が子フレームに存在することは、
+**公式の JavaScript リファレンスに明記されている**:
+
+> This will result in either the `CoreWebView2.WebMessageReceived` event
+> **or the `CoreWebView2Frame.WebMessageReceived` event** being raised,
+> depending on if `postMessage` is called from the top-level document
+> **or from a child frame**.
 
 ### Tauri の `invoke` には相乗りできない
 
@@ -111,7 +158,12 @@ Microsoft の概念ドキュメント `concepts/frames` は
   バックエンドへの鍵を渡すことになる
 - **応答が返らない。** レスポンダは `webview.eval(js)`
   （`tauri/crates/tauri/src/ipc/protocol.rs:334-336`）で、これは main frame で実行される。
-  iframe 発の invoke は片道であり、main frame に「callback 未定義」のノイズが出る
+  iframe 発の invoke は片道であり、main frame に「callback 未定義」のノイズが出る。
+  **これは第三者が実測で報告している。**
+  [tauri#6204](https://github.com/tauri-apps/tauri/issues/6204) で Tauri のメンバーが
+  「WebKit は親でも子でも invoke できるオプションを持つが、
+  **Webview2 (Windows) はそれをサポートせず、すべてのコールバックが親で受信される**」
+  と回答しており、報告者は v1 で `window.__TAURI_IPC__` が子 iframe に無いことを確認している
 
 ## 決定
 
@@ -143,6 +195,12 @@ OS の API を直接呼ぶ。**wry の fork は不要**であり、Tauri / wry �
 - **Windows は Runtime のバージョンを判定し、満たさない場合は縮退する。**
   `ICoreWebView2Frame7` が無い環境では観測できない旨を表示する。
   黙って動かないのが最悪である
+- **Windows は `about:blank` で起動し、ハンドラを登録してからゲームへナビゲートする。**
+  `add_FrameCreated` の登録が最初のナビゲーションに間に合わないと初回フレームを取りこぼし、
+  wry はナビゲーション前フックを公開していないため（詳細は「未解決事項」）
+- **観測できているフレーム数をユーザーが確認できるようにする。**
+  上記のバグ 2 件により、取りこぼしは黙って起きうる。
+  「動いていないことに気づけない」状態を作らない
 
 ## 検討した選択肢
 
@@ -180,11 +238,16 @@ OS の API を直接呼ぶ。**wry の fork は不要**であり、Tauri / wry �
 ### 案 D: ローカル HTTP サーバ / custom protocol へ `fetch` する
 
 - 概要: 注入スクリプトからローカルの受け口へ HTTP で送る
-- 却下理由: **[C-02](../spec/constraints.md) の趣旨に触れる。**
+- **技術的には成立する。** サブフレーム発のリクエストも拾える。
+  既定では out-of-process iframe を拾わないが、
+  `ICoreWebView2_22::AddWebResourceRequestedFilterWithRequestSourceKinds` に
+  `DOCUMENT` を渡せばよい（Microsoft のエンジニアが Issue #2341 で明示、
+  および WebView2Announcements #99 の公式アナウンス）。
+  **wry は既にこれを実装している**（`wry/src/webview2/mod.rs:1001-1013`）
+- 却下理由: **技術的な可否ではなく、[C-02](../spec/constraints.md) の趣旨に触れるため。**
   ゲームサーバ宛てではないが、ページから新たな送信を発生させる構造になる。
   「`XMLHttpRequest` をサブクラス化し `loadend` を購読するだけ」という
-  [architecture.md](../spec/architecture.md) の担保が崩れる。
-  加えて wry の custom protocol がサブフレーム発のリクエストを拾うかは未検証
+  [architecture.md](../spec/architecture.md) の担保が崩れる
 
 ## 決め手
 
@@ -215,26 +278,61 @@ Windows の COM コードはその対価として妥当と判断した。
 
 ## 未解決事項
 
-**本 ADR は一次ソースの読解のみに基づく。実機で動かしていない。**
+**本 ADR は一次ソースの読解のみに基づく。Windows では実機で動かしていない。**
 
-- `TODO(要検証)`: **Windows での実測が一度も無い。**
-  「全フレーム注入が入れ子 iframe まで届くか」「`ICoreWebView2Frame7` の再帰で
-  第 2 階層のゲームフレームを捕まえられるか」の 2 点。
+### 未修正の公式バグが 2 件ある（最大のリスク）
+
+どちらも「**document が作り直されるフレーム**」で起きる同系統の穴である。
+
+- **[WebView2Feedback#5115](https://github.com/MicrosoftEdge/WebView2Feedback/issues/5115)
+  （OPEN・ラベル `bug`/`tracked`・未修正）** ——
+  `FrameCreated` が入れ子 iframe で発火しないことがある。
+  Microsoft 側は素直な入れ子では再帰が動くことを実測で確認している一方、
+  **既存の iframe が差し替えられるケースでは自ら再現できている**
+- **[WebView2Feedback#2921](https://github.com/MicrosoftEdge/WebView2Feedback/issues/2921)
+  （未修正のままクローズ）** ——
+  親の script が `document.open()` / `document.write()` で作った iframe には
+  スクリプトが注入されない。Microsoft 側も「still a bug、HTML を制御できない開発者には
+  回避策が無い」と認めたまま `resolved temporarily` で閉じられている
+
+`src` 属性で実 URL へナビゲートする通常の iframe には該当しない。
+**DMM がそうした作りをしていないことは未確認**（下記）。
+
+### 実機でしか分からないこと
+
+- `TODO(要検証)`: **深さ 2 以上での実測報告が、世の中に 1 件も無い。**
+  `ICoreWebView2Frame7` は 2025-05 出荷で、**再帰的に使っている第三者の実アプリが
+  GitHub 上に存在しない**（ヒットするのは言語バインディングの定義のみ）。
+  Microsoft の公式スペックとサンプルが示す用法ではあるが、**利用実績が事実上ゼロである**
+- `TODO(要検証)`: **本プロジェクトとして Windows で一度も動かしていない。**
   macOS は Swift スパイクで実測済み（2026-08-02、注入フレーム 32、うちゲームサーバ 2）だが、
   **その結果は WKWebView のものであり Windows には転用できない**
-- `TODO(要検証)`: `AddScriptToExecuteOnDocumentCreated` が「孫」フレームまで届くか。
-  Microsoft のドキュメントは "all top-level document and child frame page navigations"
-  としか書かず、入れ子の深さに言及していない
-- `TODO(要検証)`: Tauri の `with_webview` クロージャが DMM のフレーム生成より先に走るか。
-  `add_FrameCreated` は最初のナビゲーションより前に登録しないと初回フレームを取りこぼす
 - `TODO(要検証)`: DMM が使っているのが素の `iframe` か。
-  `fencedFrame` や `object` は `CoreWebView2Frame` の対象外と明記されている
+  `concepts/frames` は `frameset` / `portal` / `embed` / `fencedFrame` / `object` が
+  対象外と書いている（ただしこのページ自体が Frame7 出荷後に更新されていない）
+- `TODO(要検証)`: ハンドラを張っていない入れ子フレームが `postMessage` したときの挙動。
+  親へバブルするのか捨てられるのかが**未文書**。
+  スペックのレビューで Microsoft 側が「議論すべき」と指摘したが、merge 版に節が入らなかった
+
+### 登録タイミング（実務上の手当てが要る）
+
+`add_FrameCreated` は最初のナビゲーションより前に登録しないと初回フレームを取りこぼす。
+ところが **wry は Windows 向けにナビゲーション前フックを公開していない**
+（`WebViewBuilderExtWindows` にあるのは `with_additional_browser_args` /
+`with_browser_accelerator_keys` / `with_browser_extensions_enabled` のみ）。
+
+**したがって `about:blank`（またはローカルの初期ページ）で起動し、
+ハンドラを登録してから DMM へナビゲートする**構成にして、順序を決定的にする。
+
+### macOS 側に残るもの
+
 - `WKScriptMessageHandler` にフレーム制限が無いことの **Apple 公式文面での裏付けは取れていない**
   （該当ページが JS レンダリングで取得できなかった）。
   根拠は wry のソースと本プロジェクトの Swift スパイクの実測である
 
-> **したがって Windows 対応を確定路線として扱わないこと。**
-> macOS と同じ粒度の観測結果が出るまで、Windows は「成立する見込み」に留まる。
+> **Windows 対応を確定路線として扱わないこと。**
+> 「Microsoft が公式スペックとサンプルで示している用法」であることは確認できたが、
+> **本プロジェクトでの実測も、第三者の利用実績も無い。**
 
 ## 根拠
 
@@ -248,7 +346,14 @@ Windows の COM コードはその対価として妥当と判断した。
 | invoke key を iframe に晒すなという注意書き | 同上: `crates/tauri/src/app.rs:1127` の doc コメント | 2026-08-03 |
 | 応答が `webview.eval` で返ること | 同上: `crates/tauri/src/ipc/protocol.rs:334-336` | 2026-08-03 |
 | `add_WebMessageReceived` が top-level document 限定であること | Microsoft Learn: `ICoreWebView2::add_WebMessageReceived` | 2026-08-03 |
-| `CoreWebView2Frame` が top-level iframe のみであること | Microsoft Learn: WebView2 概念ドキュメント `concepts/frames` | 2026-08-03 |
+| `CoreWebView2Frame` が top-level iframe のみであること（**Frame7 出荷後に未更新の記述**） | Microsoft Learn: WebView2 概念ドキュメント `concepts/frames` | 2026-08-03 |
+| **フレーム木全体を再帰で辿るのが公式の想定用法であること** | `MicrosoftEdge/WebView2Feedback` `specs/NestedFrame.md`（PR #4982、merged 2025-01-07、MIT）「Track entire WebView2 Frames Tree」節 | 2026-08-03 |
+| **公式サンプルに再帰実装が実在すること** | `MicrosoftEdge/WebView2Samples`（MIT）: `SampleApps/WebView2APISample/ScenarioWebViewEventMonitor.cpp:1127-1296`（`add_WebMessageReceived` は 1212、再帰は 1267） | 2026-08-03 |
+| 注入が入れ子に届く見込み（"should work for nested" / 実装が CDP `Page.addScriptToEvaluateOnNewDocument` 由来） | WebView2Feedback [#2440](https://github.com/MicrosoftEdge/WebView2Feedback/issues/2440) / [#2921](https://github.com/MicrosoftEdge/WebView2Feedback/issues/2921)（いずれも Microsoft 側の回答） | 2026-08-03 |
+| `window.chrome.webview` が子フレームに存在すること | Microsoft Learn: WebView2 JavaScript リファレンス `WebView.postMessage` | 2026-08-03 |
+| custom protocol がサブフレーム発を拾えること（案 D） | WebView2Feedback [#2341](https://github.com/MicrosoftEdge/WebView2Feedback/issues/2341)（Microsoft 側の回答）/ WebView2Announcements #99 / `wry/src/webview2/mod.rs:1001-1013` | 2026-08-03 |
+| Windows で invoke のコールバックが親で受信されること | [tauri#6204](https://github.com/tauri-apps/tauri/issues/6204)（Tauri メンバーの回答） | 2026-08-03 |
+| `FrameCreated` の取りこぼしバグ / `document.write` 由来フレームへの未注入バグ | WebView2Feedback [#5115](https://github.com/MicrosoftEdge/WebView2Feedback/issues/5115)（OPEN）/ [#2921](https://github.com/MicrosoftEdge/WebView2Feedback/issues/2921)（未修正でクローズ） | 2026-08-03 |
 | `ICoreWebView2Frame7` の導入バージョンと公開日 | Microsoft Learn（API リファレンス）/ NuGet `Microsoft.Web.WebView2` 1.0.3240.44 の `published` = 2025-05-05 | 2026-08-03 |
 | 必要な COM 束縛が webview2-com 0.38 に存在すること | docs.rs `webview2-com` 0.38（wry `Cargo.toml:68` の依存） | 2026-08-03 |
 
