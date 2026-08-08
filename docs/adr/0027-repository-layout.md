@@ -1,6 +1,6 @@
 # ADR-0027: リポジトリのディレクトリ構成をコア／殻の 2 クレート＋機能別フロントエンドにする
 
-- ステータス: **Proposed**
+- ステータス: Superseded by [ADR-0032](0032-repository-structure.md)（注入スクリプトの位置のみ変更して統合された）
 - 日付: 2026-08-03
 - 決定者: 承認待ち（`Accepted` にする時点で承認者名に書き換える）
 - 関連: [ADR-0016](0016-tech-stack.md)（Tauri + Rust + React）,

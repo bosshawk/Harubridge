@@ -1,6 +1,6 @@
 # ADR-0030: アーキテクチャを名乗らず、関心事ごとの素朴な分割に留める
 
-- ステータス: **Proposed**
+- ステータス: Superseded by [ADR-0032](0032-repository-structure.md)（決定は変更なしで統合された）
 - 日付: 2026-08-08
 - 決定者: プロジェクトオーナー（承認待ち）
 - 関連: [ADR-0003](0003-agent-driven-development.md)（実装は AI エージェントが行う）/
