@@ -1,8 +1,8 @@
 # ADR-0031: 開発ツールチェインを mise に統一し、Rust の版は `rust-toolchain.toml` を正として mise に読ませる
 
-- ステータス: **Proposed**
+- ステータス: **Accepted**
 - 日付: 2026-08-09
-- 決定者: 承認待ち（`Accepted` にする時点で承認者名に書き換える）
+- 決定者: プロジェクトオーナー
 - 関連: [ADR-0016](0016-tech-stack.md)（Rust + TypeScript）,
   [ADR-0018](0018-dependencies.md)（依存の選定方針）,
   [ADR-0027](0027-repository-layout.md)（リポジトリ構成。ルートに 2 ファイル増える）,
