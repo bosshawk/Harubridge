@@ -184,6 +184,8 @@ Harubridge/
 ├── src/                        フロントエンド（React / TypeScript）
 │   ├── main.tsx
 │   ├── bindings.ts             tauri-specta の生成物。**コミットする**
+│   ├── ipc/                    listen 登録と invoke の初期 pull（ADR-0030）
+│   ├── store/                  ドメイン単位のストア（ADR-0024 / ADR-0030）
 │   ├── features/
 │   │   ├── game-screen/        ← docs/spec/external/game-screen.md
 │   │   ├── fleet-view/         ← docs/spec/external/fleet-view.md
@@ -260,7 +262,8 @@ GitButler のように `crates/harubridge-tauri/` へ動かすことは可能で
 2. **`shared/` は `features/` を import しない**（依存の向きを一方向に保つ）
 
 これは Rust 側のクレート境界と同じ趣旨だが、**TypeScript には強制手段が同梱されていない。**
-機械化するにはリンタのプラグインが要る（[未解決事項](#未解決事項)）。
+`eslint-plugin-import` の `import/no-restricted-paths` で zone を定義すれば機械化できる
+（[ADR-0030](0030-no-named-architecture.md)）。**プラグインの追加には承認が要る**（[未解決事項](#未解決事項)）。
 
 ### 5. 注入スクリプト: トップレベルの `injected/`
 
@@ -478,9 +481,11 @@ upstream 自身も生成物をコミットしている。
   ADR-0026 も Proposed であり、覆って案 C（バンドラ）に移った場合は
   `injected/` がソースと生成物を持つ形になる（位置そのものは動かない）。
   本 ADR が決めたのは**置き場所が `injected/` であること**だけで、中身の作り方は ADR-0026 に従う
-- `TODO(未確定)`: `features/` 間の相互 import を機械的に禁じる手段。
-  ESLint でやるならプラグインの追加になり、[ADR-0018](0018-dependencies.md) の系列で決める必要がある。
-  **それまでは規約に留まり、違反しても検出されない**
+- ~~`TODO(未確定)`: `features/` 間の相互 import を機械的に禁じる手段。~~
+  **→ 解消。** `eslint-plugin-import` の `import/no-restricted-paths` で
+  zone を定義すれば強制できる（[ADR-0030](0030-no-named-architecture.md)）。
+  **プラグインの追加は [ADR-0018](0018-dependencies.md) 系列の承認事項として残る。**
+  入れるまでは規約に留まり、違反しても検出されない
 - `TODO(未確定)`: フィクスチャ生成器の実装形態（`cargo test` 内か独立した bin か）。
   [ADR-0022](0022-observed-data-privacy.md) の未解決事項のまま。置き場所だけが本 ADR で決まった
 - `TODO(未確定)`: CI の構成そのもの。[ADR-0022](0022-observed-data-privacy.md) が
@@ -489,7 +494,9 @@ upstream 自身も生成物をコミットしている。
 - `TODO(未確定)`: `.taurignore` を置くか。`injected/` や `data/` の変更で
   `tauri dev` が再ビルドしすぎる場合に必要になるが、実際に困るまで置かない
 - `TODO(要検証)`: ワークスペース化した状態での `tauri build`（バンドル出力先）を
-  実際に通していない。#2614 は Closed だが、macOS / Windows の両方で確認していない。
-  **最初のビルドを通した時点で確認すること**
+  実際に通していない。**最初のビルドを通した時点で確認すること**（Windows は [Issue #6](https://github.com/bosshawk/Harubridge/issues/6)）。
+  ただし **#2614 の修正時期は特定できた** —— tauri-cli **1.0.0-rc.0（commit `8d630bc8`、2021-09-23）**で修正され、
+  さらに **1.2.0 で `cargo metadata` ベースに置き換わっている**。
+  現行は `metadata.target_directory` を使うため出力先を誤認しない（2026-08-08 に tauri-cli 2.11.4 のソースで確認）
 - `TODO(未確定)`: 配布用のアイコンと `capabilities/` は Tauri 既定のままにしてある。
   配布方法（[ADR-0018](0018-dependencies.md) の未解決事項）が決まるまで触らない
