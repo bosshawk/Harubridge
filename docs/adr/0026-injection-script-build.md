@@ -1,6 +1,6 @@
 # ADR-0026: 注入スクリプトは生 JS 1 ファイルのまま持ち、型検査だけを TypeScript に任せる
 
-- ステータス: Superseded by [ADR-0032](0032-repository-structure.md)（決定は変更なしで統合された）
+- ステータス: Superseded by [ADR-0032](0032-repository-structure.md)（統合時に決定が覆された: 生 JS → TypeScript + `tsc` の型除去のみ）
 - 日付: 2026-08-03
 - 決定者: 承認待ち（`Accepted` にする時点で承認者名に書き換える）
 - 関連: [ADR-0016](0016-tech-stack.md)（観測方式と「型で守る」方針）,

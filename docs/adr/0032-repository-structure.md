@@ -37,8 +37,9 @@
 | 3 | TS: `features/` どうしが直接 import しない | リンタ（`eslint-plugin-import`） | リントが失敗 |
 
 これに乗らない規範が 1 つある。**「通信は読むだけ」（[C-02](../spec/constraints.md)）は機械で
-守らせられない**ため、それを担保する注入スクリプトは「人間が読むテキストと実行される
-テキストが同一」である形（生 JS 1 枚）を保ち、レビューで守る（§4）。
+守らせられない。** 人間が常時レビューする前提も置かない（オーナー判断 2026-08-09）。
+代わりに、**実際に注入されるテキストそのもの（生成物の `.js`）をリポジトリにコミットする**形を保ち、
+監査したい者がいつでも「動くものそのもの」を読める状態にする（§4）。
 
 ## 決定（ツリー）
 
@@ -68,7 +69,8 @@ Harubridge/
 │   ├── tauri.conf.json         frontendDist = "../dist"（既定のまま）
 │   ├── capabilities/  icons/
 │   ├── injected/
-│   │   └── kcsapi-hook.js      注入スクリプト（生 JS 1 枚。§4）
+│   │   ├── kcsapi-hook.ts      注入スクリプトのソース（TypeScript。§4）
+│   │   └── kcsapi-hook.js      tsc の生成物。コミットする（§6）
 │   └── src/
 │
 ├── src/                        フロントエンド（React / TypeScript）
@@ -123,31 +125,32 @@ Harubridge/
   **残り時間・絞り込み結果をストアに持たない**（描画時に導出）
 - テストは対象ファイルの隣（`*.test.ts(x)`）。`features/<name>/` の削除で全部消える形を保つ
 
-### §4 注入スクリプト: `src-tauri/injected/kcsapi-hook.js`（生 JS 1 枚）
+### §4 注入スクリプト: TypeScript で書き、型を落としただけの JS を注入する
 
-**持ち方**（[ADR-0026](0026-injection-script-build.md) の決定を変更なしで引き継ぐ）:
+**持ち方**（統合元 [ADR-0026](0026-injection-script-build.md) の決定「生 JS 1 枚」を
+**オーナー判断 2026-08-09 で覆した**。経緯は本節末尾）:
 
-- **生 JS 1 ファイル。バンドラもトランスパイラも通さず、そのまま
-  `initialization_script_for_all_frames` に渡す。**
-  リポジトリで人間が読むテキストと、ゲームのページで実行されるテキストが同一であること。
-  これが [C-02](../spec/constraints.md)（読み取り専用）のレビューを成立させる
-- ただし型検査は当てる: 先頭に `// @ts-check`、`tsconfig` の `allowJs` / `checkJs` の対象に含め、
-  ESLint（型情報つき）の対象にも含める
-- **import 文を書かない。npm に依存しない。IIFE として自己完結させる。**
-  Rust との境界の型は JSDoc の `import()` 型としてのみ参照する（実行時依存ゼロ）
+- ソースは **TypeScript 1 ファイル**（`src-tauri/injected/kcsapi-hook.ts`）。
+  ESLint（型情報つき）の対象に含める
+- 変換は **`tsc` による型注釈の除去のみ**（`target: ESNext`）。
+  **バンドルも構文の downlevel もしない。** ヘルパ関数や polyfill が混入せず
+  （[ADR-0026](0026-injection-script-build.md) 事実 11 / 12 の懸念を回避）、
+  出力はソースから型を取り除いただけのテキストになる
+- 生成物 `kcsapi-hook.js` は**コミットし、CI で再生成して差分ゼロを強制する**
+  （§6 の判定: 読む工程 = cargo は生成器 = tsc を実行しない。`bindings.ts` と同じ機構）
+- **値の import を書かない。npm に依存しない。IIFE として自己完結させる。**
+  ページの main world で動き、React も `bindings.ts` の値も存在しないため。
+  型だけは `import type` で参照してよい（コンパイル時に消える）
+- [C-02](../spec/constraints.md) の監査は**コミットされた `.js`（= 実際に注入されるテキスト）**に
+  対して行える。ソースとの対応は CI が保証する
 
-**デファクトとの関係（正直な位置づけ）**: 生 JS 1 枚は**デファクトではない**。
-
-- 艦これ側で注入方式を採る前例は poi のみ（FUSOU はプロキシ方式で注入スクリプト自体が
-  無い —— [ADR-0016](0016-tech-stack.md)）。方式が少数派のため、デファクトを測る母集団が無い
-- 最も近い一般領域（ブラウザ拡張の main world スクリプト）のデファクトは
-  **TypeScript + バンドラ**（WXT 等。[ADR-0026](0026-injection-script-build.md) 事実 15）。
-  つまり広い世界のデファクトはむしろ逆である
-- したがってこれは**デファクトから意図的に外れる判断**であり、理由は上記の
-  「レビューするテキストと実行されるテキストの同一性」（C-02 の監査可能性）に置く。
-  poi は根拠ではなく、この形が長期運用に耐えた傍証である
-- TS + `tsc` 変換（ADR-0026 案 B）へ移る取り消しコストは低い（約 100 行の書き換えのみ）。
-  型検査の強さは `@ts-check` と同等のため、移って得るのは記法、失うのは同一性である
+**経緯**: ADR-0026 は「人間がレビューするテキストと実行されるテキストの同一性」を決め手に
+生 JS を採っていた。しかし**人間がこのファイルを常時レビューする前提を置かない**
+（オーナー判断）。前提が消えると生 JS の優位は「生成物をコミットすれば実行されるテキストが
+リポジトリに残る」ことでほぼ代替でき、残る差は記法だけになる。記法はプロジェクト標準の
+TypeScript（[ADR-0016](0016-tech-stack.md)）に揃え、エージェントが最も確実に書ける形を採る。
+なお型検査の強さは生 JS + `@ts-check` でも同等であり、この反転で検査能力は変わらない。
+TS 化は近い一般領域（ブラウザ拡張の main world スクリプト）のデファクトとも一致する。
 
 **位置**（[ADR-0027](0027-repository-layout.md) の決定をここだけ変更）:
 
@@ -187,6 +190,7 @@ Harubridge/
 | 生成物 | 置き場所 | コミット |
 | --- | --- | --- |
 | `tauri-specta` の TypeScript 型 | `src/bindings.ts` | **する**（生成はアプリの debug 実行時のため、しないとクローン直後にフロントの検査が通らない） |
+| 注入スクリプトの JS（`tsc` の出力） | `src-tauri/injected/kcsapi-hook.js` | **する**（読む工程 = cargo が tsc を実行しないため。§4） |
 | `data/kancolle/*.json` の検証・埋め込み結果 | `OUT_DIR` | しない |
 | テストフィクスチャ | `crates/harubridge-core/tests/fixtures/` | **する**（[ADR-0022](0022-observed-data-privacy.md)） |
 
@@ -200,7 +204,8 @@ Harubridge/
 | 観測/解釈/永続化/IPC の 4 クレート | コンパイラが新たに止められる違反が増えない | [0027](0027-repository-layout.md) |
 | `src-tauri` を `crates/` 下へ移す（GitButler 方式） | 公式の例と 1 段ずれ、翻訳コストだけ増える | [0027](0027-repository-layout.md) |
 | フロントの種類別ディレクトリ（`components/` 等） | 1 機能が 4 ディレクトリに散る（実測: Clash Verge Rev） | [0027](0027-repository-layout.md) / [0030](0030-no-named-architecture.md) |
-| 注入スクリプトを TS + バンドラで作る | 注入されるものが生成物になり、レビュー対象と実行物が一致しなくなる | [0026](0026-injection-script-build.md) |
+| 注入スクリプトを生 JS 1 枚で持つ | **旧決定（ADR-0026 案 A）。本 ADR で反転** —— 人間が常時レビューする前提を置かないため、同一性の優位が消える | 本 ADR §4 |
+| 注入スクリプトを TS + バンドラで作る | 分割と npm 依存は満たしてはいけない要件。バンドラの設定が監査対象に増える。`tsc` の型除去だけで足りる | [0026](0026-injection-script-build.md) |
 | 注入スクリプトをルート直下に置く | **旧決定。本 ADR で反転**（ルートの項目を減らす） | 本 ADR §4 |
 | DDD / オニオン / ヘキサゴナル / FSD | 守るべき書き込み・所有するドメインが無く、層が空になる | [0030](0030-no-named-architecture.md) |
 | `bindings.ts` を .gitignore する | クローン直後にフロントの型検査・ビルドが通らなくなる | [0027](0027-repository-layout.md) |
@@ -237,5 +242,4 @@ Harubridge/
 - `TODO(未確定)`: フィクスチャ生成器の実装形態（[ADR-0022](0022-observed-data-privacy.md) のまま）
 - `TODO(未確定)`: `.taurignore` を置くか。実際に困るまで置かない
 - `TODO(要検証)`: ワークスペース構成での `tauri build` を実際に通していない。最初のビルドで確認する
-- `TODO(要検証)`: `checkJs` + JSDoc が `XMLHttpRequest` のサブクラス化をどこまで検査できるか
 - 注入スクリプトから Rust への転送経路は [ADR-0029](0029-injection-ipc-transport.md)（別論点、Proposed）
