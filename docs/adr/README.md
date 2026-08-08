@@ -95,6 +95,6 @@
 | [0029](0029-injection-ipc-transport.md) | 注入スクリプトから Rust への転送は、Tauri の invoke に相乗りせず自前のハンドラで受ける | **Proposed** | 2026-08-03 |
 | [0030](0030-no-named-architecture.md) | アーキテクチャを名乗らず、関心事ごとの素朴な分割に留める | Superseded by ADR-0032 | 2026-08-08 |
 | [0031](0031-toolchain-management.md) | 開発ツールチェインを mise に統一し、Rust の版は `rust-toolchain.toml` を正として mise に読ませる | Accepted | 2026-08-09 |
-| [0032](0032-repository-structure.md) | リポジトリ構成を確定する（0026 / 0027 / 0030 を統合） | **Proposed** | 2026-08-09 |
+| [0032](0032-repository-structure.md) | リポジトリ構成を確定する（0026 / 0027 / 0030 を統合） | Accepted | 2026-08-09 |
 
 > 新しい ADR を追加したら、この一覧にも 1 行足すこと。

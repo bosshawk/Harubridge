@@ -1,8 +1,8 @@
 # ADR-0032: リポジトリ構成を確定する（ADR-0026 / 0027 / 0030 を統合）
 
-- ステータス: **Proposed**
+- ステータス: **Accepted**
 - 日付: 2026-08-09
-- 決定者: 承認待ち（`Accepted` にする時点で承認者名に書き換える）
+- 決定者: プロジェクトオーナー
 - 統合元: [ADR-0026](0026-injection-script-build.md)（注入スクリプトの持ち方）,
   [ADR-0027](0027-repository-layout.md)（ディレクトリ構成）,
   [ADR-0030](0030-no-named-architecture.md)（内側の分け方）。
