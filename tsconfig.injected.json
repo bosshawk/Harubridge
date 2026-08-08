@@ -1,0 +1,16 @@
+{
+  // 注入スクリプト専用の設定（ADR-0032 §4）。
+  // 変換は型注釈の除去のみ。バンドルも構文の downlevel もしない。
+  "compilerOptions": {
+    "target": "ESNext",
+    "lib": ["ESNext", "DOM"],
+    // ページの main world で動く。node の型も React の型も存在しない世界（ADR-0032 §4）
+    "types": [],
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "verbatimModuleSyntax": false,
+    "noEmit": false
+  },
+  "include": ["src-tauri/injected/kcsapi-hook.ts"]
+}

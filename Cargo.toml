@@ -1,0 +1,5 @@
+# ワークスペース定義（ADR-0032）
+# members は glob を使わず完全一致で列挙する（tauri-cli の既知の落とし穴回避。旧 ADR-0027 の調査）
+[workspace]
+resolver = "2"
+members = ["src-tauri", "crates/harubridge-core"]

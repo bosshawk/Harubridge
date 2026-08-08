@@ -1,0 +1,4 @@
+# pnpm の設定（pnpm 10+ はここが設定の置き場所。package.json の "pnpm" は読まれない）
+# ビルドスクリプトの実行許可。既定ではすべてブロックされる（サプライチェーン対策）
+allowBuilds:
+  esbuild: true
