@@ -94,5 +94,6 @@
 | [0028](0028-quest-counter-schema.md) | 任務カウンタのデータ形式と `count` 条件の語彙 | **Proposed** | 2026-08-03 |
 | [0029](0029-injection-ipc-transport.md) | 注入スクリプトから Rust への転送は、Tauri の invoke に相乗りせず自前のハンドラで受ける | **Proposed** | 2026-08-03 |
 | [0030](0030-no-named-architecture.md) | アーキテクチャを名乗らず、関心事ごとの素朴な分割に留める | **Proposed** | 2026-08-08 |
+| [0031](0031-toolchain-management.md) | 開発ツールチェインを mise に統一し、Rust の版は `rust-toolchain.toml` を正として mise に読ませる | **Proposed** | 2026-08-09 |
 
 > 新しい ADR を追加したら、この一覧にも 1 行足すこと。

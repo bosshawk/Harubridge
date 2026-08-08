@@ -53,6 +53,33 @@
 - [docs/adr/](docs/adr/) — これまでの意思決定
 - [CONTRIBUTING.md](CONTRIBUTING.md) — 開発の回し方（役割分担・依頼の書き方）
 
+## 開発環境の準備
+
+ツールチェインは [mise](https://mise.jdx.dev/) で導入します
+（[ADR-0031](docs/adr/0031-toolchain-management.md)）。
+
+```sh
+brew install mise            # macOS。他の OS は mise 公式の手順に従う
+# シェルで有効にする（例: zsh。~/.zshrc に 1 行足す）
+echo 'eval "$(mise activate zsh)"' >> ~/.zshrc
+
+# リポジトリのルートで
+mise trust                   # 初回のみ。mise の設定を信頼する
+mise install                 # Node / pnpm / Rust 一式が入る
+```
+
+これで次が揃います。
+
+| ツール | 版の正 |
+| --- | --- |
+| Node / pnpm | [`mise.toml`](mise.toml) |
+| Rust（rustup / rustc / cargo / rustfmt / clippy） | [`rust-toolchain.toml`](rust-toolchain.toml) |
+
+**Rust の版は `mise.toml` ではなく `rust-toolchain.toml` に書いてあります。**
+mise がそのファイルを読むため、rustup を直接使う場合も同じ版が選ばれます。
+逆に `mise.toml` の `[tools]` に `rust` を足すと `rust-toolchain.toml` が無視されるので、
+**両方に書かないでください**（理由は [ADR-0031](docs/adr/0031-toolchain-management.md)）。
+
 ## 現在の状態
 
 | 項目 | 状態 |
