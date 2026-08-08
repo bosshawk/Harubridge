@@ -2,10 +2,11 @@
 
 艦隊これくしょん（艦これ）向けの**専用ブラウザ（専ブラ）**を開発するプロジェクトです。
 
-> **現在のフェーズ: 実装準備**
-> 技術構成（[Tauri + Rust + React](docs/adr/0016-tech-stack.md)）と
-> 要求（[FR 50 件 / NFR 11 件](docs/spec/requirements.md)）は確定済み。
-> 実装コードはまだありません。
+> **現在のフェーズ: 実装（骨格まで）**
+> 技術構成（[Tauri + Rust + React](docs/adr/0016-tech-stack.md)）、
+> 要求（[FR 50 件 / NFR 11 件](docs/spec/requirements.md)）、
+> リポジトリ構成（[ADR-0032](docs/adr/0032-repository-structure.md)）は確定済み。
+> 骨格（ビルド・検査が通る空の構成）まで作成済みで、機能は未実装です。
 
 ---
 
@@ -88,7 +89,8 @@ mise がそのファイルを読むため、rustup を直接使う場合も同�
 | 要求仕様 | **承認済み**（[docs/spec/requirements.md](docs/spec/requirements.md)。FR 50 件 / NFR 11 件） |
 | 公開方針 | OSS 公開（[ADR-0005](docs/adr/0005-publish-as-oss.md)） / [MIT License](LICENSE) |
 | 技術構成 | **Tauri + Rust + React**（[ADR-0016](docs/adr/0016-tech-stack.md)）。対応は macOS / Windows |
-| 実装 | 未着手 |
+| リポジトリ構成 | **確定**（[ADR-0032](docs/adr/0032-repository-structure.md)）。骨格作成済み |
+| 実装 | 骨格のみ（機能は未実装） |
 
 ## 名前について
 
