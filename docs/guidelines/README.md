@@ -47,4 +47,5 @@
 
 | ファイル | 適用範囲 | ステータス |
 | --- | --- | --- |
-| （まだ無い） | | |
+| [`rust.md`](rust.md) | すべての Rust コード（`crates/` と `src-tauri/`。略号 `RS`） | **Draft（承認待ち）** |
+| [`typescript.md`](typescript.md) | `src/` 配下の TypeScript / React と注入スクリプト（略号 `TS`） | **Draft（承認待ち）** |
