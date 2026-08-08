@@ -1,0 +1,9 @@
+# Rust ツールチェインの定義（ADR-0031）
+#
+# 版の正はこのファイル。mise もこれを読む
+# （mise.toml の idiomatic_version_file_enable_tools = ["rust"]）。
+# rustup を直接使う場合も同じ版が選ばれる。
+
+[toolchain]
+channel = "stable"
+components = ["rustfmt", "clippy"]

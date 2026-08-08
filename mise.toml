@@ -1,0 +1,15 @@
+# 開発ツールチェインの定義（ADR-0031）
+#
+# rust はここに書かない。版の正は rust-toolchain.toml であり、
+# 下の idiomatic_version_file_enable_tools によって mise がそれを読む。
+#
+# ここに rust を書くと mise が RUSTUP_TOOLCHAIN を立て、
+# rustup の優先順位（環境変数 2 位 > rust-toolchain.toml 4 位）により
+# rust-toolchain.toml を黙って上書きする。必ず片方だけにすること。
+
+[settings]
+idiomatic_version_file_enable_tools = ["rust"]
+
+[tools]
+node = "26.7.0"
+pnpm = "11.20.0"
