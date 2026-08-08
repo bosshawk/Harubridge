@@ -1,8 +1,8 @@
 # ADR-0020: 艦これ側の仕様を `docs/kancolle/` に記録する
 
-- ステータス: **Proposed**
-- 日付: 2026-08-02
-- 決定者: 承認待ち（`Accepted` にする時点で承認者名に書き換える）
+- ステータス: **Accepted**
+- 日付: 2026-08-02（承認 2026-08-08）
+- 決定者: プロジェクトオーナー
 - 関連: [ADR-0008](0008-code-as-source-of-truth.md)（**適用範囲を明確にする。覆さない**）,
   [ADR-0015](0015-documentation-layout.md)（構成に `docs/kancolle/` を追加する）,
   [C-03](../spec/constraints.md)
