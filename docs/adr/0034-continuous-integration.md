@@ -1,4 +1,4 @@
-# ADR-0034: CI を GitHub Actions に置き、対応 OS の 2 つでローカルと同じ `task` を回す
+# ADR-0034: CI を GitHub Actions に置き、OS 非依存の検査は ubuntu、OS 依存のものだけ macOS / Windows で回す
 
 - ステータス: **Proposed**
 - 日付: 2026-08-09
@@ -99,6 +99,27 @@
 - `tauri build` に **`--no-bundle`**（「`bundle > active` が `true` でもバンドル工程を飛ばす」）がある
   （[Tauri v2: CLI reference](https://v2.tauri.app/reference/cli/)）
 
+**OS によって結果が変わる検査と、変わらない検査（リポジトリの実物を読んで確認した）。**
+
+- **`crates/harubridge-core/` は `tauri` に依存しない**（`Cargo.toml` で確認。
+  [ADR-0032](0032-repository-structure.md) §1 が強制している境界）。
+  したがって **Linux で `libwebkit2gtk-4.1-dev` 等を入れなくても clippy とテストが通る**
+- **`src-tauri/` は `tauri` に依存する。** ここだけが Linux で追加パッケージを要求する
+- **[ADR-0029](0029-injection-ipc-transport.md)（Proposed）が採ろうとしている実装は、
+  macOS と Windows で完全に別のコードである** —— macOS は `WKUserContentController` の
+  `addScriptMessageHandler:name:`、Windows は COM の `ICoreWebView2Frame2::add_WebMessageReceived`。
+  **`#[cfg(target_os = ...)]` で分岐したコードは、その OS 向けにコンパイルしない限り
+  型検査すらされない。** Linux でビルドしても、どちらの分岐も消える
+- **Linux 版の実装は存在しない**（対応 OS でない）。
+  `cargo clippy --workspace` を Linux で通すには、**誰も使わない Linux 分岐をコード側に
+  維持し続ける**ことになる
+- **Linux のファイルシステムは大文字小文字を区別する。**
+  macOS と Windows の既定は区別しない。したがって import パスの大小のずれは
+  **Linux でだけ検出できる**（`tsc` / `eslint` の検出力が上がる）
+- **実行時の差異（WebView の挙動・通知・ウィンドウ）は、どの OS で CI を回しても検証できない。**
+  E2E も GUI テストも存在しないため。Windows の実機確認は Issue #6 に残っており、
+  **CI はそれを代替しない**
+
 **現在の `Taskfile.yml` の穴（実ファイルを読んで確認）。**
 
 - `check:fe` の `desc` は「型・リント・整形・**注入スクリプトの差分**」と書いているが、
@@ -111,16 +132,31 @@
 **CI を GitHub Actions に置く。ワークフローに書くのは
 「ツールチェインを入れる」と「`task` のタスクを呼ぶ」の 2 つだけとし、
 検査の中身は Taskfile と cargo / package.json 側に置いて CI 固有の記述を作らない。
-実行環境は対応 OS と同じ `macos-latest` / `windows-latest` の 2 つとする。**
+実行環境は「その検査は OS によって結果が変わりうるか」の一点で振り分け、
+変わらないものは `ubuntu-latest` に集約する。**
 
 - ワークフローは `.github/workflows/ci.yml` の 1 本。
   トリガーは `push`（`main`）/ `pull_request` / `workflow_dispatch`
-- ジョブは 2 つ。どちらも 2 OS の matrix
-  - **検査ジョブ** —— `task` の検査系タスクを呼ぶ（型・リント・整形・clippy・テスト・
-    生成物の差分・観測データの混入判定・gitleaks）
-  - **ビルドジョブ** —— `tauri build --no-bundle` を呼ぶ。
-    **Windows でコンパイルが通ることの唯一の自動的な証拠**にする。
-    バンドル・署名・公証は本 ADR の対象外
+- ジョブは 2 つ
+
+| ジョブ | 環境 | 内容 |
+| --- | --- | --- |
+| **静的検査** | `ubuntu-latest` **のみ** | 型検査・リント・整形・生成物の差分・観測データの混入判定・gitleaks・`cargo fmt --check`・**`tauri` に依存しないクレート**の clippy とテスト |
+| **プラットフォーム検査** | `macos-latest` / `windows-latest` の matrix | `src-tauri` を含む `cargo clippy --workspace`・`cargo test`・`tauri build --no-bundle` |
+
+- **振り分けの基準は 1 本だけ。「OS によって結果が変わりうるか」。**
+  変わらないもの（構文・型・書式・秘密情報・リポジトリの形）は 1 回だけ回す。
+  変わりうるもの（`#[cfg(target_os)]` 分岐のコンパイル、ファイルパス・改行・時刻を触るコードの実行）は
+  対応 OS の 2 つで回す
+- **この線は既存のクレート境界と一致する。** `crates/harubridge-core/` は `tauri` を知らず
+  （[ADR-0032](0032-repository-structure.md) §1 が強制している）、Linux でそのまま検査できる。
+  `src-tauri/` だけが OS に触れる
+- **プラットフォーム検査の主目的は、OS 別コードのコンパイルである。**
+  [ADR-0029](0029-injection-ipc-transport.md) が採ろうとしている macOS / Windows の実装は互いに別物であり、
+  **その OS でコンパイルしない限り型検査すら行われない。**
+  とくに Windows は一度も動かしていない（Issue #6）ため、
+  **コンパイルが通ることの唯一の自動的な証拠**になる
+- バンドル・署名・公証は本 ADR の対象外（`--no-bundle`）
 - **CI から呼ぶコマンドはすべて `task <name>` の形にする。**
   必要なタスクが無ければ Taskfile に足す。**ワークフローの YAML に生のコマンドを書かない**
 - ツールチェインは `jdx/mise-action@v4`。Rust のビルドキャッシュに `Swatinem/rust-cache` を使う
@@ -158,28 +194,46 @@
 
 ### 論点 2: どの OS で回すか
 
-#### 案 B1: `macos-latest` + `windows-latest` の 2 つ（採用）
+#### 案 B1: OS 非依存の検査は ubuntu、OS 依存のものだけ macOS / Windows（採用）
 
-- 概要: 対応 OS と CI の実行環境を一致させる
+- 概要: 「OS によって結果が変わりうるか」で振り分ける。
+  `tauri` に依存しない部分はすべて `ubuntu-latest` に集約し、
+  `src-tauri` を含む部分だけ対応 OS 2 つで回す
 - 利点:
-  - **Windows は一度も動かしていない**（[architecture.md](../spec/architecture.md) の `TODO(要検証)`、Issue #6）。
-    実機での動作確認は後回しにしたままだが、**コンパイルが通るかどうかだけは自動で分かる**
-  - 改行・パス区切り・ファイル名の大小など、Windows でだけ壊れるものを継続的に踏める
-- 欠点: 同じ検査を 2 回回す。Windows のランナーは macOS より遅い
+  - **同じ検査を 3 回回さない。** 型・リント・整形・秘密情報の検査に OS の意味は無い
+  - **Linux は大文字小文字を区別するため、静的検査の検出力がむしろ上がる。**
+    import パスの大小のずれは macOS / Windows では素通りする
+  - ubuntu は 3 つの中で最も速く、**壊れたことに気づくまでの時間が短くなる**。
+    [ADR-0014](0014-trunk-based-on-main.md) の下では検出が常に push のあとになるため、ここは効く
+  - **振り分けの線が既存のクレート境界と一致する**ため、どちらに置くかで迷わない。
+    `tauri` に依存するものが増えたら、それはプラットフォーム検査側である
+  - `src-tauri` を Linux でビルドしないため、**Tauri の Linux 用システムパッケージを入れずに済む**
+- 欠点:
+  - ジョブが 2 種類になり、ワークフローが「全部同じ」より複雑になる
+  - **対応 OS でない環境でだけ落ちる**ことが起きうる（例: パスの大小）。
+    ただしそれは検出力が上がった結果であり、直す価値のある誤りである
 
-#### 案 B2: `macos-latest` のみ
+#### 案 B2: すべての検査を `macos-latest` + `windows-latest` の 2 つで回す
+
+- 概要: 対応 OS と CI の実行環境を完全に一致させ、ジョブを 1 種類に保つ
+- 利点: ワークフローが単純。「CI が緑 = 対応 OS で緑」が一言で言える
+- 却下理由: **静的検査には OS の意味が無いのに、実行時間だけが倍になる**ため。
+  `tsc` や `eslint` が macOS で緑になったことは、対応 OS について何も保証しない。
+  加えて大文字小文字を区別しない 2 OS だけになり、**Linux で回せば見つかる誤りを取り逃がす。**
+
+#### 案 B3: `macos-latest` のみ
 
 - 概要: 実測済みの OS 1 つに絞る
-- 利点: 実行時間が半分。ワークフローが単純
 - 却下理由: 対応 OS に挙げている Windows が、**コンパイルできるかすら誰も知らない**状態が続くため。
+  [ADR-0029](0029-injection-ipc-transport.md) の Windows 実装は macOS 版と別のコードであり、
+  macOS でビルドしても `#[cfg]` により消える。
 
-#### 案 B3: `ubuntu-latest` を足す（あるいは検査だけ ubuntu に寄せる）
+#### 案 B4: `ubuntu-latest` のみ
 
-- 概要: 最も速いランナーで静的検査を回す
-- 却下理由: **Linux は対応 OS ではない。** 緑になっても保証するものが無く、
-  赤くなっても直す動機が無いため、いずれ無視される検査になる。
-  加えて Tauri は Linux でだけ追加のシステムパッケージ（`libwebkit2gtk-4.1-dev` ほか）を要求し、
-  対応 OS でない環境の維持コストだけが残る。
+- 概要: 最も速く安い 1 つに集約する
+- 却下理由: **OS 別コードが一切コンパイルされない**ため。
+  加えて Linux 版の実装は存在しないので、`cargo clippy --workspace` を Linux で通すには
+  **誰も使わない Linux 分岐をコード側に維持し続ける**ことになる。
 
 ### 論点 3: 観測データの混入判定をどう実装するか
 
@@ -264,30 +318,42 @@
 
 ## 決め手
 
-**「ローカルで回るものと CI で回るものが同じである」という保証を得るために、
-CI の実行時間（2 OS で同じ検査を二重に回すこと）と、CI 専用に最適化する自由を捨てた。**
+**「CI で落ちたものは手元でも落ちる」という再現性を得るために、
+CI 専用に最適化する自由を捨てた。**
 
 CI にしか無いコマンドは、必ずローカルで再現できない失敗を生む。
 コードを書くのがエージェントであり、人間が全行を見張らない前提
 （[ADR-0003](0003-agent-driven-development.md)）では、
 **「CI で落ちたが手元では再現しない」状態が最も高くつく。**
 
+OS の振り分けも同じ基準に従っている。速さや費用ではなく
+**「その検査は OS によって結果が変わりうるか」**だけで決めており、
+変わらないものを 3 回回しても再現性は 1 ミリも増えない。
+なお費用は判断材料にならない（public リポジトリは標準ランナーが無償・無制限）。
+
 ## 影響
 
 ### 実装への影響
 
 - 新規に作るもの:
-  - `.github/workflows/ci.yml`（検査ジョブとビルドジョブ。どちらも 2 OS の matrix）
+  - `.github/workflows/ci.yml`（静的検査ジョブ 1 つ + プラットフォーム検査ジョブの 2 OS matrix）
   - `.gitattributes`（`* text=auto eol=lf`）
   - 観測データの混入判定を行う実行可能クレート（[ADR-0032](0032-repository-structure.md) の
     ツリーに 1 メンバー追加。**同 ADR の「強制される境界は 3 本」には影響しない**）
 - `mise.toml` の `[tools]` に `gitleaks` を追加する
-- **`Taskfile.yml` に足りない検査を足す**:
+- **`Taskfile.yml` に足りない検査を足し、`tauri` 依存の有無で呼び分けられるように割る**:
   - 生成物の差分検査（`kcsapi-hook.js` / `bindings.ts` を再生成して差分ゼロ）。
     **`check:fe` の `desc` が「注入スクリプトの差分」と書いているのに実装されていない**穴を埋める
   - 観測データの混入判定
   - gitleaks
   - `tauri build --no-bundle`
+  - 現在の `check:rust` は `cargo clippy --workspace` であり、これは `src-tauri` を含む
+    （＝プラットフォーム検査側）。**ubuntu 用に「`tauri` に依存しないクレートだけ」の
+    入口を別に用意する。** 開発者が手元で叩く `task check` は、
+    従来どおり自分の OS で全部を回す
+- **静的検査を ubuntu だけで回すため、`pnpm format:check` は CI で一度も Windows を踏まない。**
+  Windows の改行変換に対する防御は `.gitattributes` の一本に集約される
+  （それが論点 5 で「CI 側の `core.autocrlf` 設定」を却下した理由でもある）
 - `cargo` を回す時点で `crates/harubridge-core/build.rs` が走り、
   `data/kancolle/*.json` の JSON としての妥当性は自動的に検査される（既存の実装）
 - **`bindings.ts` はまだ存在しない**（`tauri-specta` の配線が未実装）。
@@ -345,5 +411,12 @@ CI は push のあとに回る**事後検出**になる。
   現時点では既定ルールのみで導入し、実測後にカスタムルールを足す
 - 配布（署名・公証・自動更新）とリリースの自動化は本 ADR の対象外。
   外部仕様と配布方法が決まってから別に起票する
-- CI の実行時間が問題になった場合の分割（静的検査を 1 OS に寄せる等）は、
-  実際に遅くなってから判断する。**先に最適化しない**
+- **プラットフォーム検査は、現時点ではほとんど空回りする。**
+  `src-tauri/src/lib.rs` はまだ雛形であり、OS 別コードは 1 行も無い。
+  効き始めるのは [ADR-0029](0029-injection-ipc-transport.md) が承認され、
+  `#[cfg(target_os = ...)]` の実装が入ってからである。
+  **先に置く理由は、そのコードが入った初日から型検査されている状態にしておくためである**
+- Linux を対応 OS に加えることは検討していない。加えるなら CI ではなく
+  [overview.md](../spec/overview.md) の変更（＝仕様の変更）が先である
+- CI の実行時間が問題になった場合の追加の分割は、実際に遅くなってから判断する。
+  **先に最適化しない**
