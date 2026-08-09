@@ -12,7 +12,7 @@
   [ADR-0008](../0008-code-as-source-of-truth.md)（コードが正）/
   [ADR-0016](../0016-tech-stack.md) / [ADR-0024](0024-state-sync-granularity.md) /
   [ADR-0027](0027-repository-layout.md)（**外側の構成。本 ADR は内側を扱う**）/
-  [ADR-0028](../0028-quest-counter-schema.md)
+  [ADR-0028](0028-quest-counter-schema.md)
 
 ## 背景と課題
 
@@ -92,7 +92,7 @@ disallowed-methods = [
 | 内部モデル | アプリが表示・計算に使う形。**我々が所有する唯一の形** |
 | 状態 | メモリ上の現在状態。[ADR-0024](0024-state-sync-granularity.md) の push 単位と一致させる |
 | 永続化 | `state/*.json` / `events/*.jsonl` / `replays/`（[ADR-0021](../0021-data-persistence.md)）|
-| 任務カウンタ | **唯一の自前ドメインロジック**（[ADR-0028](../0028-quest-counter-schema.md)）|
+| 任務カウンタ | **唯一の自前ドメインロジック**（[ADR-0028](0028-quest-counter-schema.md)）|
 | 計算 | 制空値・索敵値などの純関数。出典コメント必須（NFR-009）|
 | **UI へ出す形** | マスタと結合済みの読み取り用。**内部モデルとは別に持つ**（下記）|
 

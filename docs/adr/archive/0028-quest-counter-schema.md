@@ -1,30 +1,39 @@
-# ADR-0028: 任務カウンタのデータ形式と `count` 条件の語彙
+# ADR-0028: 任務カウンタのデータ形式と `count` 条件の語彙（取り下げ）
 
-- ステータス: **Proposed**
-- 日付: 2026-08-03
-- 決定者: 承認待ち（`Accepted` にする時点で承認者名に書き換える）
-- 関連: [ADR-0020](0020-kancolle-reference.md)（`data/` に機械可読データを置く決定を具体化する）,
-  [ADR-0021](0021-data-persistence.md)（導出状態としての任務進捗）,
-  [ADR-0025](0025-clock-handling.md)（**リセット境界の時刻の求め方はそちらに従う**）,
-  [FR-050 / FR-051](../spec/requirements.md),
-  [C-01 / C-02 / C-03](../spec/constraints.md),
-  [rules/quests.md](../kancolle/rules/quests.md),
-  [api_get_member_questlist.md](../kancolle/api/api_get_member_questlist.md)
+> **この ADR は決定に至らないまま取り下げられた。実装の根拠にしてはならない。**
+> 任務カウンタのデータ形式と `count` 条件の語彙について、
+> 本プロジェクトは**現時点で何も決定していない**。
+> 実装しながら決めるものとして
+> [Issue #9](https://github.com/bosshawk/Harubridge/issues/9) に論点を移してある。
+> 本文に残してあるのは**調査記録だけ**であり、決定・決め手・影響の各節は削除した。
+> 「案 A」以下の比較も、採用も却下も確定していない。
+
+- ステータス: **Withdrawn**（取り下げ。決定に至らず、検討を Issue に戻した）
+- 日付: 2026-08-03（取り下げ 2026-08-09）
+- 決定者: —— （決定していない。取り下げの判断はプロジェクトオーナー）
+- 関連: [ADR-0020](../0020-kancolle-reference.md)（`data/` に機械可読データを置く決定を具体化する）,
+  [ADR-0021](../0021-data-persistence.md)（導出状態としての任務進捗）,
+  [ADR-0025](../0025-clock-handling.md)（**リセット境界の時刻の求め方はそちらに従う**）,
+  [FR-050 / FR-051](../../spec/requirements.md),
+  [C-01 / C-02 / C-03](../../spec/constraints.md),
+  [rules/quests.md](../../kancolle/rules/quests.md),
+  [api_get_member_questlist.md](../../kancolle/api/api_get_member_questlist.md)
 
 ## 背景と課題
 
-[FR-050](../spec/requirements.md) により、**任務の達成回数は自前で数える**ことが確定している。
+[FR-050](../../spec/requirements.md) により、**任務の達成回数は自前で数える**ことが確定している。
 ゲームは `api_state`（1/2/3）と `api_progress_flag`（0 / 1=50% 以上 / 2=80% 以上）しか返さず、
-回数はどのフィールドにも存在しない（[questlist の記録](../kancolle/api/api_get_member_questlist.md)）。
+回数はどのフィールドにも存在しない（[questlist の記録](../../kancolle/api/api_get_member_questlist.md)）。
 
 数えるには**任務ごとの達成条件を知っている必要がある**。
-[ADR-0020](0020-kancolle-reference.md) は「アプリが読むデータは `data/` に機械可読で置く」と決め、
-[architecture.md](../spec/architecture.md) は「`data/` は `build.rs` で検証して埋め込む」と決めた。
+[ADR-0020](../0020-kancolle-reference.md) は「アプリが読むデータは `data/` に機械可読で置く」と決め、
+[architecture.md](../../spec/architecture.md) は「`data/` は `build.rs` で検証して埋め込む」と決めた。
 しかし**中身の形は決まっていない。**
 
-現在の [`data/kancolle/quests.json`](../../data/kancolle/quests.json) は 2 件のみの暫定であり、
+現在の [`data/kancolle/quests.json`](../../../data/kancolle/quests.json) は 2 件のみの暫定であり、
 `rules/quests.md` は末尾で `TODO(未確定)`「`count` の条件をどこまで表現できる語彙にするかは
-実装に着手する時点で決める」と明記している。**本 ADR がそれを決める。**
+実装に着手する時点で決める」と明記している。
+**本 ADR はそれを決めようとして、決めきれずに取り下げられた。**
 
 ### 決めなければならないこと
 
@@ -37,11 +46,11 @@
 
 **本プロジェクトは `api_get_member/questlist` を一度も観測していない。**
 出撃・演習・遠征・工廠系のエンドポイントも**すべて未観測**である
-（[api/overview.md](../kancolle/api/overview.md) の `TODO(未観測)`）。
+（[api/overview.md](../../kancolle/api/overview.md) の `TODO(未観測)`）。
 
 したがって本 ADR の事実はすべて他実装のソースの参照であり、
 **「どのイベントで数えるか」を実測で裏づけたものは 1 件も無い。**
-この制約が決定の形そのものを決めている（後述）。
+**この制約が、取り下げの直接の理由である。**
 
 ### 調査でわかった、決定に効く事実
 
@@ -87,7 +96,7 @@ KancolleSniffer の `QuestSpec.cs` は、基底 `QuestSpec`
 
 > **2 実装が独立に同じ境界で割っている。**
 > ただし KancolleSniffer のテーブルは七四式電子観測儀を参考に作られたと
-> ソースに明記されており（[rules/quests.md](../kancolle/rules/quests.md)）、
+> ソースに明記されており（[rules/quests.md](../../kancolle/rules/quests.md)）、
 > **この一致を「独立な 2 例」として扱ってはならない。**
 > 独立なのは KC3改 だが、KC3改 は条件を一切データに持たないため、この境界に関する証言をしない。
 
@@ -144,146 +153,36 @@ KancolleSniffer もこれに対応しており、`QuestDestroyItem` の多くに
 
 ## 決定
 
-### 1. 形式は JSON を継続し、`build.rs` で検証して埋め込む
+**無い。取り下げた。**
 
-[`data/kancolle/quests.json`](../../data/kancolle/quests.json) を JSON のまま維持する。
-`build.rs` で `serde_json` によりパースし、下記のスキーマ検査に失敗したらビルドを落とす
-（[architecture.md](../spec/architecture.md)「外部データの取り込み」）。
+語彙は、数える契機となるイベントを実際に観測し、Rust 側で解釈してみないと決めきれない。
+本プロジェクトは出撃・演習・遠征・工廠のいずれの結果も観測しておらず、
+`api_get_member/questlist` 自体も未観測である。
+**語彙を決めても、それが実際のイベントを表現できるかを確かめる手段が無い。**
+[C-03](../../spec/constraints.md) が禁じる「推測を確定仕様として扱う」ことに近づく。
 
-**実行時に読む形は採らない。** 外部から差し替える経路を作らないため（[C-04](../spec/constraints.md)）。
+論点は [Issue #9](https://github.com/bosshawk/Harubridge/issues/9) に移した。
+実測で語彙が固まり、かつ `data/` のスキーマとして覆すコストが高いと分かった時点で、改めて 1 本書く。
 
-### 2. `count` の語彙は「値の照合」までとし、述語はデータに書かない
-
-**これが本 ADR の中心である。**
-
-境界を次の 1 行で定める。
-
-> **定数との照合（等しい / 集合に含まれる / 以上）だけで書ける条件はデータに書く。
-> 数え上げ・全称量化・「他は禁止」といった述語が要る条件は、データに書かない。**
-
-`count` は「**1 個のイベント種別**」と「**そのイベントに付く値の照合フィルタ**」の組で表す。
-複数条件の任務（あ号作戦、Z作戦など）は `stages` の配列にする。
-
-```jsonc
-{
-  "id": 337,
-  "name": "「十八駆」演習！",
-  "reset": "daily",
-  "counter": {
-    "shift": 2,
-    "adjust": true,
-    "stages": [
-      { "max": 3, "event": "practice_result", "rank_at_least": "S" }
-    ]
-  },
-  "source": "…",
-  "verified": null
-}
-```
-
-```jsonc
-{
-  "id": 249,
-  "name": "「第五戦隊」出撃せよ！",
-  "reset": "monthly",
-  "counter": null,
-  "unsupported": "fleet-composition",
-  "source": "…",
-  "verified": null
-}
-```
-
-| フィールド | 内容 |
-| --- | --- |
-| `id` | 任務 ID。一意 |
-| `name` | **人がこのテーブルを読むための識別子**。UI は `api_title` を使い、この値を表示しない |
-| `reset` | **進捗カウンタがリセットされる周期。**任務の出現周期ではない（→ 背景 (c)） |
-| `counter` | `null` なら「数えない」 |
-| `counter.stages[]` | 1 個以上。各段が `max` と 1 個の `event` と照合フィルタを持つ |
-| `counter.shift` | 逆算モデルの上書き（[rules/quests.md](../kancolle/rules/quests.md) の採用モデル） |
-| `counter.adjust` | `false` なら `api_progress_flag` による補正をしない（→ 背景 (d)） |
-| `unsupported` | 語彙で表現できない理由。**`null` でなければ UI は「進捗を数えない」と表示する** |
-| `source` / `verified` | 出典と確認日（[data/README.md](../../data/README.md)） |
-
-`reset` の値は閉じた列挙とする:
-`once` / `daily` / `weekly` / `monthly` / `quarterly` / `yearly-01` 〜 `yearly-12` / `unknown`。
-
-`unsupported` の値も閉じた列挙とする:
-`fleet-composition`（編成条件）/ `possession`（所持数の判定）/ `shared-counter`（他任務と共有）/
-`unobserved-event`（数える契機が未観測）/ `unknown`。
-
-### 3. 語彙は Rust 側の enum を正とし、`data/` はそれに無い値を書けない
-
-**`event` とフィルタの名前の集合は、Rust の enum が正である。**
-`build.rs` は enum に無い値を見つけたらビルドを落とす。
-
-これにより「**表現できるのに検証されていない条件**」が原理的に発生しない。
-語彙を 1 つ増やすには、実装を 1 つ増やす必要がある。
-
-**本 ADR では `event` の具体的な値を確定しない。**
-数える契機となるエンドポイントを**本プロジェクトは 1 つも観測していない**ためである。
-初期の候補は既存 3 実装が購読しているものから採るが、
-**実測して構造を確認したものから 1 つずつ enum に追加する**（[C-03](../spec/constraints.md)）。
-
-`TODO(要検証)` 実装着手時に、下記を実測してから語彙を確定する。
-
-| 候補となる契機 | 参照元 | 実測 |
-| --- | --- | --- |
-| 出撃の戦闘結果（ランク / 海域 / ボスか） | 3 実装すべてが `api_req_sortie/battleresult` 等を購読 | **未観測** |
-| 演習の結果（ランク） | 同上 `api_req_practice/battle_result` | **未観測** |
-| 遠征の帰還（遠征 ID / 成否） | 同上 `api_req_mission/result` | **未観測** |
-| 撃沈した敵の艦種 | 七四式 `ProgressSlaughter` / Sniffer `QuestEnemyType` | **未観測** |
-| 工廠（開発・建造・解体・廃棄・改修・近代化改修） | 3 実装すべて | **未観測** |
-| 入渠・補給 | 3 実装すべて | **未観測** |
-
-### 4. カウンタは「状態」ではなく「リセット境界以降の事象の集計」と定義する
-
-[ADR-0021](0021-data-persistence.md) が **`events/*.jsonl` を正、`state/quests.json` をキャッシュ**と
-定めたことにより、既存 3 実装ができなかった形が採れる。
-
-> **表示値 = max( 直近のリセット境界以降の `events/` を数えた値, `floor` )**
-
-- `floor` は `api_progress_flag` から逆算した**下限**であり、`state/quests.json` に持つ
-- `floor` もリセット境界で捨てる
-- `counter.adjust` が `false` の任務では `floor` を更新しない（→ 背景 (d)）
-- **`floor` は下げない。** `api_progress_flag` が下がっても `floor` は据え置く
-
-**これによりリセットの取りこぼしが原理的に起きない。**
-アプリを起動していない間に境界を跨いでも、集計の下限が動くだけである。
-「最後にリセットした時刻」を持つ必要がない（→ 背景 (f) の 2 実装と異なる）。
-
-`state/quests.json` を失っても `events/` から再集計でき、失うのは `floor` だけである。
-`floor` は次にプレイヤーが任務画面を開いた時点で取り直せる。
-
-境界の時刻の求め方は [ADR-0025](0025-clock-handling.md) に従う
-（**JST 固定オフセット (+09:00)。端末のローカル時刻を経由しない**）。
-本 ADR はそれを前提とし、独自には決めない。
-なお KancolleSniffer は `DateTime.Now`（端末ローカル）で 5 時を判定しており、
-日本国外では境界がずれる。この点は ADR-0025 が既に同じ指摘をしている。
-
-### 5. FR-051（いつ時点の値か）は 3 つの時刻で満たす
-
-`state/quests.json` の各任務に次を持つ。
-
-| 値 | 意味 |
-| --- | --- |
-| `counted_through` | この時刻までの `events/` を数えた |
-| `flag_observed_at` | 最後に `questlist` でこの任務の `api_progress_flag` を見た時刻 |
-| `floor_estimated` | 表示値が `floor` 由来（＝逆算した推定値）であるか |
-
-**`questlist` はプレイヤーが任務画面を開いたときにしか飛ばず、しかもタブ単位である。**
-こちらから取りに行くことは [C-01](../spec/constraints.md) / [C-02](../spec/constraints.md) に反する。
-したがって `flag_observed_at` が古いままになることは避けられず、
-**それをユーザーに見せることが FR-051 の実体である。**
-
-`TODO(未確定)`: この 3 つをユーザーにどう見せるかは**外部仕様の領分**であり、
-本 ADR では決めない（人間の承認が要る。[CLAUDE.md](../../CLAUDE.md) §2）。
+**なお、取り下げによって失われる決定は少ない。**
+`data/` をビルド時に検証して埋め込み、実行時に読まず外部からも取得しないことは
+[architecture.md](../../spec/architecture.md)「外部データの取り込み」が既に定めている。
+`events/*.jsonl` を正、`state/quests.json` をキャッシュとすることは
+[ADR-0021](../0021-data-persistence.md) が、
+リセット境界を JST 固定オフセットの算術で求めることは
+[ADR-0025](../0025-clock-handling.md) の決定 4 が定めている。
+形式が JSON であることは [`data/kancolle/quests.json`](../../../data/kancolle/quests.json) が
+現に JSON である事実で足りる。
 
 ## 検討した選択肢
 
-### 案 A: 値の照合までの閉じた語彙 + 「表現できないものは載せない」（採用）
+> **以下は取り下げ時点の検討である。採用も却下も確定していない。**
+> 既存 3 実装のソースに当たった調査結果として残す（同じ調査を繰り返さないため）。
+> 案 A が前提にしている語彙とスキーマは、上記のとおり決定として残っていない。
 
-- 概要: 上記のとおり。述語が要る任務は `counter: null` + `unsupported` を書き、
+### 案 A: 値の照合までの閉じた語彙 + 「表現できないものは載せない」（当時の第一候補）
+
+- 概要: 述語が要る任務は `counter: null` + `unsupported` を書き、
   UI は「進捗を数えない」と表示して縮退する
 - 利点:
   - 評価器が「照合」で済み、インタプリタにならない
@@ -314,8 +213,8 @@ KancolleSniffer もこれに対応しており、`QuestDestroyItem` の多くに
 - 概要: `data/kancolle/quests.json` を廃し、任務 ID の巨大な `match` を Rust に書く
 - 利点: 表現力に上限が無い。実際に 3 実装のうち 2 つがこの形に落ち着いている
 - 欠点: 出典（`source` / `verified`）をレコードに持たせられない。
-  `build.rs` での検証（[architecture.md](../spec/architecture.md)）が効く対象が無くなる
-- 却下理由: [ADR-0020](0020-kancolle-reference.md) の
+  `build.rs` での検証（[architecture.md](../../spec/architecture.md)）が効く対象が無くなる
+- 却下理由: [ADR-0020](../0020-kancolle-reference.md) の
   「アプリが読むデータは `data/` に置き、出典を各レコードに持たせる」を覆すことになる。
   艦これ側の観測結果は**ランタイムの選択より長生きする**という同 ADR の前提が失われる。
 
@@ -345,7 +244,7 @@ KancolleSniffer もこれに対応しており、`QuestDestroyItem` の多くに
 - 却下理由: `serde_yaml` は **`0.9.34+deprecated` が最新安定版で、最終更新が 2024-03-25**
   （crates.io、2026-08-03 実測）。作者が保守を終了している。
   後継の `serde_yaml_ng` も最終更新 2024-05-26 / 90 日 414 万 DL と規模が 2 桁小さい。
-  **[ADR-0018](0018-dependencies.md) が採った「実測の DL 数と更新状況で選ぶ」基準を満たさない。**
+  **[ADR-0018](../0018-dependencies.md) が採った「実測の DL 数と更新状況で選ぶ」基準を満たさない。**
 
 ### 案 G: 形式を RON にする
 
@@ -353,13 +252,13 @@ KancolleSniffer もこれに対応しており、`QuestDestroyItem` の多くに
   90 日 2438 万 DL（`serde_json` の 1/10 以下、2026-08-03 実測）で、
   **Rust の外から編集・検証する道具が事実上無い。**
   任務テーブルは今後 10 年単位で人が手で足していくデータであり、
-  ランタイムに紐づかない形式であることを優先する（[data/README.md](../../data/README.md) の理由と同じ）。
+  ランタイムに紐づかない形式であることを優先する（[data/README.md](../../../data/README.md) の理由と同じ）。
 
 ### 案 H: 実行時にデータファイルを読む
 
 - 却下理由: 手で書くデータであり必ず誤りが混入する。
   **実行時に読むと、誤りが「ユーザーの環境で初めて」露見する。**
-  [architecture.md](../spec/architecture.md) が既に「ビルド時に検出する」と定めており、
+  [architecture.md](../../spec/architecture.md) が既に「ビルド時に検出する」と定めており、
   それを覆す理由が見つからなかった。
 
 ### 案 I: `api_progress_flag` に合わせて自前カウンタを双方向に補正する（KC3改 の方式）
@@ -368,85 +267,57 @@ KancolleSniffer もこれに対応しており、`QuestDestroyItem` の多くに
 - 却下理由: **`api_progress_flag` は単調増加ではない**（→ 背景 (d)）。
   所持数が条件に入る任務では、装備を使っただけで 80% 表示が消える。
   そこで自前カウンタを下げると、**数えた事実（`events/` にある）を推測で上書きする**ことになる。
-  [ADR-0021](0021-data-persistence.md) の「事象が正」に反する。
+  [ADR-0021](../0021-data-persistence.md) の「事象が正」に反する。
 
 ### 案 J: 進捗をユーザーが手で修正できるようにする
 
 - 却下理由: **ユーザーに見える振る舞いであり、外部仕様が無い。**
-  [FR-050](../spec/requirements.md) / FR-051 のどちらも要求していない。
-  仕様の追加には人間の承認が要る（[CLAUDE.md](../../CLAUDE.md) §2）ため、本 ADR では決めない。
+  [FR-050](../../spec/requirements.md) / FR-051 のどちらも要求していない。
+  仕様の追加には人間の承認が要る（[CLAUDE.md](../../../CLAUDE.md) §2）ため、本 ADR では決めない。
   必要と判断されたら外部仕様に起こしてから実装する。
 
-## 決め手
+## 決めるために要ること
 
-**表現力を捨てて、「表現できるのに検証されていない条件が存在しない」状態を買った。**
+> 決定を書いていないため、決め手と影響の節も置かない。
+> 以下は取り下げ時点で残っていた宿題であり、
+> [Issue #9](https://github.com/bosshawk/Harubridge/issues/9) に引き継いである。
 
-任務の条件は本質的に述語であり、真面目に表現しようとすれば必ずミニ言語になる。
-だが本プロジェクトは**数える契機そのものを 1 つも観測していない**。
-検証できないものを書けるようにすることは、[C-03](../spec/constraints.md) が禁じている
-「推測を確定仕様として扱う」ことそのものである。
-
-## 影響
-
-- 実装への影響:
-  - `build.rs` に任務テーブルの検証を追加する。`event` / `reset` / `unsupported` の値は
-    Rust の enum に照合し、未知の値でビルドを落とす
-  - `serde_json` を Rust の依存に追加する（[ADR-0018](0018-dependencies.md) の一覧に 1 行）
-  - 任務の進捗は「集計 + 下限」の 2 値で持つ。単一のカウンタとして実装しない
-  - **編成条件を要する任務は初回リリースで数えられない。** UI は縮退表示を必ず持つ
-- データへの影響:
-  - [`data/kancolle/quests.json`](../../data/kancolle/quests.json) は**本 ADR が承認されるまで変更しない**
-    （`Proposed` は実装の根拠にしてはいけない。[README.md](README.md)）。
-    承認後、現行 2 件を新スキーマに移す。`period` → `reset` の改名を含む
-- ドキュメントへの影響:
-  - [rules/quests.md](../kancolle/rules/quests.md) の末尾 `TODO(未確定)`
-    「`count` の条件をどこまで表現できる語彙にするか」が解消される（**別途更新が要る**）
-  - 「アプリ導入前の進捗は復元できない」「表示が古いままになりうる」は
-    [ADR-0021](0021-data-persistence.md) が既に**外部仕様が要る**としている。本 ADR も同じ結論
-  - [architecture.md](../spec/architecture.md) への追記は不要（既存の記述の範囲内）
-- 取り消す場合のコスト: **低〜中。**
-  語彙を広げる方向（案 B へ）は、既存レコードを壊さずに追加できる。
-  逆に `data/` を捨ててコードに戻す（案 C）場合は、出典の持ち方から作り直しになる。
-
-## 未解決事項
 
 - `TODO(要検証)`: **`event` の具体的な値。**
   数える契機となるエンドポイントを 1 つも観測していないため確定できない。
   出撃・演習・遠征・工廠を含む 1 セッションを観測すれば埋まる。
-  [ADR-0021](0021-data-persistence.md) が「最優先」としている観測と同一のものである
+  [ADR-0021](../0021-data-persistence.md) が「最優先」としている観測と同一のものである
 - `TODO(要検証)`: **`api_get_member/questlist` 自体が未観測。**
   `api_progress_flag` の実際の値と実際の達成回数の対応が確認できていない以上、
   `floor` の逆算モデル（`shift`）の正しさは検証されていない
-  （[rules/quests.md](../kancolle/rules/quests.md) も同じ `TODO` を持つ）
+  （[rules/quests.md](../../kancolle/rules/quests.md) も同じ `TODO` を持つ）
 - `TODO(要検証)`: **リセット境界がサーバ時刻とクライアント時刻のどちらで決まるか。**
-  [rules/timers.md](../kancolle/rules/timers.md) は「PC の時計がサーバとずれていると
+  [rules/timers.md](../../kancolle/rules/timers.md) は「PC の時計がサーバとずれていると
   完了時刻の表示が前後する」と記録しているが、任務のリセットについては確認していない。
-  [ADR-0025](0025-clock-handling.md) は「時計のずれは補正せず、警告も出さない」と決めており、
+  [ADR-0025](../0025-clock-handling.md) は「時計のずれは補正せず、警告も出さない」と決めており、
   本 ADR もそれに従う。**ただしリセット境界について実測した資料は無い**
 - `TODO(要検証)`: **共有カウンタの扱い。**
   デイリーの開発・建造など、複数任務が同じ回数を共有する事例が知られている
-  （[rules/quests.md](../kancolle/rules/quests.md)）。
-  七四式電子観測儀は `SharedCounterShift` というフィールドで補正しているが、
-  本 ADR のスキーマには対応する概念が無い。`unsupported: "shared-counter"` で逃がすか、
-  フィールドを足すかは実測してから決める
+  （[rules/quests.md](../../kancolle/rules/quests.md)）。
+  七四式電子観測儀は `SharedCounterShift` というフィールドで補正している。
+  逃がすか、フィールドを足すかは実測してから決める
 - `TODO(未確定)`: **`unsupported` の任務をユーザーにどう見せるか。**外部仕様の領分
 - `TODO(未確定)`: **編成条件を要する任務を、どこまで諦めるか。**
-  本 ADR は「データに書かない」と決めたが、
-  「一部の任務だけコードに書く」道を将来選ぶ可能性は残っている。
+  データに書かない・一部だけコードに書く・全部コードに書くのいずれも未決である。
   その判断は、実際に何件が非対応になるかを数えてから行う
 - `TODO(未確定)`: 任務テーブルを増やしていく作業の進め方（どの任務から埋めるか）。
-  [rules/quests.md](../kancolle/rules/quests.md) は「よく使う任務から埋める」とだけ決めている
+  [rules/quests.md](../../kancolle/rules/quests.md) は「よく使う任務から埋める」とだけ決めている
 
 ## 参照した資料
 
 | 記述 | 出典 | ライセンス | 参照日 |
 | --- | --- | --- | --- |
-| `QuestSpec` の基底と派生 6 種、184 件のテーブル、`QuestFleetChecker.cs` の 521 行 / 86 case、`QuestCounter.cs` の任務 ID 直書き、リセット境界の実装、`_lastReset` の永続化 | bitbucket.org/kancollesniffer/kancollesniffer `KancolleSniffer/Model/QuestSpec.cs` / `QuestCountList.cs` / `QuestCounter.cs` / `QuestFleetChecker.cs` / `QuestInfo.cs` | **Apache-2.0**（`Copyright (C) 2013-2021 Kazuhiro Fujieda` / `Copyright (C) 2021 hATrayflood`）。**参照のみ。コードは流用しない**（[sources.md](../kancolle/sources.md) C-6） | 2026-08-03 |
+| `QuestSpec` の基底と派生 6 種、184 件のテーブル、`QuestFleetChecker.cs` の 521 行 / 86 case、`QuestCounter.cs` の任務 ID 直書き、リセット境界の実装、`_lastReset` の永続化 | bitbucket.org/kancollesniffer/kancollesniffer `KancolleSniffer/Model/QuestSpec.cs` / `QuestCountList.cs` / `QuestCounter.cs` / `QuestFleetChecker.cs` / `QuestInfo.cs` | **Apache-2.0**（`Copyright (C) 2013-2021 Kazuhiro Fujieda` / `Copyright (C) 2021 hATrayflood`）。**参照のみ。コードは流用しない**（[sources.md](../../kancolle/sources.md) C-6） | 2026-08-03 |
 | 171 の一意な `case`、506 箇所の `new Progress*`、17 種の `Progress*`、`ProgressSpecialBattle` の 82 case / 27 KB、`CheckProgress` / `IsOldQuest` / `SharedCounterShift` / `IgnoreCheckProgress`、337 の「クォータリーだが1日で進捗リセット」 | github.com/ElectronicObserverEN/ElectronicObserver `ElectronicObserver/Data/Quest/QuestProgressManager.cs` / `ProgressData.cs` / `ProgressSpecialBattle.cs` | MIT（`Original work copyright (c) 2014 Andante` / `Translation work copyright (c) 2015 Ryuu Kitsune`） | 2026-08-03 |
 | `quests_meta.json` の 776 件中 135 件が `tracking`、キーが 4 種のみ、`repeatableTypes` のリセット時刻と questIds、`Kcsapi.js` の任務 ID 直書き | github.com/KC3Kai/KC3Kai `src/data/quests_meta.json` / `src/library/managers/QuestManager.js` / `src/library/modules/Kcsapi.js` | MIT | 2026-08-03 |
 | デイリー境界「1日(5時～翌5時)」、定期任務の ID 体系（Bd/Bw/Bm/Bq/By ほか）、`api_progress_flag` が下がる報告 | [艦これ攻略 Wiki「任務」](https://wikiwiki.jp/kancolle/%E4%BB%BB%E5%8B%99) | 明示なし。**参照のみ、転載不可** | 2026-08-03 |
 | `serde_json` 1.0.151 / 90 日 2 億 5607 万、`toml` 1.1.4 / 1 億 8373 万、`serde_yaml` 0.9.34+deprecated（最終更新 2024-03-25）、`serde_yaml_ng` 0.10.0 / 414 万、`ron` 0.12.2 / 2438 万 | crates.io API | — | 2026-08-03 |
 
 > `kcwikizh/kcdata` は**ライセンス表記が無く参照も流用も不可**であるため、
-> 任務データの取得先として検討していない（[sources.md](../kancolle/sources.md) F-1）。
+> 任務データの取得先として検討していない（[sources.md](../../kancolle/sources.md) F-1）。
 > 本 ADR はどの実装からもデータそのものを取り込んでいない。**決めたのはスキーマだけである。**

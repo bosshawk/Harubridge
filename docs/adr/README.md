@@ -121,7 +121,7 @@
 | [0025](0025-clock-handling.md) | 時刻の扱い —— 壁時計と単調増加時計の使い分け | Accepted | 2026-08-03 |
 | [0026](archive/0026-injection-script-build.md) | 注入スクリプトは生 JS 1 ファイルのまま持ち、型検査だけを TypeScript に任せる | Superseded by ADR-0032 | 2026-08-03 |
 | [0027](archive/0027-repository-layout.md) | リポジトリのディレクトリ構成をコア／殻の 2 クレート＋機能別フロントエンドにする | Superseded by ADR-0032 | 2026-08-03 |
-| [0028](0028-quest-counter-schema.md) | 任務カウンタのデータ形式と `count` 条件の語彙 | **Proposed** | 2026-08-03 |
+| [0028](archive/0028-quest-counter-schema.md) | 任務カウンタのデータ形式と `count` 条件の語彙 | **Withdrawn**（決定に至らず取り下げ） | 2026-08-03 |
 | [0029](0029-injection-ipc-transport.md) | 注入スクリプトから Rust への転送は、Tauri の invoke に相乗りせず自前のハンドラで受ける | Accepted | 2026-08-03 |
 | [0030](archive/0030-no-named-architecture.md) | アーキテクチャを名乗らず、関心事ごとの素朴な分割に留める | Superseded by ADR-0032 | 2026-08-08 |
 | [0031](0031-toolchain-management.md) | 開発ツールチェインを mise に統一し、Rust の版は `rust-toolchain.toml` を正として mise に読ませる | Accepted | 2026-08-09 |
