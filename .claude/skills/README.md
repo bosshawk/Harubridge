@@ -14,6 +14,7 @@
 | [`write-spec`](write-spec/SKILL.md) | `docs/spec/` の仕様書を書く・更新する |
 | [`capture-issue`](capture-issue/SKILL.md) | 論点を GitHub Issue に残す・ADR 化して閉じる |
 | [`research-kancolle`](research-kancolle/SKILL.md) | 艦これ側の仕様を調べて `docs/kancolle/` に記録する |
+| [`validate-data`](validate-data/SKILL.md) | `data/` 配下のデータの出典・整合性を検証する |
 | [`docs-audit`](docs-audit/SKILL.md) | ドキュメントの整合性・鮮度を点検する |
 | [`audit-adr-refs`](audit-adr-refs/SKILL.md) | `docs/adr/` の外に ADR への参照が無いか点検する |
 
@@ -25,6 +26,14 @@
 | エージェント | 用途 |
 | --- | --- |
 | `kancolle-researcher` | 艦これの仕様調査。`research-kancolle` スキルに従う |
+| `kancolle-oss-analyst` | 既存の艦これ OSS の内部実装の調査。ライセンス規律を組み込み |
+| `kancolle-expert` | 艦これ仕様の相談役。`docs/kancolle/` を拠り所に確度付きで答える |
+| `data-validator` | `data/` の検証。`validate-data` スキルに従う |
+| `docs-auditor` | 仕様・文書の整合性点検。`docs-audit` / `audit-adr-refs` スキルに従う |
+| `rust-implementer` | Rust コア（`crates/` / `src-tauri/`）の実装。G-RS ルールを遵守 |
+| `frontend-implementer` | TypeScript / React（`src/`）と注入スクリプトの実装。G-TS ルールを遵守 |
+| `rust-reviewer` | Rust コードのレビュー。修正せず、ルール ID 付きの指摘を返す |
+| `typescript-reviewer` | TypeScript / React コードのレビュー。修正せず、ルール ID 付きの指摘を返す |
 
 ## スキルを追加するとき
 
