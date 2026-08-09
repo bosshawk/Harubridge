@@ -1,11 +1,16 @@
 # ADR-0033: 開発コマンドの入口として Taskfile を採用する
 
-- ステータス: **Proposed**
+- ステータス: **Accepted**
 - 日付: 2026-08-09
-- 決定者: 承認待ち（`Accepted` にする時点で承認者名に書き換える）
-- 関連: [ADR-0031](0031-toolchain-management.md)（**本 ADR がタスクランナーの項のみを置き換える。
-  mise / rustup / pnpm の決定は有効**）, [ADR-0032](0032-repository-structure.md),
-  [ADR-0003](0003-agent-driven-development.md)
+- 決定者: プロジェクトオーナー
+- 関連: [ADR-0031](0031-toolchain-management.md)（mise / rustup / pnpm の決定は有効のまま）,
+  [ADR-0032](0032-repository-structure.md), [ADR-0003](0003-agent-driven-development.md)
+
+> **注**: ADR-0031 にあった「タスクランナー（just / make 等）を入れない」の行は、
+> 本 ADR の採択に伴い **0031 の本文から削除された**（オーナー決定 2026-08-09）。
+> 「Accepted の本文は書き換えない」ルールの**今回限りの特例**であり、前例としない。
+> 部分 Supersede の注記を重ねると本文が読みづらくなるため、と判断された。
+> 削除された決定の全文は下の「背景と課題」に引用として残っている。
 
 ## 背景と課題
 
@@ -97,8 +102,8 @@ Taskfile 公式ドキュメントの明記:
 
 - `mise.toml` に `task = "3.52.0"` が加わる（パッチまで固定。ADR-0031 の方針どおり）
 - ルートに `Taskfile.yml` が加わる
-- [ADR-0031](0031-toolchain-management.md) のステータスを
-  「Accepted（タスクランナーの項のみ Superseded by ADR-0033）」に変更する
+- [ADR-0031](0031-toolchain-management.md) のタスクランナーの行を本文から削除した
+  （冒頭の注のとおり、今回限りの特例）
 - README の開発手順が `task --list` を起点にできる
 - CI は `task check` を呼ぶ形にできる（CI 自体は未整備のまま）
 - 取り消す場合のコスト: **低。** `Taskfile.yml` と mise の 1 行を消せば

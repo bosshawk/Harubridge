@@ -138,9 +138,6 @@ components = ["rustfmt", "clippy"]
   `tauri-specta` を `=` で固定する（[ADR-0018](0018-dependencies.md)）既存方針と揃える
 - **Rust は `stable` に留める。** パッチ版固定は全員に巨大なダウンロードを強制する
 - **`.nvmrc` を作らない。** 読み手が mise しかいないなら `mise.toml` に直接書けば済む
-- **タスクランナー（just / make 等）を入れない。** デファクトが存在せず
-  （Issue #7 の調査: GitButler=Makefile / Spacedrive=just / **Tauri 本体=無し**）、
-  `make` は Windows に無い。npm scripts と cargo の直叩きで足りる
 - **CI は [`jdx/mise-action`](https://github.com/jdx/mise-action) を使い、
   ローカルと同じファイルを同じ道具に読ませる**（CI 自体の整備は未着手）
 
