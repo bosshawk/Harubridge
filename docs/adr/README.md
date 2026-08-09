@@ -11,22 +11,26 @@
 - **一度 `Accepted` になった ADR の本文は書き換えない。**
   決定を変えるときは新しい ADR を起票し、旧 ADR のステータス行だけを
   `Superseded by ADR-NNNN` に更新する。
-- **`Superseded` になった ADR は本文冒頭に警告を付け、[`archive/`](archive/) へ移動する。**
-  このディレクトリの直下には有効な ADR（`Accepted` / `Proposed`）だけを置く。
-  archive の本文は調査記録の保管であり、実装の根拠にしてはならない。
+- **`Superseded` / `Deprecated` になった ADR は [`archive/`](archive/) へ移動する。**
+  このディレクトリの直下には現行の ADR（`Accepted` / `Proposed` / `Rejected`）だけを置く
+  （`Rejected` は「採用しない」という現行の決定なので残す）。移動の手順:
+  1. 本文冒頭に警告を付ける（読まない・実装の根拠にしない・現行はどれか）
+  2. `git mv` で `archive/` へ移動する
+  3. **リポジトリ内の相互リンクをすべて張り替え、リンク切れを残さない**
+     （移動したファイル内から外へのリンクも対象）
+  4. この README の一覧のリンクを更新する
 - 誤字修正や、決定内容に影響しない補足は可。
 
 ## ステータス
 
-| ステータス | 意味 |
-| --- | --- |
-| `Proposed` | 提案中。まだ実装の根拠にしてはいけない |
-| `Accepted` | 採用。実装はこれに従う |
-| `Superseded by ADR-NNNN` | 別の ADR に置き換えられた |
-| `Deprecated` | 前提が消滅し、置き換え先も無い |
-| `Rejected` | 検討したが採用しなかった（記録として残す） |
-| `Accepted（…のみ Superseded by …）` | 決定の一部だけが置き換えられた。残りは有効 |
-| `Superseded by ADR-NNNN` | 全体が別の ADR に統合・置換された。本文は履歴として残る |
+| ステータス | 意味 | 置き場所 |
+| --- | --- | --- |
+| `Proposed` | 提案中。まだ実装の根拠にしてはいけない | 直下 |
+| `Accepted` | 採用。実装はこれに従う | 直下 |
+| `Accepted（…のみ Superseded by …）` | 決定の一部だけが置き換えられた。残りは有効 | 直下 |
+| `Rejected` | 検討したが採用しなかった（「採用しない」という現行の決定） | 直下 |
+| `Superseded by ADR-NNNN` | 別の ADR に置き換えられた。本文は調査記録として残る | **`archive/`** |
+| `Deprecated` | 前提が消滅し、置き換え先も無い | **`archive/`** |
 
 ## ADR にする条件
 
