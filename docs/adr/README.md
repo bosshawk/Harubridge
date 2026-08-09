@@ -114,6 +114,6 @@
 | [0031](0031-toolchain-management.md) | 開発ツールチェインを mise に統一し、Rust の版は `rust-toolchain.toml` を正として mise に読ませる | Accepted | 2026-08-09 |
 | [0032](0032-repository-structure.md) | リポジトリ構成を確定する（0026 / 0027 / 0030 を統合） | Accepted | 2026-08-09 |
 | [0033](0033-task-runner.md) | 開発コマンドの入口として Taskfile を採用する | Accepted | 2026-08-09 |
-| [0034](0034-continuous-integration.md) | CI を GitHub Actions に置き、OS 非依存の検査は ubuntu、OS 依存のものだけ macOS / Windows で回す | **Proposed** | 2026-08-09 |
+| [0034](0034-continuous-integration.md) | CI を GitHub Actions に置き、検査は ubuntu に集約する。OS 別のジョブは Windows 1 つだけ持つ | **Proposed** | 2026-08-09 |
 
 > 新しい ADR を追加したら、この一覧にも 1 行足すこと。
