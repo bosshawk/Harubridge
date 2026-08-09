@@ -47,6 +47,11 @@ flowchart LR
 
 Rust と WebView の橋渡しは Tauri が担う。
 
+UI は複数の OS ウィンドウ（メインウィンドウと機能グループ単位の情報ウィンドウ。
+[external/game-screen.md](external/game-screen.md)）に分かれる。
+どのウィンドウも Rust コアから受け取った状態だけを描画し、
+ウィンドウどうしで状態を直接やり取りしない。
+
 ## 外部との接点
 
 ゲームとの唯一の接点は**注入スクリプトによる XHR の観測**である。
