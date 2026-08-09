@@ -1,35 +1,35 @@
 # ADR-0027: リポジトリのディレクトリ構成をコア／殻の 2 クレート＋機能別フロントエンドにする
 
-- ステータス: Superseded by [ADR-0032](0032-repository-structure.md)
+- ステータス: Superseded by [ADR-0032](../0032-repository-structure.md)
 
 > ⚠️ **この ADR を読まないこと。実装の根拠にしないこと。**
-> 現行のリポジトリ構成は **[ADR-0032](0032-repository-structure.md)** にある。
+> 現行のリポジトリ構成は **[ADR-0032](../0032-repository-structure.md)** にある。
 > 本文のツリー図は現行と異なる（注入スクリプトの位置と持ち方が変更された）。
 > 本文は統合前の調査記録（Tauri のワークスペース挙動・生成物の扱いの一次ソース）の
 > 保管のためだけに残している。
 - 日付: 2026-08-03
 - 決定者: 承認待ち（`Accepted` にする時点で承認者名に書き換える）
-- 関連: [ADR-0016](0016-tech-stack.md)（Tauri + Rust + React）,
-  [ADR-0018](0018-dependencies.md)（`tauri-specta`）, [ADR-0019](0019-linter.md),
-  [ADR-0021](0021-data-persistence.md)（`state/` `events/` `replays/`）,
-  [ADR-0022](0022-observed-data-privacy.md)（`.local/` / フィクスチャ生成器）,
+- 関連: [ADR-0016](../0016-tech-stack.md)（Tauri + Rust + React）,
+  [ADR-0018](../0018-dependencies.md)（`tauri-specta`）, [ADR-0019](../0019-linter.md),
+  [ADR-0021](../0021-data-persistence.md)（`state/` `events/` `replays/`）,
+  [ADR-0022](../0022-observed-data-privacy.md)（`.local/` / フィクスチャ生成器）,
   [ADR-0026](0026-injection-script-build.md)（注入スクリプトのビルド方式。**本 ADR は置き場所のみを決め、
   中身の作り方はそちらに従う**。両方とも Proposed であり、ADR-0026 が覆れば本 ADR の §5 も見直す）,
-  [docs/spec/architecture.md](../spec/architecture.md), [data/README.md](../../data/README.md)
-- **対象外**: `docs/` 以下の構成。[ADR-0015](0015-documentation-layout.md) で決着済みであり、本 ADR は触れない
+  [docs/spec/architecture.md](../../spec/architecture.md), [data/README.md](../../../data/README.md)
+- **対象外**: `docs/` 以下の構成。[ADR-0015](../0015-documentation-layout.md) で決着済みであり、本 ADR は触れない
 
 ## 背景と課題
 
 コードがまだ 1 行も無い。一方で、置き場所を決めていないと動けないものが既に 4 つある。
 
-1. **Rust をどう割るか。** [ADR-0016](0016-tech-stack.md) は Tauri を選び、
-   [architecture.md](../spec/architecture.md) は「注入スクリプト / Rust コア / UI」の 3 つに
+1. **Rust をどう割るか。** [ADR-0016](../0016-tech-stack.md) は Tauri を選び、
+   [architecture.md](../../spec/architecture.md) は「注入スクリプト / Rust コア / UI」の 3 つに
    責務を分けている。しかし「Rust コア」が Tauri アプリと同じクレートなのかは決まっていない
 2. **注入スクリプトをどこに置くか。** Rust からもフロントのビルドからも参照されうる
-3. **生成物をどこに置き、コミットするか。** [ADR-0018](0018-dependencies.md) の `tauri-specta` は
-   TypeScript を吐き、[architecture.md](../spec/architecture.md) は `build.rs` が
+3. **生成物をどこに置き、コミットするか。** [ADR-0018](../0018-dependencies.md) の `tauri-specta` は
+   TypeScript を吐き、[architecture.md](../../spec/architecture.md) は `build.rs` が
    `data/kancolle/*.json` を検証・埋め込みすると定めている
-4. **テストをどこに置くか。** [ADR-0022](0022-observed-data-privacy.md) は
+4. **テストをどこに置くか。** [ADR-0022](../0022-observed-data-privacy.md) は
    フィクスチャを `tests/fixtures/` に置き、CI で生成器の出力とのバイト一致を強制すると決めている。
    その `tests/` がどのクレートのものかが未定である
 
@@ -37,10 +37,10 @@
 
 | 場所 | 決定 |
 | --- | --- |
-| `docs/` | [ADR-0015](0015-documentation-layout.md) |
-| `data/`（トップレベル） | [data/README.md](../../data/README.md) / [ADR-0020](0020-kancolle-reference.md) |
-| `.local/`（git 管理外、debug のデータ置き場） | [ADR-0022](0022-observed-data-privacy.md) |
-| `state/` `events/` `replays/`（上記ルートの下） | [ADR-0021](0021-data-persistence.md) |
+| `docs/` | [ADR-0015](../0015-documentation-layout.md) |
+| `data/`（トップレベル） | [data/README.md](../../../data/README.md) / [ADR-0020](../0020-kancolle-reference.md) |
+| `.local/`（git 管理外、debug のデータ置き場） | [ADR-0022](../0022-observed-data-privacy.md) |
+| `state/` `events/` `replays/`（上記ルートの下） | [ADR-0021](../0021-data-persistence.md) |
 
 ### 調査した事実
 
@@ -144,7 +144,7 @@
   パスがディレクトリなら配下全体を走査する
 - ビルドスクリプトの**カレントディレクトリはそのパッケージのルート**である
 - 結合テストは `tests/`。データファイルは `tests/fixtures/` に置くのが通例
-  （[ADR-0022](0022-observed-data-privacy.md) が既に確認済み）
+  （[ADR-0022](../0022-observed-data-privacy.md) が既に確認済み）
 
 ## 決定
 
@@ -216,7 +216,7 @@ Harubridge/
 
 依存の向きは `src-tauri` → `harubridge-core` の一方向のみ。逆流は**コンパイルが通らない**。
 
-これにより、[architecture.md](../spec/architecture.md) の
+これにより、[architecture.md](../../spec/architecture.md) の
 「UI はゲームの通信を直接見ない」「非公開仕様への依存はパース層に閉じ込める」という規範のうち、
 **「コアが IPC・UI・Tauri の都合を知らない」部分が規約ではなく型検査になる。**
 
@@ -232,7 +232,7 @@ GitButler のように `crates/harubridge-tauri/` へ動かすことは可能で
 
 - `frontendDist = "../dist"`、`beforeDevCommand`、アイコン生成、`capabilities/` の探索、
   `create-tauri-app` の生成物、公式ドキュメントのすべての例が**そのまま当てはまる**
-- [ADR-0003](0003-agent-driven-development.md) の体制では、
+- [ADR-0003](../0003-agent-driven-development.md) の体制では、
   公開されている例と手元の構成がずれるたびに、エージェントが翻訳を誤る余地が生まれる
 - 上記 #2614（`target` 出力先の誤認）は**メンバーを glob で書いたときに顕在化**した。
   したがって `members` は `["src-tauri", "crates/harubridge-core"]` と**完全一致で列挙する**
@@ -255,10 +255,10 @@ GitButler のように `crates/harubridge-tauri/` へ動かすことは可能で
 
 **ディレクトリ名を `docs/spec/external/` のファイル名に一致させる。**
 
-- [CLAUDE.md](../../CLAUDE.md) §0 は「ドキュメントとの対応関係を通常以上に重視する」と定め、
+- [CLAUDE.md](../../../CLAUDE.md) §0 は「ドキュメントとの対応関係を通常以上に重視する」と定め、
   ユーザーに見える振る舞いは `docs/spec/external/<機能グループ>.md` に書くと決めている。
   **名前を一致させれば、仕様書と実装の対応が目視で確認でき、
-  [docs-audit](../../.claude/skills/docs-audit/SKILL.md) が機械的に突き合わせられる**
+  [docs-audit](../../../.claude/skills/docs-audit/SKILL.md) が機械的に突き合わせられる**
 - 種類別（`components/` `hooks/` `stores/`）にすると、
   1 つの外部仕様の変更が毎回 3〜4 ディレクトリに散る。対応関係は人の記憶にしか残らない
 
@@ -288,11 +288,11 @@ GitButler のように `crates/harubridge-tauri/` へ動かすことは可能で
   `src/` に置くと Vite のアプリツリーに入り、
   **アプリのコードを import しても「ビルドは通ってしまう」**。
   ADR-0026 の「import 文を書かない」という前提を破りやすくする
-- **この 1 ファイルだけが [C-02](../spec/constraints.md) を担保している。**
+- **この 1 ファイルだけが [C-02](../../spec/constraints.md) を担保している。**
   ADR-0026 の決め手は「人間がレビューするテキストと、ページで実行されるテキストが同一であること」だった。
   監査対象がトップレベルに 1 つあるほうが、`src-tauri/src/` の中に紛れるより見つけやすい
 - これは既に決まっている **`data/` をトップレベルに置いた理由と同型**である
-  （[data/README.md](../../data/README.md):「`docs/` でも `src-tauri/` でもない」）
+  （[data/README.md](../../../data/README.md):「`docs/` でも `src-tauri/` でもない」）
 
 **ADR-0026 の結論に依存する部分**は次の 1 点だけである。
 
@@ -316,7 +316,7 @@ GitButler のように `crates/harubridge-tauri/` へ動かすことは可能で
 | --- | --- | --- | --- |
 | `tauri-specta` の TypeScript 型 | `src-tauri`（debug 実行時） | `src/bindings.ts` | **する** |
 | `data/kancolle/*.json` の検証・埋め込み結果 | `crates/harubridge-core/build.rs` | `OUT_DIR`（`target/` 配下） | しない |
-| テストフィクスチャ | 生成器（形態は ADR-0022 で未確定） | `crates/harubridge-core/tests/fixtures/` | **する**（[ADR-0022](0022-observed-data-privacy.md) の決定） |
+| テストフィクスチャ | 生成器（形態は ADR-0022 で未確定） | `crates/harubridge-core/tests/fixtures/` | **する**（[ADR-0022](../0022-observed-data-privacy.md) の決定） |
 
 **`bindings.ts` をコミットする理由**は、`tauri-specta` の出力が
 **アプリの debug 実行時**に行われることにある（上記の調査事実）。
@@ -325,7 +325,7 @@ GitButler のように `crates/harubridge-tauri/` へ動かすことは可能で
 upstream 自身も生成物をコミットしている。
 
 代償は「生成物が差分に出る」ことである。これは
-**[ADR-0022](0022-observed-data-privacy.md) がフィクスチャに対して既に採った機構
+**[ADR-0022](../0022-observed-data-privacy.md) がフィクスチャに対して既に採った機構
 （生成器を再実行してバイト一致を CI で強制する）をそのまま適用して打ち消す。**
 同じ問題に同じ道具を使い、規律を 1 種類に保つ。
 
@@ -337,8 +337,8 @@ upstream 自身も生成物をコミットしている。
 | --- | --- | --- |
 | コアの単体テスト | ソースと同じファイルの `#[cfg(test)] mod tests` | Rust の慣習 |
 | コアの結合テスト | `crates/harubridge-core/tests/` | [Cargo Package Layout](https://doc.rust-lang.org/cargo/guide/project-layout.html) |
-| フィクスチャ | `crates/harubridge-core/tests/fixtures/` | [ADR-0022](0022-observed-data-privacy.md) |
-| 実測データを読む任意実行テスト | 同上（データは `.local/` から読む） | [ADR-0022](0022-observed-data-privacy.md)（CI では走らせない） |
+| フィクスチャ | `crates/harubridge-core/tests/fixtures/` | [ADR-0022](../0022-observed-data-privacy.md) |
+| 実測データを読む任意実行テスト | 同上（データは `.local/` から読む） | [ADR-0022](../0022-observed-data-privacy.md)（CI では走らせない） |
 | `src-tauri/` のテスト | 原則として置かない | 配線しか無いため |
 | フロントエンド | 対象ファイルの隣（`*.test.ts` / `*.test.tsx`） | 機能ディレクトリを自己完結させ、`features/<name>/` の削除で全部消えるようにする |
 
@@ -353,10 +353,10 @@ upstream 自身も生成物をコミットしている。
 
 - 概要: 上記のとおり。境界は「Tauri を知っているか」1 本
 - 利点:
-  - 層の逆流をコンパイラが止める。[ADR-0016](0016-tech-stack.md) の決め手
+  - 層の逆流をコンパイラが止める。[ADR-0016](../0016-tech-stack.md) の決め手
     （「人間の常時レビューが無い体制ではコンパイラが最後の防波堤」）と同じ論法が
     ディレクトリ構成にも効く
-  - パース層のテストが GUI 依存から切り離される（[ADR-0022](0022-observed-data-privacy.md) の CI が軽くなる）
+  - パース層のテストが GUI 依存から切り離される（[ADR-0022](../0022-observed-data-privacy.md) の CI が軽くなる）
   - 変更頻度が違うもの（ゲーム更新に追随する解釈 / ほぼ変わらない殻）が分かれる
   - `tauri dev` は依存クレートも監視するため、開発体験は落ちない（公式ドキュメントで確認済み）
 - 欠点:
@@ -371,7 +371,7 @@ upstream 自身も生成物をコミットしている。
   - 構成が最小。公式ドキュメントと完全に一致し、ワークスペース由来の問題が一切起きない
   - コードが 1 行も無い段階で境界を引かずに済む（後から切り出せる）
 - 却下理由: 「コアが Tauri を知らない」という
-  [architecture.md](../spec/architecture.md) の中心的な規範が、
+  [architecture.md](../../spec/architecture.md) の中心的な規範が、
   **module 境界では規約のままになり、違反してもビルドが通る**ため。
 
 #### 案 A3: 観測 / 解釈 / 永続化 / IPC を 4 クレートに分ける
@@ -385,7 +385,7 @@ upstream 自身も生成物をコミットしている。
 - 概要: `crates/harubridge-tauri/` に `tauri.conf.json` を同居させる。
   Tauri v2 で実際に動いている構成である（実例で確認済み）
 - 却下理由: Tauri の既定パス（`frontendDist = "../dist"` 等）と公開されている例の前提が
-  1 段ずれ、[ADR-0003](0003-agent-driven-development.md) の体制でその翻訳コストを払う理由が無いため。
+  1 段ずれ、[ADR-0003](../0003-agent-driven-development.md) の体制でその翻訳コストを払う理由が無いため。
 
 ### 論点 2: フロントエンドのディレクトリ規約
 
@@ -399,7 +399,7 @@ upstream 自身も生成物をコミットしている。
 #### 案 B2: 種類別（`components/` `hooks/` `stores/` …）
 
 - 却下理由: 外部仕様 1 本の変更が毎回 3〜4 ディレクトリに散り、
-  [CLAUDE.md](../../CLAUDE.md) §0 が求める「ドキュメントとの対応関係」が
+  [CLAUDE.md](../../../CLAUDE.md) §0 が求める「ドキュメントとの対応関係」が
   ディレクトリ構造から読み取れなくなるため。
 
 ### 論点 3: 注入スクリプトの置き場所
@@ -407,7 +407,7 @@ upstream 自身も生成物をコミットしている。
 #### 案 C1: トップレベルの `injected/`（採用）
 
 - 利点: Rust の埋め込みと `tsconfig` / ESLint の検査という**両側からの参照**に対して中立。
-  [C-02](../spec/constraints.md) を担保する唯一のファイルが最上位で目に入る。
+  [C-02](../../spec/constraints.md) を担保する唯一のファイルが最上位で目に入る。
   [ADR-0026](0026-injection-script-build.md) がどちらに転んでも位置が動かない
 - 欠点: トップレベルのディレクトリが 1 つ増える。
   ADR-0026 の結論の下ではファイル 1 枚だけであり、大げさに見える
@@ -424,7 +424,7 @@ upstream 自身も生成物をコミットしている。
 
 - 却下理由: 実行される world が違い、React も `bindings.ts` も使えないにもかかわらず、
   **アプリのコードを import してもビルドが通ってしまう**ため。
-  [architecture.md](../spec/architecture.md) の「注入スクリプトは判断を持たない」を守りにくくする。
+  [architecture.md](../../spec/architecture.md) の「注入スクリプトは判断を持たない」を守りにくくする。
 
 ### 論点 4: 生成物をコミットするか
 
@@ -432,7 +432,7 @@ upstream 自身も生成物をコミットしている。
 
 - 利点: クローン直後にフロントエンドの型検査・リント・ビルドが通る。
   レビュー時に IPC の型変更が差分として見える。upstream の運用と一致する。
-  検査の機構が [ADR-0022](0022-observed-data-privacy.md) と同じで、規律が 1 種類に収まる
+  検査の機構が [ADR-0022](../0022-observed-data-privacy.md) と同じで、規律が 1 種類に収まる
 - 欠点: 生成物が差分に混ざる。CI が未整備な間は「差分ゼロ」を強制できない
 
 #### 案 D2: `bindings.ts` を `.gitignore` し、ビルド前に生成する
@@ -460,21 +460,21 @@ upstream 自身も生成物をコミットしている。
 
 - 実装への影響:
   - ルートに `Cargo.toml`（ワークスペース）が生まれ、`Cargo.lock` と `target/` が
-    `src-tauri/` からルートへ移る。既存の [.gitignore](../../.gitignore) の `target/` は両方に効く
+    `src-tauri/` からルートへ移る。既存の [.gitignore](../../../.gitignore) の `target/` は両方に効く
   - `members` は **glob を使わず完全一致で列挙する**（#2614 の回避）
   - `build.rs` が 2 つになる。コア側は `cargo::rerun-if-changed=../../data/kancolle` を必ず出す
   - CI ジョブが 2 本増える: `bindings.ts` の再生成差分検査、フィクスチャの
-    バイト一致検査（後者は [ADR-0022](0022-observed-data-privacy.md) の既定）
+    バイト一致検査（後者は [ADR-0022](../0022-observed-data-privacy.md) の既定）
   - `cargo test -p harubridge-core` が WebView 無しで完結する
 - ドキュメントへの影響（**人間の承認が必要**）:
-  - [architecture.md](../spec/architecture.md) の 3 分割（注入スクリプト / Rust コア / UI）は
+  - [architecture.md](../../spec/architecture.md) の 3 分割（注入スクリプト / Rust コア / UI）は
     本 ADR と矛盾しない。**クレート分割は「Rust コア」の内側の話であり、
-    [ADR-0008](0008-code-as-source-of-truth.md) によりそれ自体は文書化しない**
+    [ADR-0008](../0008-code-as-source-of-truth.md) によりそれ自体は文書化しない**
   - ただし「**コアは `tauri` に依存しない**」は機能追加時に必ず従う構造上の制約であり、
     コードからは読み取りにくい（`Cargo.toml` を見ないと分からない）。
-    [architecture.md](../spec/architecture.md)「機能追加時の構造上の制約」に 1 行足すことを提案する
+    [architecture.md](../../spec/architecture.md)「機能追加時の構造上の制約」に 1 行足すことを提案する
   - `docs/guidelines/` は本 ADR では起こさない。
-    [ADR-0022](0022-observed-data-privacy.md) が予定しているテスト規約の中で参照すれば足りる
+    [ADR-0022](../0022-observed-data-privacy.md) が予定しているテスト規約の中で参照すれば足りる
 - 取り消す場合のコスト:
   - 2 クレートを 1 つに戻す: **低**（機械的な統合）
   - `src-tauri/` を移動する: **中**（`tauri.conf.json` の相対パスと CI の参照が動く）
@@ -490,11 +490,11 @@ upstream 自身も生成物をコミットしている。
 - ~~`TODO(未確定)`: `features/` 間の相互 import を機械的に禁じる手段。~~
   **→ 解消。** `eslint-plugin-import` の `import/no-restricted-paths` で
   zone を定義すれば強制できる（[ADR-0030](0030-no-named-architecture.md)）。
-  **プラグインの追加は [ADR-0018](0018-dependencies.md) 系列の承認事項として残る。**
+  **プラグインの追加は [ADR-0018](../0018-dependencies.md) 系列の承認事項として残る。**
   入れるまでは規約に留まり、違反しても検出されない
 - `TODO(未確定)`: フィクスチャ生成器の実装形態（`cargo test` 内か独立した bin か）。
-  [ADR-0022](0022-observed-data-privacy.md) の未解決事項のまま。置き場所だけが本 ADR で決まった
-- `TODO(未確定)`: CI の構成そのもの。[ADR-0022](0022-observed-data-privacy.md) が
+  [ADR-0022](../0022-observed-data-privacy.md) の未解決事項のまま。置き場所だけが本 ADR で決まった
+- `TODO(未確定)`: CI の構成そのもの。[ADR-0022](../0022-observed-data-privacy.md) が
   「CI 自体が未整備」と記録している。**本 ADR の生成物の扱いは CI の差分検査を前提にしている**ため、
   CI が無い間は `bindings.ts` の手編集を止める手段が無い
 - `TODO(未確定)`: `.taurignore` を置くか。`injected/` や `data/` の変更で
@@ -505,4 +505,4 @@ upstream 自身も生成物をコミットしている。
   さらに **1.2.0 で `cargo metadata` ベースに置き換わっている**。
   現行は `metadata.target_directory` を使うため出力先を誤認しない（2026-08-08 に tauri-cli 2.11.4 のソースで確認）
 - `TODO(未確定)`: 配布用のアイコンと `capabilities/` は Tauri 既定のままにしてある。
-  配布方法（[ADR-0018](0018-dependencies.md) の未解決事項）が決まるまで触らない
+  配布方法（[ADR-0018](../0018-dependencies.md) の未解決事項）が決まるまで触らない

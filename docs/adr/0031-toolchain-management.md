@@ -5,7 +5,7 @@
 - 決定者: プロジェクトオーナー
 - 関連: [ADR-0016](0016-tech-stack.md)（Rust + TypeScript）,
   [ADR-0018](0018-dependencies.md)（依存の選定方針）,
-  [ADR-0027](0027-repository-layout.md)（リポジトリ構成。ルートに 2 ファイル増える）,
+  [ADR-0027](archive/0027-repository-layout.md)（リポジトリ構成。ルートに 2 ファイル増える）,
   [ADR-0003](0003-agent-driven-development.md), [ADR-0005](0005-publish-as-oss.md),
   調査: [Issue #7](https://github.com/bosshawk/Harubridge/issues/7)（本 ADR の起票により閉じる）
 
@@ -253,7 +253,7 @@ mise の既定で無効な機構（idiomatic version file）に乗ることを�
 
 - 実装への影響:
   - リポジトリのルートに `mise.toml` と `rust-toolchain.toml` が増える。
-    [ADR-0027](0027-repository-layout.md) のツリー図はこの 2 ファイルを含まないが、
+    [ADR-0027](archive/0027-repository-layout.md) のツリー図はこの 2 ファイルを含まないが、
     同 ADR は `Proposed` であり本 ADR が差分を記録する（同 ADR の本文は変更しない）
   - リポジトリの `mise.toml` は初回に **`mise trust` が必要**（`mise` の既定の安全機構）
   - エージェントが叩くコマンドは変わらない —— `pnpm install` / `pnpm tauri dev` /
@@ -274,12 +274,12 @@ mise の既定で無効な機構（idiomatic version file）に乗ることを�
 ## 未解決事項
 
 - `TODO(未確定)`: CI の構成そのもの。`jdx/mise-action` を使う方針だけが決まっており、
-  ジョブの中身は未着手（[ADR-0027](0027-repository-layout.md) / [ADR-0022](0022-observed-data-privacy.md)
+  ジョブの中身は未着手（[ADR-0027](archive/0027-repository-layout.md) / [ADR-0022](0022-observed-data-privacy.md)
   も CI 未整備を未解決事項として記録している）
 - `TODO(未確定)`: `.gitattributes`（改行コード）。Windows 対応（[Issue #6](https://github.com/bosshawk/Harubridge/issues/6)）
   に着手する時点で判断する
 - `TODO(未確定)`: npm scripts に環境変数の指定や `rm -rf` を書くと Windows で壊れる。
-  クロスプラットフォームな記述に限る規約が要る（[docs/guidelines/](../guidelines/) の範囲）
+  クロスプラットフォームな記述に限る規約が要る（[docs/guidelines/](../guidelines) の範囲）
 - `TODO(未確定)`: `protoc` のような**自前で版管理しない道具**が増えたら `mise.toml` に足す
 - `TODO(要検証)`: mise の版を上げたときに idiomatic version file の挙動が変わらないこと。
   上記の実測は **mise 2026.8.3** で行った。**版を上げる際は `mise ls --current` の

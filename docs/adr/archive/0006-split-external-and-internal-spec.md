@@ -1,9 +1,9 @@
 # ADR-0006: 仕様を外部仕様・内部仕様・ガイドラインに分割する
 
-- ステータス: Superseded by [ADR-0015](0015-documentation-layout.md)（構成に関する 6 本を統合。本文は履歴として残す）
+- ステータス: Superseded by [ADR-0015](../0015-documentation-layout.md)（構成に関する 6 本を統合。本文は履歴として残す）
 - 日付: 2026-08-01
 - 決定者: プロジェクトオーナー
-- 関連: [ADR-0002](0002-documentation-structure.md)（本 ADR は 0002 を置き換えず、`spec` 層を細分化する）, [ADR-0003](0003-agent-driven-development.md)
+- 関連: [ADR-0002](0002-documentation-structure.md)（本 ADR は 0002 を置き換えず、`spec` 層を細分化する）, [ADR-0003](../0003-agent-driven-development.md)
 
 ## 背景と課題
 
@@ -74,7 +74,7 @@ docs/spec/
 
 ## 決め手
 
-エージェント駆動開発（[ADR-0003](0003-agent-driven-development.md)）では、
+エージェント駆動開発（[ADR-0003](../0003-agent-driven-development.md)）では、
 **「どこまで勝手に変えてよいか」を明示できることの価値が大きい**。
 案 A はそれをディレクトリ構造として表現でき、指示のたびに説明する必要がなくなる。
 

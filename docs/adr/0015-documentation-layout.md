@@ -3,9 +3,9 @@
 - ステータス: Accepted（`docs/kancolle/` の追加は [ADR-0020](0020-kancolle-reference.md) による）
 - 日付: 2026-08-02
 - 決定者: プロジェクトオーナー
-- 統合対象: [ADR-0002](0002-documentation-structure.md), [ADR-0006](0006-split-external-and-internal-spec.md),
-  [ADR-0007](0007-observability-based-spec-boundary.md), [ADR-0009](0009-notes-as-github-issues.md),
-  [ADR-0010](0010-top-level-doc-layout.md), [ADR-0012](0012-local-notes-directory.md)
+- 統合対象: [ADR-0002](archive/0002-documentation-structure.md), [ADR-0006](archive/0006-split-external-and-internal-spec.md),
+  [ADR-0007](archive/0007-observability-based-spec-boundary.md), [ADR-0009](archive/0009-notes-as-github-issues.md),
+  [ADR-0010](archive/0010-top-level-doc-layout.md), [ADR-0012](archive/0012-local-notes-directory.md)
 - 関連: [ADR-0008](0008-code-as-source-of-truth.md)（何を書かないかの原則。**引き続き有効**）
 
 ## 背景と課題

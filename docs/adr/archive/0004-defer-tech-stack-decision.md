@@ -1,9 +1,9 @@
 # ADR-0004: 技術構成の決定を要求定義のあとに延期する
 
-- ステータス: Superseded by [ADR-0016](0016-tech-stack.md)（技術構成の決定により保留を解除）
+- ステータス: Superseded by [ADR-0016](../0016-tech-stack.md)（技術構成の決定により保留を解除）
 - 日付: 2026-08-01
 - 決定者: プロジェクトオーナー
-- 関連: [docs/notes/2026-08-01-tech-stack-open-questions.md](../notes/2026-08-01-tech-stack-open-questions.md), [docs/spec/constraints.md](../spec/constraints.md)
+- 関連: [docs/notes/2026-08-01-tech-stack-open-questions.md](../../notes/2026-08-01-tech-stack-open-questions.md), [docs/spec/constraints.md](../../spec/constraints.md)
 
 ## 背景と課題
 
@@ -16,7 +16,7 @@
 ## 決定
 
 技術構成（言語 / フレームワーク / 実行形態 / 配布方法）の決定を、
-[`docs/spec/requirements.md`](../spec/requirements.md) の要求が
+[`docs/spec/requirements.md`](../../spec/requirements.md) の要求が
 オーナーによって承認されるまで**明示的に保留**する。
 
 保留期間中は以下を守る。
@@ -48,7 +48,7 @@
 
 ## 決め手
 
-このプロジェクトの技術選定は、**制約（[constraints.md](../spec/constraints.md)）と
+このプロジェクトの技術選定は、**制約（[constraints.md](../../spec/constraints.md)）と
 要求から導かれる従属変数**であり、独立に決められるものではないと判断した。
 
 ## 影響
@@ -60,5 +60,5 @@
 ## 未解決事項
 
 - 技術構成そのもの。論点は
-  [notes/2026-08-01-tech-stack-open-questions.md](../notes/2026-08-01-tech-stack-open-questions.md) に整理する。
+  [notes/2026-08-01-tech-stack-open-questions.md](../../notes/2026-08-01-tech-stack-open-questions.md) に整理する。
 - 要求承認の判定基準（どこまで書けたら「固まった」とするか）。

@@ -1,9 +1,9 @@
 # ADR-0009: その場の方針・検討メモを GitHub Issue に移す
 
-- ステータス: Superseded by [ADR-0015](0015-documentation-layout.md)（構成に関する 6 本を統合。本文は履歴として残す）
+- ステータス: Superseded by [ADR-0015](../0015-documentation-layout.md)（構成に関する 6 本を統合。本文は履歴として残す）
 - 日付: 2026-08-02
 - 決定者: プロジェクトオーナー
-- 関連: [ADR-0002](0002-documentation-structure.md)（本 ADR が notes 層に関する決定を置き換える）, [ADR-0005](0005-publish-as-oss.md), [ADR-0008](0008-code-as-source-of-truth.md)
+- 関連: [ADR-0002](0002-documentation-structure.md)（本 ADR が notes 層に関する決定を置き換える）, [ADR-0005](../0005-publish-as-oss.md), [ADR-0008](../0008-code-as-source-of-truth.md)
 
 ## 背景と課題
 
@@ -14,10 +14,10 @@
 
 - **捨てる前提の資料が git 履歴に永久に残る。** archive はゴミ箱として肥大化する。
 - 昇格・棚卸しが手作業であり、放置されたメモが「古い方針」として残る。
-  [ADR-0008](0008-code-as-source-of-truth.md) と同じ問題 —— 信用できない文書は無いより悪い。
+  [ADR-0008](../0008-code-as-source-of-truth.md) と同じ問題 —— 信用できない文書は無いより悪い。
 - メモは本来「議論して、決めて、閉じる」もので、ファイルにはその状態機械が無い。
 
-[ADR-0005](0005-publish-as-oss.md) で OSS 公開を決めたため、GitHub の Issue が使える。
+[ADR-0005](../0005-publish-as-oss.md) で OSS 公開を決めたため、GitHub の Issue が使える。
 Issue には open / closed という状態があり、議論のスレッドが付き、
 閉じれば一覧から自然に消えて履歴には残る。**捨てる資料の置き場所として正しい形をしている。**
 

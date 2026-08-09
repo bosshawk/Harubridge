@@ -1,9 +1,9 @@
 # ADR-0010: ドキュメントの最上位構成を目的別の 3 ディレクトリに整理する
 
-- ステータス: Superseded by [ADR-0015](0015-documentation-layout.md)（構成に関する 6 本を統合。本文は履歴として残す）
+- ステータス: Superseded by [ADR-0015](../0015-documentation-layout.md)（構成に関する 6 本を統合。本文は履歴として残す）
 - 日付: 2026-08-02
 - 決定者: プロジェクトオーナー
-- 関連: [ADR-0002](0002-documentation-structure.md), [ADR-0006](0006-split-external-and-internal-spec.md)（`guidelines/` の配置を変更する）, [ADR-0008](0008-code-as-source-of-truth.md)
+- 関連: [ADR-0002](0002-documentation-structure.md), [ADR-0006](0006-split-external-and-internal-spec.md)（`guidelines/` の配置を変更する）, [ADR-0008](../0008-code-as-source-of-truth.md)
 
 ## 背景と課題
 
@@ -41,8 +41,8 @@ docs/
 
 1. **`docs/spec/guidelines/` を `docs/guidelines/` へ移す。**
    仕様と並列にし、`guides` との名前衝突を解消する。
-2. **`docs/guides/` を解体し、[CONTRIBUTING.md](../../CONTRIBUTING.md) にする。**
-   OSS として公開する（[ADR-0005](0005-publish-as-oss.md)）以上、
+2. **`docs/guides/` を解体し、[CONTRIBUTING.md](../../../CONTRIBUTING.md) にする。**
+   OSS として公開する（[ADR-0005](../0005-publish-as-oss.md)）以上、
    進め方の置き場所は GitHub が Issue / PR 画面で案内する慣行の場所に従う。
    独自のディレクトリを発明しない。
 3. **`architecture.md` は `docs/spec/` に残す。**

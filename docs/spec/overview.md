@@ -51,4 +51,4 @@
 - `TBD`: 要求全般。オーナーとの相談で作成する。
 - `TODO(未確定)`: 正式なアプリケーション名。`Harubridge` はコードネーム。
 - `TODO(未確定)`: 対応 OS。**技術構成の検討時に同時に決定する**
-  （[ADR-0004](../adr/0004-defer-tech-stack-decision.md)）。単独では決めない。
+  （[ADR-0004](../adr/archive/0004-defer-tech-stack-decision.md)）。単独では決めない。

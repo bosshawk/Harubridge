@@ -3,7 +3,7 @@
 - ステータス: Accepted
 - 日付: 2026-08-01
 - 決定者: プロジェクトオーナー
-- 関連: [ADR-0003](0003-agent-driven-development.md), [ADR-0004](0004-defer-tech-stack-decision.md), [docs/spec/constraints.md](../spec/constraints.md)
+- 関連: [ADR-0003](0003-agent-driven-development.md), [ADR-0004](archive/0004-defer-tech-stack-decision.md), [docs/spec/constraints.md](../spec/constraints.md)
 
 ## 背景と課題
 

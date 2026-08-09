@@ -1,6 +1,6 @@
 # ADR-0007: 外部仕様と内部仕様の切り分けを可観測性で判断する
 
-- ステータス: Superseded by [ADR-0015](0015-documentation-layout.md)（構成に関する 6 本を統合。本文は履歴として残す）
+- ステータス: Superseded by [ADR-0015](../0015-documentation-layout.md)（構成に関する 6 本を統合。本文は履歴として残す）
 - 日付: 2026-08-02
 - 決定者: プロジェクトオーナー
 - 関連: [ADR-0006](0006-split-external-and-internal-spec.md)（本 ADR は 0006 を置き換えず、判断基準を差し替える）
@@ -38,7 +38,7 @@ external / internal / guidelines に分割し、承認境界をディレクト�
 
 あわせて以下を定める。
 
-1. **判断基準の記述は [docs/spec/README.md](../spec/README.md) の 1 箇所のみを正とする。**
+1. **判断基準の記述は [docs/spec/README.md](../../spec/README.md) の 1 箇所のみを正とする。**
    旧基準は 4 箇所に複製されており、「同じ事実を 2 箇所に書かない」という
    自らのルールに反していた。他の文書はリンクで参照する。
 2. **`internal/` のファイルは必須としない。** 永続化する / 観測データに依存する /
@@ -76,7 +76,7 @@ external / internal / guidelines に分割し、承認境界をディレクト�
 ## 影響
 
 - ドキュメントへの影響:
-  - [docs/spec/README.md](../spec/README.md) に新基準と境界例の注記を置く（唯一の正）。
+  - [docs/spec/README.md](../../spec/README.md) に新基準と境界例の注記を置く（唯一の正）。
   - `docs/README.md` / `docs/spec/external/README.md` / `.claude/skills/write-spec/SKILL.md`
     の複製をリンクに置き換える。
   - 外部仕様・内部仕様のテンプレートを `E-nn` 参照方式に改める。
@@ -87,5 +87,5 @@ external / internal / guidelines に分割し、承認境界をディレクト�
 ## 未解決事項
 
 - `TODO(未確定)`: 「ユーザーが違いに気づくか」の判定が割れる事例が出た場合、
-  境界例として [docs/spec/README.md](../spec/README.md) に追記していく。
+  境界例として [docs/spec/README.md](../../spec/README.md) に追記していく。
   追記が増えすぎたら基準そのものを再検討する。

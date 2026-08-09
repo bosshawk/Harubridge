@@ -13,7 +13,7 @@
 **UI は薄い。** [ADR-0024](../adr/0024-state-sync-granularity.md) により、真実の情報源は Rust コアにある。
 名前解決も計算も縮退の判定も Rust 側で済んでから届くため、
 **TypeScript 側に残るのは「IPC の配線」「純関数の書式化」「描画」の 3 種類だけ**である
-（[ADR-0030](../adr/0030-no-named-architecture.md) 案 C の却下理由）。
+（[ADR-0030](../adr/archive/0030-no-named-architecture.md) 案 C の却下理由）。
 このガイドラインは、**その薄さを保つために書いてはいけないもの**を主に定める。
 
 判断に迷ったら次の 2 つを拠り所にする。
@@ -27,8 +27,8 @@
    （[ADR-0016](../adr/0016-tech-stack.md) / [ADR-0019](../adr/0019-linter.md) の決め手）。
 
 **ディレクトリ構成と層の話はここに書かない。**
-[ADR-0030](../adr/0030-no-named-architecture.md)（`src/` の内側）と
-[ADR-0027](../adr/0027-repository-layout.md)（リポジトリ全体）が正である。
+[ADR-0030](../adr/archive/0030-no-named-architecture.md)（`src/` の内側）と
+[ADR-0027](../adr/archive/0027-repository-layout.md)（リポジトリ全体）が正である。
 
 ## ルール
 
@@ -80,7 +80,7 @@ UI 側で型を書き直すとその利点が消える。`as` はさらに、ズ
 | ID | 強度 | ルール |
 | --- | --- | --- |
 | G-TS-10 | MUST | **艦これのゲーム概念に自分で英語名を付けない。** [glossary.md](../spec/glossary.md) を引く。無い語は glossary に追加してから使う（承認が要る） |
-| G-TS-11 | MUST | **`api_*` 由来の語を `src/` に持ち込まない**（glossary 原則 2 / [ADR-0030](../adr/0030-no-named-architecture.md)）。UI に届く時点で艦これの語彙は消えている |
+| G-TS-11 | MUST | **`api_*` 由来の語を `src/` に持ち込まない**（glossary 原則 2 / [ADR-0030](../adr/archive/0030-no-named-architecture.md)）。UI に届く時点で艦これの語彙は消えている |
 | G-TS-12 | MUST | 表記は glossary 原則 3・4・5 に従う（型・コンポーネントは `PascalCase`、値・関数は `camelCase`、略語は `Hp` / `Id` / `Lbas`） |
 | G-TS-13 | MUST | コンポーネントは `PascalCase`。フックは `use` で始まる `camelCase`（`eslint-plugin-react-hooks` がこの規則で対象を判定する） |
 | G-TS-14 | MUST | イベントハンドラの実体は `handleXxx`、props として渡す口は `onXxx`（React 公式 "Responding to Events" の慣習） |
@@ -179,7 +179,7 @@ function ExpeditionPanel() {
 
 | ID | 強度 | ルール |
 | --- | --- | --- |
-| G-TS-30 | MUST | **`invoke` / `listen` を `ipc/` の外に書かない**（[ADR-0030](../adr/0030-no-named-architecture.md)）。コンポーネントもフックも直接呼ばない |
+| G-TS-30 | MUST | **`invoke` / `listen` を `ipc/` の外に書かない**（[ADR-0030](../adr/archive/0030-no-named-architecture.md)）。コンポーネントもフックも直接呼ばない |
 | G-TS-31 | MUST | **受け取ったペイロードで丸ごと置き換える。マージ・パッチ・差分適用を書かない。** 全量が来る |
 | G-TS-32 | MUST | **Rust 由来のスライスに、置き換え以外の更新関数を作らない。** 「UI から 1 隻だけ直す」という口を生やさない |
 | G-TS-33 | MUST | 残り時間・絞り込み結果・並べ替え結果をストアに持たない。描画時に導出する |
@@ -225,7 +225,7 @@ NFR-003（未知の構造でも停止せず縮退する）の UI 側の担保。
 | ID | 強度 | ルール |
 | --- | --- | --- |
 | G-TS-40 | MUST | **Error Boundary はパネル単位で置く。** アプリ全体を 1 枚で包んで済ませない |
-| G-TS-41 | MUST | パネルの外枠（最終更新時刻の表示・E-01 の案内・エラー境界）は **`shared/` の共通部品を使う。** パネルごとに書き直さない（[ADR-0030](../adr/0030-no-named-architecture.md)） |
+| G-TS-41 | MUST | パネルの外枠（最終更新時刻の表示・E-01 の案内・エラー境界）は **`shared/` の共通部品を使う。** パネルごとに書き直さない（[ADR-0030](../adr/archive/0030-no-named-architecture.md)） |
 | G-TS-42 | MUST | 落ちたパネルには「表示できない」と**最後に観測できた時刻**を出す（E-02）。白画面にしない |
 | G-TS-43 | MUST | 項目 1 つが欠けただけで `throw` しない。`—` を表示して行は出す（E-04） |
 | G-TS-44 | MUST | 並べ替えで `—` の行を末尾に置く。`undefined` を数値として比較しない（E-04） |
@@ -322,7 +322,7 @@ console.log("api response", rawResponse);   // ❌ 生のレスポンス
 ### 注入スクリプト
 
 `src/` の他のコードとは規約が違う。**このファイルだけ生 JS である**
-（[ADR-0026](../adr/0026-injection-script-build.md)）。
+（[ADR-0026](../adr/archive/0026-injection-script-build.md)）。
 
 | ID | 強度 | ルール |
 | --- | --- | --- |
@@ -426,7 +426,7 @@ export function remaining(completesAt: number) {
 | G-TS-90 | MUST | **推奨セットで検出できるものを、このガイドラインに書き写さない。** ルールの重複は必ず片方が腐る |
 | G-TS-91 | MUST | `typescript-eslint` の**型情報を要求する推奨セット**（`recommended-type-checked` 以上）を土台にする。[ADR-0019](../adr/0019-linter.md) はこの検出力のために `biome` を捨てた |
 | G-TS-92 | MUST | `eslint-plugin-react-hooks` の推奨セットを入れる（Rules of Hooks の機械検出） |
-| G-TS-93 | MUST | **`import/no-restricted-paths` の zone 定義を消さない・緩めない。** これが [ADR-0030](../adr/0030-no-named-architecture.md) の 3 本目の境界（`shared → features → app` の一方向）を守る唯一の手段である |
+| G-TS-93 | MUST | **`import/no-restricted-paths` の zone 定義を消さない・緩めない。** これが [ADR-0030](../adr/archive/0030-no-named-architecture.md) の 3 本目の境界（`shared → features → app` の一方向）を守る唯一の手段である |
 | G-TS-94 | MUST | `eslint-disable` は**行単位**（`eslint-disable-next-line`）・**ルール名指定**・**理由コメント**の 3 点をそろえる。ファイル先頭での一括無効化をしない |
 | G-TS-95 | MUST | **`import/no-restricted-paths` と型安全性に関わるルール（`no-explicit-any`、`no-floating-promises`、`no-unsafe-*`）を `eslint-disable` しない。** ここを黙らせるくらいなら設計を変える |
 | G-TS-96 | MUST | Prettier の設定を増やさない。既定のまま使い、整形について議論しない |
@@ -519,7 +519,7 @@ function ExpeditionRow({ row }: { row: ExpeditionRow }) {
   **依存を 1 つ増やす判断であり、ADR-0018 系列の追記が要る**
 - `TODO(未確定)`: **`eslint-plugin-jsx-a11y` の採否**（G-TS-54）。同上。
   加えて `eslint-plugin-import`（`import/no-restricted-paths`）は
-  [ADR-0030](../adr/0030-no-named-architecture.md) の「影響」で必要と明記されているが、
+  [ADR-0030](../adr/archive/0030-no-named-architecture.md) の「影響」で必要と明記されているが、
   こちらも ADR-0018 の一覧には未記載である
 - `TODO(要検証)`: `typescript-eslint` の推奨セットを
   `recommended-type-checked` に留めるか `strict-type-checked` まで上げるか。
@@ -528,7 +528,7 @@ function ExpeditionRow({ row }: { row: ExpeditionRow }) {
 - `TODO(未確定)`: ファイル名の表記（G-TS-15）。
   `PascalCase.tsx` / `camelCase.ts` の併用ではなく全体を `kebab-case` に寄せる流儀もある
   （bulletproof-react）。**React 公式に規範が無い**ため
-  （[ADR-0030](../adr/0030-no-named-architecture.md) 根拠表）、どちらでも通る。実装着手時に 1 つ選ぶ
+  （[ADR-0030](../adr/archive/0030-no-named-architecture.md) 根拠表）、どちらでも通る。実装着手時に 1 つ選ぶ
 - `TODO(未確定)`: UI コンポーネントライブラリ未選定
   （[ADR-0018](../adr/0018-dependencies.md) の未解決事項）。
   選定後、G-TS-52 / 53（意味のある要素・アクセシブルな名前）をどこまでライブラリに任せるかを見直す

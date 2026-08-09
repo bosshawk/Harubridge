@@ -1,32 +1,32 @@
 # ADR-0026: 注入スクリプトは生 JS 1 ファイルのまま持ち、型検査だけを TypeScript に任せる
 
-- ステータス: Superseded by [ADR-0032](0032-repository-structure.md)
+- ステータス: Superseded by [ADR-0032](../0032-repository-structure.md)
 
 > ⚠️ **この ADR を読まないこと。実装の根拠にしないこと。**
-> 本文の決定（生 JS 1 枚）は **[ADR-0032](0032-repository-structure.md) §4 で覆された**
+> 本文の決定（生 JS 1 枚）は **[ADR-0032](../0032-repository-structure.md) §4 で覆された**
 > （現行: TypeScript + `tsc` の型除去のみ）。
 > 本文は統合前の調査記録（事実 1〜15）の保管のためだけに残している。
 - 日付: 2026-08-03
 - 決定者: 承認待ち（`Accepted` にする時点で承認者名に書き換える）
-- 関連: [ADR-0016](0016-tech-stack.md)（観測方式と「型で守る」方針）,
-  [ADR-0018](0018-dependencies.md)（`tauri-specta` による型の受け渡し）,
-  [ADR-0019](0019-linter.md)（ESLint + Prettier / 型情報つきリント）,
-  [architecture.md](../spec/architecture.md), [C-02 / C-04](../spec/constraints.md)
+- 関連: [ADR-0016](../0016-tech-stack.md)（観測方式と「型で守る」方針）,
+  [ADR-0018](../0018-dependencies.md)（`tauri-specta` による型の受け渡し）,
+  [ADR-0019](../0019-linter.md)（ESLint + Prettier / 型情報つきリント）,
+  [architecture.md](../../spec/architecture.md), [C-02 / C-04](../../spec/constraints.md)
 
 ## 背景と課題
 
-[ADR-0016](0016-tech-stack.md) の観測方式は**ページ内での XHR フック**である。
-[architecture.md](../spec/architecture.md) はこのスクリプトに次の役割を与えている。
+[ADR-0016](../0016-tech-stack.md) の観測方式は**ページ内での XHR フック**である。
+[architecture.md](../../spec/architecture.md) はこのスクリプトに次の役割を与えている。
 
 - ゲームのフレーム内で XHR を観測し、Rust へ渡す。**ページ内でのみ動き、判断を持たない**
 - **絞り込みは注入スクリプトの中で行う。`/kcsapi/` 以外は Rust コアへ渡さない**
   （実測 2026-08-02: `/kcsapi/` 18 件に対しそれ以外が 216 件。**境界はページ内に置く**）
-- `XMLHttpRequest` を**サブクラス化し、`loadend` を購読するだけ**とする（[C-02](../spec/constraints.md)）
+- `XMLHttpRequest` を**サブクラス化し、`loadend` を購読するだけ**とする（[C-02](../../spec/constraints.md)）
 
 同等のことを poi は**生 JS 1 ファイル**で行っている。
-一方 [ADR-0016](0016-tech-stack.md) は「型の強い言語のほうがメンテナンス性が高い」
+一方 [ADR-0016](../0016-tech-stack.md) は「型の強い言語のほうがメンテナンス性が高い」
 「人間による常時レビューが無い体制では、コンパイラが最後の防波堤になる」を決め手にしており、
-[ADR-0019](0019-linter.md) はその一貫性を理由にリンタを選び直している。
+[ADR-0019](../0019-linter.md) はその一貫性を理由にリンタを選び直している。
 
 **この 100 行を TypeScript でビルドするのか、生 JS のまま持つのかを決める必要がある。**
 「小さいから生 JS でよい」で済ませると、上記 2 本の決定と正面から食い違う。
@@ -73,7 +73,7 @@ UI（メインフレーム）と注入スクリプトでは **IPC の経路が�
 
 - ファイル先頭に `// @ts-check` を置き、`tsconfig` の `allowJs` / `checkJs` の対象に含める。
   **DOM の型（`lib: ["DOM"]`）を当てて TypeScript コンパイラの検査を通す**
-- [ADR-0019](0019-linter.md) の ESLint（型情報つき）の対象に含める
+- [ADR-0019](../0019-linter.md) の ESLint（型情報つき）の対象に含める
 - Rust とのメッセージ境界の型は、`tauri-specta` の生成物から
   **JSDoc の `@import` / `import()` 型としてのみ参照する**（実行時の依存はゼロ）
 - **import 文を書かない。npm パッケージに依存しない。IIFE として自己完結させる**
@@ -86,7 +86,7 @@ UI（メインフレーム）と注入スクリプトでは **IPC の経路が�
   型検査とリントは TypeScript / ESLint に任せ、**トランスパイルもバンドルもしない**
 - 利点:
   - **リポジトリのテキストと、ページに注入されるテキストが同一である。**
-    [C-02](../spec/constraints.md)（通信は読み取り専用）を人間が目視で確認する対象と、
+    [C-02](../../spec/constraints.md)（通信は読み取り専用）を人間が目視で確認する対象と、
     実際にゲームのページで走るものが一致する
   - ヘルパ関数も polyfill も混入しない（事実 12 の懸念が構造的に発生しない）。
     組み込みのサブクラス化が downlevel で壊れる経路も無い（事実 11）
@@ -130,7 +130,7 @@ UI（メインフレーム）と注入スクリプトでは **IPC の経路が�
 ### 案 D: 型検査もしない素の生 JS（poi と同じ形）
 
 - 概要: poi の `xhr-hack.js` と同じく、型に関する仕組みを一切入れない
-- 却下理由: [ADR-0016](0016-tech-stack.md) と [ADR-0019](0019-linter.md) が
+- 却下理由: [ADR-0016](../0016-tech-stack.md) と [ADR-0019](../0019-linter.md) が
   「コンパイラとリンタが最後の防波堤」を根拠に選定を行っており、**この 1 ファイルだけ
   例外にする理由が無い**（`@ts-check` の追加コストは 1 行である）。
 
@@ -139,8 +139,8 @@ UI（メインフレーム）と注入スクリプトでは **IPC の経路が�
 **「人間がレビューするテキストと、ゲームのページで実行されるテキストが同一であること」を取り、
 `.ts` という拡張子とモジュール分割の自由を捨てた。**
 
-[C-02](../spec/constraints.md) を担保しているのはこの 100 行だけであり、
-そこが生成物になると、[ADR-0003](0003-agent-driven-development.md) の体制で
+[C-02](../../spec/constraints.md) を担保しているのはこの 100 行だけであり、
+そこが生成物になると、[ADR-0003](../0003-agent-driven-development.md) の体制で
 人間が確認できるものが「入力」だけになる。
 
 ## 影響
@@ -148,10 +148,10 @@ UI（メインフレーム）と注入スクリプトでは **IPC の経路が�
 - 実装への影響:
   - 注入スクリプトは **1 ファイル・import なし・npm 依存なし・IIFE** で書く
   - `tsconfig` に `allowJs` / `checkJs` と `lib: ["DOM", ...]` の設定が要る。
-    ESLint（[ADR-0019](0019-linter.md)）の対象にもこのファイルを含める
+    ESLint（[ADR-0019](../0019-linter.md)）の対象にもこのファイルを含める
   - `tauri-specta` の生成物は **UI 側だけが値として使う。**
     注入スクリプトからは JSDoc の型としてのみ参照する
-- ドキュメントへの影響: [architecture.md](../spec/architecture.md) の構造は変わらない
+- ドキュメントへの影響: [architecture.md](../../spec/architecture.md) の構造は変わらない
   （境界の位置も責務も同じ）ため、更新は不要
 - 取り消す場合のコスト: **低。** 100 行を `.ts` に移してビルドエントリを 1 つ足すだけで案 C に移れる。
   逆方向も同じ

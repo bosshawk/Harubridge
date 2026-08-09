@@ -3,7 +3,7 @@
 - ステータス: Accepted
 - 日付: 2026-08-01
 - 決定者: プロジェクトオーナー
-- 関連: [ADR-0002](0002-documentation-structure.md), [ADR-0003](0003-agent-driven-development.md)
+- 関連: [ADR-0002](archive/0002-documentation-structure.md), [ADR-0003](0003-agent-driven-development.md)
 
 ## 背景と課題
 

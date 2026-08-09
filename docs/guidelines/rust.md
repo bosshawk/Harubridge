@@ -10,14 +10,14 @@
   [0018](../adr/0018-dependencies.md)（`thiserror` と `anyhow`）/
   [0022](../adr/0022-observed-data-privacy.md)（観測データとフィクスチャ）/
   [0025](../adr/0025-clock-handling.md)（時刻）/
-  [0027](../adr/0027-repository-layout.md)・[0030](../adr/0030-no-named-architecture.md)（**構造。本文書は触れない**）
+  [0027](../adr/archive/0027-repository-layout.md)・[0030](../adr/archive/0030-no-named-architecture.md)（**構造。本文書は触れない**）
 - ステータス: ドラフト（承認待ち）
 
 ## 原則
 
 **このガイドラインは「Rust をどう書くか」だけを扱う。**
-どこに置くかは [ADR-0030](../adr/0030-no-named-architecture.md) と
-[ADR-0027](../adr/0027-repository-layout.md)、何と名付けるかは
+どこに置くかは [ADR-0030](../adr/archive/0030-no-named-architecture.md) と
+[ADR-0027](../adr/archive/0027-repository-layout.md)、何と名付けるかは
 [glossary.md](../spec/glossary.md) が正である。ここでは繰り返さない。
 
 判断の拠り所は 2 つ。
@@ -50,8 +50,8 @@ ID は `G-RS-<連番>`。連番は主題ごとに桁を分けてある（命名 
 | G-RS-02 | MUST | 略語は 1 つの単語として扱う（`Hp` / `Id` / `Api` / `Los`）。大文字を連ねない（[glossary.md 原則 4](../spec/glossary.md#原則-4-略語は-1-つの単語として扱う)） |
 | G-RS-03 | MUST | 艦これのゲーム概念に付ける英語識別子は [glossary.md](../spec/glossary.md) を正とする。**ここで訳語を決めない。** 用語集に無い語が必要になったら、**用語集に追加してから使う**（`docs/spec/` は人間の承認が要る階層） |
 | G-RS-04 | MUST | 型名は単数、集合を持つ変数は複数形、辞書は `<値>_by_<鍵>`（[glossary.md](../spec/glossary.md) の原則 5） |
-| G-RS-05 | MUST | 艦これの API の語（`api_*` / `deck` / `slotitem` / `cond`）を受信モジュールの外へ出さない（[glossary.md 原則 2](../spec/glossary.md#原則-2-艦これ-api-の語を識別子に持ち込まない)）。これは [ADR-0030](../adr/0030-no-named-architecture.md) により**入れ子の private モジュールでコンパイラが強制する** |
-| G-RS-06 | SHOULD | 型の変換は `From` / `TryFrom` の実装として書く。専用の `convert_*` 関数を作らない（[ADR-0030](../adr/0030-no-named-architecture.md)。「腐敗防止層の実体は `From` / `TryFrom`」） |
+| G-RS-05 | MUST | 艦これの API の語（`api_*` / `deck` / `slotitem` / `cond`）を受信モジュールの外へ出さない（[glossary.md 原則 2](../spec/glossary.md#原則-2-艦これ-api-の語を識別子に持ち込まない)）。これは [ADR-0030](../adr/archive/0030-no-named-architecture.md) により**入れ子の private モジュールでコンパイラが強制する** |
+| G-RS-06 | SHOULD | 型の変換は `From` / `TryFrom` の実装として書く。専用の `convert_*` 関数を作らない（[ADR-0030](../adr/archive/0030-no-named-architecture.md)。「腐敗防止層の実体は `From` / `TryFrom`」） |
 
 ### エラー処理
 
@@ -68,7 +68,7 @@ ID は `G-RS-<連番>`。連番は主題ごとに桁を分けてある（命名 
 
 **この節がこのガイドラインの中心である。**
 「ワイヤ型」とは、艦これの JSON を `serde` で直接受ける型を指す
-（[ADR-0030](../adr/0030-no-named-architecture.md) の「外部モデル」。受信モジュール内の private）。
+（[ADR-0030](../adr/archive/0030-no-named-architecture.md) の「外部モデル」。受信モジュール内の private）。
 
 | ID | 強度 | ルール |
 | --- | --- | --- |
@@ -104,17 +104,17 @@ ID は `G-RS-<連番>`。連番は主題ごとに桁を分けてある（命名 
 | ID | 強度 | ルール |
 | --- | --- | --- |
 | G-RS-50 | MUST NOT | 実測した `/kcsapi/` のレスポンスをテストコード・フィクスチャ・スナップショットに入れない。**一度コミットすれば履歴から消せない**（[C-07](../spec/constraints.md)）。フィクスチャは生成器の出力のみ（[ADR-0022](../adr/0022-observed-data-privacy.md)） |
-| G-RS-51 | MUST | ワイヤ型と変換のテストは、**同じモジュールの中の `#[cfg(test)] mod tests`** に書く。[ADR-0030](../adr/0030-no-named-architecture.md) によりこれらは private な入れ子モジュールであり、**`tests/` からは到達できない**（`tests/` は外部クレートとして public API しか見えない）。`tests/` に置くのは、クレートの公開 API を通した結合テストだけ |
+| G-RS-51 | MUST | ワイヤ型と変換のテストは、**同じモジュールの中の `#[cfg(test)] mod tests`** に書く。[ADR-0030](../adr/archive/0030-no-named-architecture.md) によりこれらは private な入れ子モジュールであり、**`tests/` からは到達できない**（`tests/` は外部クレートとして public API しか見えない）。`tests/` に置くのは、クレートの公開 API を通した結合テストだけ |
 | G-RS-52 | MUST | 縮退のテストは最低 3 種類を持つ。**(a) フィールドが消えた / (b) 型が変わった（数値のはずが文字列・`null`）/ (c) 未知のキーが増えた。** (c) は `extra` に入ることを検証する |
 | G-RS-53 | SHOULD | 実測データを読むテストは `#[ignore]` を付け、git 管理外のディレクトリ（`.local/`）を読む。CI では走らない（[ADR-0022](../adr/0022-observed-data-privacy.md) 案 B4） |
-| G-RS-54 | MUST | テストで現在時刻を暗黙に読まない。時刻は引数で渡す（[ADR-0025](../adr/0025-clock-handling.md)）。永続化のテストは実際のアプリデータ領域ではなく一時ディレクトリを使う（[ADR-0030](../adr/0030-no-named-architecture.md) 案 D） |
+| G-RS-54 | MUST | テストで現在時刻を暗黙に読まない。時刻は引数で渡す（[ADR-0025](../adr/0025-clock-handling.md)）。永続化のテストは実際のアプリデータ領域ではなく一時ディレクトリを使う（[ADR-0030](../adr/archive/0030-no-named-architecture.md) 案 D） |
 
 ### `clippy` と静的解析
 
 | ID | 強度 | ルール |
 | --- | --- | --- |
 | G-RS-60 | MUST | `cargo fmt --check` と `cargo clippy --all-targets -- -D warnings` が通ること（[ADR-0018](../adr/0018-dependencies.md)。警告をエラー扱い） |
-| G-RS-61 | MUST | 「この関数を使わない」という規律は、文章ではなく `clippy.toml` の `disallowed-methods` / `disallowed-types` に書く。**書ける規律を文章に留めない**（[ADR-0030](../adr/0030-no-named-architecture.md)。`clippy.toml` は `CARGO_MANIFEST_DIR` から親へ遡って探索されるため、クレートごとに置ける） |
+| G-RS-61 | MUST | 「この関数を使わない」という規律は、文章ではなく `clippy.toml` の `disallowed-methods` / `disallowed-types` に書く。**書ける規律を文章に留めない**（[ADR-0030](../adr/archive/0030-no-named-architecture.md)。`clippy.toml` は `CARGO_MANIFEST_DIR` から親へ遡って探索されるため、クレートごとに置ける） |
 | G-RS-62 | MUST | `#[allow(...)]` は**最小のスコープ**に付け、**必ず理由をコメントで添える。** クレート全体（`#![allow(...)]`）やファイル先頭に付けない |
 
 ### コメントとドキュメントコメント
@@ -128,7 +128,7 @@ ID は `G-RS-<連番>`。連番は主題ごとに桁を分けてある（命名 
 | G-RS-71 | MUST | **計算式には出典コメントを必ず書く**（[NFR-009](../spec/requirements.md)）。参照した OSS 名・ファイル・URL・参照日、または `docs/kancolle/formulas/` への参照。出典が無い式には `TODO(要検証)` を付ける |
 | G-RS-72 | MUST | 艦これの非公開仕様に依存する箇所（フィールド名・列挙値・枠数）には、`docs/kancolle/` の該当文書へのリンクを書く（[C-03](../spec/constraints.md)） |
 | G-RS-73 | SHOULD | `pub` な項目には doc コメントを書く。ただし**署名で分かることは書かない。** 書くのは前提条件・失敗する条件・**単位**（ミリ秒か秒か、0 始まりか 1 始まりか） |
-| G-RS-74 | MUST NOT | doc コメントに層構造・モジュールの割り方・ディレクトリ構成の説明を書かない（[ADR-0030](../adr/0030-no-named-architecture.md) / [ADR-0027](../adr/0027-repository-layout.md) の領分）。**同じ説明が 2 箇所にあると必ず片方が古くなる** |
+| G-RS-74 | MUST NOT | doc コメントに層構造・モジュールの割り方・ディレクトリ構成の説明を書かない（[ADR-0030](../adr/archive/0030-no-named-architecture.md) / [ADR-0027](../adr/archive/0027-repository-layout.md) の領分）。**同じ説明が 2 箇所にあると必ず片方が古くなる** |
 | G-RS-75 | MUST NOT | コメント・テスト名・doc の例に、実測の提督名・`api_member_id`・`api_token` を書かない（[C-07](../spec/constraints.md)） |
 
 ## 具体例
@@ -365,7 +365,7 @@ fn fighter_power(gears: &[Gear]) -> u32 {
   プロセスを落とすのか・その呼び出しだけが失敗するのかは実測していない。
   **G-RS-30 の根拠の強さがここで変わる**ため、実装着手時に確かめる。
 - `TODO(要検証)`: `clippy.toml` で禁止する具体的な項目の一覧。
-  [ADR-0030](../adr/0030-no-named-architecture.md) が `std::time::Instant::now` の 1 件を挙げているが、
+  [ADR-0030](../adr/archive/0030-no-named-architecture.md) が `std::time::Instant::now` の 1 件を挙げているが、
   `disallowed-methods` に `serde_json::from_str` の直接呼び出しなどを足すかは未決。
   **`clippy` の `restriction` グループ（`unwrap_used` / `expect_used` / `indexing_slicing` など）を
   どこまで有効にするかも含めて、Cargo.toml の `[lints]` 表を作る時点で決める。**
@@ -374,5 +374,5 @@ fn fighter_power(gears: &[Gear]) -> u32 {
 - `TODO(未確定)`: `serde` のワイヤ型を**手で書くか、マクロで畳むか。**
   G-RS-20 / G-RS-22 は全ワイヤ型に同じ 2 行を要求するため、
   忘れを機械的に検出したくなる。ただし**マクロは読み解きの面を増やす**
-  （[ADR-0030](../adr/0030-no-named-architecture.md) の決め手 3）ため、
+  （[ADR-0030](../adr/archive/0030-no-named-architecture.md) の決め手 3）ため、
   最初は手で書き、痛くなってから考える。

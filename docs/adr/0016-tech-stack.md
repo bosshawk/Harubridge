@@ -3,7 +3,7 @@
 - ステータス: **Accepted**
 - 日付: 2026-08-02
 - 決定者: プロジェクトオーナー
-- 関連: [ADR-0004](0004-defer-tech-stack-decision.md)（本 ADR が採択されれば置き換える）,
+- 関連: [ADR-0004](archive/0004-defer-tech-stack-decision.md)（本 ADR が採択されれば置き換える）,
   [ADR-0003](0003-agent-driven-development.md), [ADR-0011](0011-license-mit.md),
   調査: Issue #1 / #2
 
@@ -284,9 +284,9 @@ OS の WebView を使うぶん、配布サイズと常駐メモリで明確な�
 
 ## 影響
 
-- [ADR-0004](0004-defer-tech-stack-decision.md) を置き換える（`Accepted` になった時点）
+- [ADR-0004](archive/0004-defer-tech-stack-decision.md) を置き換える（`Accepted` になった時点）
 - [architecture.md](../spec/architecture.md) の骨子を埋められるようになる
-- [guidelines/](../guidelines/) に Rust / TypeScript 向けの規約を書き始められる
+- [guidelines/](../guidelines) に Rust / TypeScript 向けの規約を書き始められる
 - 対応 OS は **macOS / Windows**（Linux は同一コードで動く見込みだが対象外）
 - 取り消す場合のコスト: **中**。実装着手前なら低い。
   **観測がプロキシ方式に閉じているため、ランタイムを変えても

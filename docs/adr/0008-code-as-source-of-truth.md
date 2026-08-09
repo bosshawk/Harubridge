@@ -3,11 +3,11 @@
 - ステータス: Accepted
 - 日付: 2026-08-02
 - 決定者: プロジェクトオーナー
-- 関連: [ADR-0003](0003-agent-driven-development.md), [ADR-0006](0006-split-external-and-internal-spec.md)（本 ADR が `internal/` に関する決定を置き換える）, [ADR-0007](0007-observability-based-spec-boundary.md)
+- 関連: [ADR-0003](0003-agent-driven-development.md), [ADR-0006](archive/0006-split-external-and-internal-spec.md)（本 ADR が `internal/` に関する決定を置き換える）, [ADR-0007](archive/0007-observability-based-spec-boundary.md)
 
 ## 背景と課題
 
-[ADR-0006](0006-split-external-and-internal-spec.md) で `docs/spec/` を
+[ADR-0006](archive/0006-split-external-and-internal-spec.md) で `docs/spec/` を
 external / internal / guidelines に分割したが、`internal/` のテンプレートには
 モジュール構成・データモデル・処理フロー・テスト方針といった節が並んでいた。
 
@@ -44,7 +44,7 @@ external / internal / guidelines に分割したが、`internal/` のテンプ�
 4. コードを読んでも分からない**設計意図は ADR に書く**。
    基本設計は「いまの構造」を、ADR は「なぜその構造か」を担当する。
 
-[ADR-0007](0007-observability-based-spec-boundary.md) の切り分け基準は引き続き有効。
+[ADR-0007](archive/0007-observability-based-spec-boundary.md) の切り分け基準は引き続き有効。
 「ユーザーが違いに気づくなら外部仕様」であり、気づかないものは
 **コード（骨格に関わるものだけ基本設計）** が受け持つ、と読み替える。
 
@@ -62,7 +62,7 @@ external / internal / guidelines に分割したが、`internal/` のテンプ�
 
 - 概要: 完了条件に「内部仕様の更新」を含める。
 - 却下理由: 義務づけは守られない前提で設計すべきである
-  （[ADR-0002](0002-documentation-structure.md) と同じ思想）。
+  （[ADR-0002](archive/0002-documentation-structure.md) と同じ思想）。
   更新漏れが 1 度でも起きれば、以後その文書は信用できなくなる。
 
 ### 案 C: 内部仕様をコードから自動生成する
@@ -95,6 +95,6 @@ external / internal / guidelines に分割したが、`internal/` のテンプ�
 ## 未解決事項
 
 - `TODO(未確定)`: `architecture.md` の具体的な中身。技術構成の決定後に埋める
-  （[ADR-0004](0004-defer-tech-stack-decision.md)）。
+  （[ADR-0004](archive/0004-defer-tech-stack-decision.md)）。
 - `TODO(未確定)`: 「基本設計に影響する変更」の線引き。
   最初の実装が入った時点で具体例を追記する。

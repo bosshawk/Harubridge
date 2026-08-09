@@ -3,9 +3,9 @@
 - ステータス: **Accepted**
 - 日付: 2026-08-09
 - 決定者: プロジェクトオーナー
-- 統合元: [ADR-0026](0026-injection-script-build.md)（注入スクリプトの持ち方）,
-  [ADR-0027](0027-repository-layout.md)（ディレクトリ構成）,
-  [ADR-0030](0030-no-named-architecture.md)（内側の分け方）。
+- 統合元: [ADR-0026](archive/0026-injection-script-build.md)（注入スクリプトの持ち方）,
+  [ADR-0027](archive/0027-repository-layout.md)（ディレクトリ構成）,
+  [ADR-0030](archive/0030-no-named-architecture.md)（内側の分け方）。
   **3 本の調査事実・却下案の全文はそれぞれに履歴として残る。本 ADR は決定を 1 本に集約する**
   （[ADR-0015](0015-documentation-layout.md) が 6 本を統合したのと同じ形式）
 - 関連: [ADR-0016](0016-tech-stack.md)（Tauri + Rust + React）,
@@ -102,7 +102,7 @@ Harubridge/
 
 依存は `src-tauri` → `harubridge-core` の一方向のみ。逆流はコンパイルが通らない。
 **それ以上は割らない。** 割っても新たにコンパイラが止められる違反が増えないため
-（4 クレート案の却下。詳細は [ADR-0027](0027-repository-layout.md)）。
+（4 クレート案の却下。詳細は [ADR-0027](archive/0027-repository-layout.md)）。
 
 `build.rs` はコア側に置き、`cargo::rerun-if-changed=../../data/kancolle` を必ず出す
 （`data/` はパッケージ外のため、これが無いと変更が検出されない）。出力は `OUT_DIR` のみ。
@@ -139,14 +139,14 @@ Harubridge/
 
 ### §4 注入スクリプト: TypeScript で書き、型を落としただけの JS を注入する
 
-**持ち方**（統合元 [ADR-0026](0026-injection-script-build.md) の決定「生 JS 1 枚」を
+**持ち方**（統合元 [ADR-0026](archive/0026-injection-script-build.md) の決定「生 JS 1 枚」を
 **オーナー判断 2026-08-09 で覆した**。経緯は本節末尾）:
 
 - ソースは **TypeScript 1 ファイル**（`src-tauri/injected/kcsapi-hook.ts`）。
   ESLint（型情報つき）の対象に含める
 - 変換は **`tsc` による型注釈の除去のみ**（`target: ESNext`）。
   **バンドルも構文の downlevel もしない。** ヘルパ関数や polyfill が混入せず
-  （[ADR-0026](0026-injection-script-build.md) 事実 11 / 12 の懸念を回避）、
+  （[ADR-0026](archive/0026-injection-script-build.md) 事実 11 / 12 の懸念を回避）、
   出力はソースから型を取り除いただけのテキストになる
 - 生成物 `kcsapi-hook.js` は**コミットし、CI で再生成して差分ゼロを強制する**
   （§6 の判定: 読む工程 = cargo は生成器 = tsc を実行しない。`bindings.ts` と同じ機構）
@@ -164,7 +164,7 @@ TypeScript（[ADR-0016](0016-tech-stack.md)）に揃え、エージェントが�
 なお型検査の強さは生 JS + `@ts-check` でも同等であり、この反転で検査能力は変わらない。
 TS 化は近い一般領域（ブラウザ拡張の main world スクリプト）のデファクトとも一致する。
 
-**位置**（[ADR-0027](0027-repository-layout.md) の決定をここだけ変更）:
+**位置**（[ADR-0027](archive/0027-repository-layout.md) の決定をここだけ変更）:
 
 - 旧決定はルート直下 `injected/` だった。**`src-tauri/injected/` に変更する。**
 - 理由: ルート直下に 1 ファイルだけのディレクトリが増えることを避ける（オーナー指摘 2026-08-09）。
@@ -176,7 +176,7 @@ TS 化は近い一般領域（ブラウザ拡張の main world スクリプト�
 
 ### §5 内側の構造: アーキテクチャを名乗らない
 
-[ADR-0030](0030-no-named-architecture.md) の決定を変更なしで引き継ぐ。
+[ADR-0030](archive/0030-no-named-architecture.md) の決定を変更なしで引き継ぐ。
 
 - DDD / オニオン / クリーン / ヘキサゴナル / Feature-Sliced Design の語彙
   （レイヤー・ポート・アダプタ・ユースケース・エンティティ）を持ち込まない。
@@ -212,15 +212,15 @@ TS 化は近い一般領域（ブラウザ拡張の main world スクリプト�
 
 | 却下した案 | 却下理由の要旨 | 全文 |
 | --- | --- | --- |
-| 単一クレート（`src-tauri/` のみ） | 「コアが Tauri を知らない」が規約のままになり、違反してもビルドが通る | [0027](0027-repository-layout.md) |
-| 観測/解釈/永続化/IPC の 4 クレート | コンパイラが新たに止められる違反が増えない | [0027](0027-repository-layout.md) |
-| `src-tauri` を `crates/` 下へ移す（GitButler 方式） | 公式の例と 1 段ずれ、翻訳コストだけ増える | [0027](0027-repository-layout.md) |
-| フロントの種類別ディレクトリ（`components/` 等） | 1 機能が 4 ディレクトリに散る（実測: Clash Verge Rev） | [0027](0027-repository-layout.md) / [0030](0030-no-named-architecture.md) |
+| 単一クレート（`src-tauri/` のみ） | 「コアが Tauri を知らない」が規約のままになり、違反してもビルドが通る | [0027](archive/0027-repository-layout.md) |
+| 観測/解釈/永続化/IPC の 4 クレート | コンパイラが新たに止められる違反が増えない | [0027](archive/0027-repository-layout.md) |
+| `src-tauri` を `crates/` 下へ移す（GitButler 方式） | 公式の例と 1 段ずれ、翻訳コストだけ増える | [0027](archive/0027-repository-layout.md) |
+| フロントの種類別ディレクトリ（`components/` 等） | 1 機能が 4 ディレクトリに散る（実測: Clash Verge Rev） | [0027](archive/0027-repository-layout.md) / [0030](archive/0030-no-named-architecture.md) |
 | 注入スクリプトを生 JS 1 枚で持つ | **旧決定（ADR-0026 案 A）。本 ADR で反転** —— 人間が常時レビューする前提を置かないため、同一性の優位が消える | 本 ADR §4 |
-| 注入スクリプトを TS + バンドラで作る | 分割と npm 依存は満たしてはいけない要件。バンドラの設定が監査対象に増える。`tsc` の型除去だけで足りる | [0026](0026-injection-script-build.md) |
+| 注入スクリプトを TS + バンドラで作る | 分割と npm 依存は満たしてはいけない要件。バンドラの設定が監査対象に増える。`tsc` の型除去だけで足りる | [0026](archive/0026-injection-script-build.md) |
 | 注入スクリプトをルート直下に置く | **旧決定。本 ADR で反転**（ルートの項目を減らす） | 本 ADR §4 |
-| DDD / オニオン / ヘキサゴナル / FSD | 守るべき書き込み・所有するドメインが無く、層が空になる | [0030](0030-no-named-architecture.md) |
-| `bindings.ts` を .gitignore する | クローン直後にフロントの型検査・ビルドが通らなくなる | [0027](0027-repository-layout.md) |
+| DDD / オニオン / ヘキサゴナル / FSD | 守るべき書き込み・所有するドメインが無く、層が空になる | [0030](archive/0030-no-named-architecture.md) |
+| `bindings.ts` を .gitignore する | クローン直後にフロントの型検査・ビルドが通らなくなる | [0027](archive/0027-repository-layout.md) |
 
 ## 決め手
 
@@ -236,8 +236,8 @@ TS 化は近い一般領域（ブラウザ拡張の main world スクリプト�
   - CI に 2 本のジョブが要る: `bindings.ts` の再生成差分検査、フィクスチャのバイト一致検査
   - `cargo test -p harubridge-core` が WebView 無しで完結する
 - ドキュメントへの影響:
-  - [ADR-0026](0026-injection-script-build.md) / [ADR-0027](0027-repository-layout.md) /
-    [ADR-0030](0030-no-named-architecture.md) を `Superseded by ADR-0032` にする
+  - [ADR-0026](archive/0026-injection-script-build.md) / [ADR-0027](archive/0027-repository-layout.md) /
+    [ADR-0030](archive/0030-no-named-architecture.md) を `Superseded by ADR-0032` にする
   - [architecture.md](../spec/architecture.md) の「コアは `tauri` に依存しない」の 1 行追記は
     0027 からの持ち越し提案のまま（**人間の承認が必要**）
 - 取り消す場合のコスト: 統合元の記録と同じ（クレート統合: 低 / ディレクトリ移動: 低〜中 /

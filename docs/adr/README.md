@@ -5,11 +5,15 @@
 
 ## ルール
 
-- 1 決定 = 1 ファイル。ファイル名は `NNNN-english-kebab-title.md`（連番、欠番禁止）。
+- 1 決定 = 1 ファイル。ファイル名は `NNNN-english-kebab-title.md`
+  （連番、欠番禁止。連番は `archive/` を含む全体で一意）。
 - テンプレート: [`template.md`](template.md) をコピーして書く。
 - **一度 `Accepted` になった ADR の本文は書き換えない。**
   決定を変えるときは新しい ADR を起票し、旧 ADR のステータス行だけを
   `Superseded by ADR-NNNN` に更新する。
+- **`Superseded` になった ADR は本文冒頭に警告を付け、[`archive/`](archive/) へ移動する。**
+  このディレクトリの直下には有効な ADR（`Accepted` / `Proposed`）だけを置く。
+  archive の本文は調査記録の保管であり、実装の根拠にしてはならない。
 - 誤字修正や、決定内容に影響しない補足は可。
 
 ## ステータス
@@ -65,17 +69,17 @@
 | No. | タイトル | ステータス | 日付 |
 | --- | --- | --- | --- |
 | [0001](0001-record-architecture-decisions.md) | 意思決定を ADR として記録する | Accepted | 2026-08-01 |
-| [0002](0002-documentation-structure.md) | ドキュメントを notes / spec / adr の 3 層で管理する | Superseded by ADR-0015 | 2026-08-01 |
+| [0002](archive/0002-documentation-structure.md) | ドキュメントを notes / spec / adr の 3 層で管理する | Superseded by ADR-0015 | 2026-08-01 |
 | [0003](0003-agent-driven-development.md) | 実装はすべて AI エージェントが行う | Accepted | 2026-08-01 |
-| [0004](0004-defer-tech-stack-decision.md) | 技術構成の決定を要求定義のあとに延期する | Superseded by ADR-0016 | 2026-08-01 |
+| [0004](archive/0004-defer-tech-stack-decision.md) | 技術構成の決定を要求定義のあとに延期する | Superseded by ADR-0016 | 2026-08-01 |
 | [0005](0005-publish-as-oss.md) | OSS として公開する | Accepted | 2026-08-01 |
-| [0006](0006-split-external-and-internal-spec.md) | 仕様を外部仕様・内部仕様・ガイドラインに分割する | Superseded by ADR-0015 | 2026-08-01 |
-| [0007](0007-observability-based-spec-boundary.md) | 外部仕様と内部仕様の切り分けを可観測性で判断する | Superseded by ADR-0015 | 2026-08-02 |
+| [0006](archive/0006-split-external-and-internal-spec.md) | 仕様を外部仕様・内部仕様・ガイドラインに分割する | Superseded by ADR-0015 | 2026-08-01 |
+| [0007](archive/0007-observability-based-spec-boundary.md) | 外部仕様と内部仕様の切り分けを可観測性で判断する | Superseded by ADR-0015 | 2026-08-02 |
 | [0008](0008-code-as-source-of-truth.md) | 詳細仕様はコードを正とし、文書は基本設計とガイドラインに絞る | Accepted | 2026-08-02 |
-| [0009](0009-notes-as-github-issues.md) | その場の方針・検討メモを GitHub Issue に移す | Superseded by ADR-0015 | 2026-08-02 |
-| [0010](0010-top-level-doc-layout.md) | ドキュメントの最上位構成を目的別の 3 ディレクトリに整理する | Superseded by ADR-0015 | 2026-08-02 |
+| [0009](archive/0009-notes-as-github-issues.md) | その場の方針・検討メモを GitHub Issue に移す | Superseded by ADR-0015 | 2026-08-02 |
+| [0010](archive/0010-top-level-doc-layout.md) | ドキュメントの最上位構成を目的別の 3 ディレクトリに整理する | Superseded by ADR-0015 | 2026-08-02 |
 | [0011](0011-license-mit.md) | ライセンスに MIT License を採用する | Accepted | 2026-08-02 |
-| [0012](0012-local-notes-directory.md) | `docs/notes/` をローカル専用のメモ置き場として残す | Superseded by ADR-0015 | 2026-08-02 |
+| [0012](archive/0012-local-notes-directory.md) | `docs/notes/` をローカル専用のメモ置き場として残す | Superseded by ADR-0015 | 2026-08-02 |
 | [0013](0013-copyright-holder.md) | 著作権表記を `bosshawk` とする | Accepted | 2026-08-02 |
 | [0014](0014-trunk-based-on-main.md) | 当分の間 `main` に直接コミットする | Accepted | 2026-08-02 |
 | [0015](0015-documentation-layout.md) | ドキュメント構成を確定する（0002/0006/0007/0009/0010/0012 を統合） | Accepted | 2026-08-02 |
@@ -89,11 +93,11 @@
 | [0023](0023-multi-account-scope.md) | 当面は 1 アカウントのみを扱い、切り替わりの検出だけを実装する | **Proposed** | 2026-08-03 |
 | [0024](0024-state-sync-granularity.md) | Rust コアから UI への状態同期を、ドメイン単位の全量 push と起動時の pull で行う | **Proposed** | 2026-08-03 |
 | [0025](0025-clock-handling.md) | 時刻の扱い —— 壁時計と単調増加時計の使い分け | **Proposed** | 2026-08-03 |
-| [0026](0026-injection-script-build.md) | 注入スクリプトは生 JS 1 ファイルのまま持ち、型検査だけを TypeScript に任せる | Superseded by ADR-0032 | 2026-08-03 |
-| [0027](0027-repository-layout.md) | リポジトリのディレクトリ構成をコア／殻の 2 クレート＋機能別フロントエンドにする | Superseded by ADR-0032 | 2026-08-03 |
+| [0026](archive/0026-injection-script-build.md) | 注入スクリプトは生 JS 1 ファイルのまま持ち、型検査だけを TypeScript に任せる | Superseded by ADR-0032 | 2026-08-03 |
+| [0027](archive/0027-repository-layout.md) | リポジトリのディレクトリ構成をコア／殻の 2 クレート＋機能別フロントエンドにする | Superseded by ADR-0032 | 2026-08-03 |
 | [0028](0028-quest-counter-schema.md) | 任務カウンタのデータ形式と `count` 条件の語彙 | **Proposed** | 2026-08-03 |
 | [0029](0029-injection-ipc-transport.md) | 注入スクリプトから Rust への転送は、Tauri の invoke に相乗りせず自前のハンドラで受ける | **Proposed** | 2026-08-03 |
-| [0030](0030-no-named-architecture.md) | アーキテクチャを名乗らず、関心事ごとの素朴な分割に留める | Superseded by ADR-0032 | 2026-08-08 |
+| [0030](archive/0030-no-named-architecture.md) | アーキテクチャを名乗らず、関心事ごとの素朴な分割に留める | Superseded by ADR-0032 | 2026-08-08 |
 | [0031](0031-toolchain-management.md) | 開発ツールチェインを mise に統一し、Rust の版は `rust-toolchain.toml` を正として mise に読ませる | Accepted | 2026-08-09 |
 | [0032](0032-repository-structure.md) | リポジトリ構成を確定する（0026 / 0027 / 0030 を統合） | Accepted | 2026-08-09 |
 

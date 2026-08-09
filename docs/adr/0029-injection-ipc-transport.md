@@ -4,7 +4,7 @@
 - 日付: 2026-08-03
 - 決定者: プロジェクトオーナー（承認待ち）
 - 関連: [ADR-0016](0016-tech-stack.md)（Tauri v2）/ [ADR-0024](0024-state-sync-granularity.md)（Rust → UI の同期）/
-  [ADR-0026](0026-injection-script-build.md)（注入スクリプトの作り）/
+  [ADR-0026](archive/0026-injection-script-build.md)（注入スクリプトの作り）/
   [architecture.md](../spec/architecture.md)（「境界はページ内に置く」）
 
 ## 背景と課題
@@ -22,11 +22,11 @@
 `play.games.dmm.com` →（第 1 階層）`osapi.dmm.com` →（第 2 階層）ゲームサーバの 2 階層）。
 
 **注入できることと、そこから native へ送り返せることは別の問題である。**
-[ADR-0026](0026-injection-script-build.md) の検討中に、Tauri のブートストラップが
+[ADR-0026](archive/0026-injection-script-build.md) の検討中に、Tauri のブートストラップが
 main frame 限定で積まれていることが判明し、前提が成立するか不明になった。
 
 **この前提が崩れると [ADR-0024](0024-state-sync-granularity.md) /
-[0026](0026-injection-script-build.md) / [0027](0027-repository-layout.md) と
+[0026](archive/0026-injection-script-build.md) / [0027](archive/0027-repository-layout.md) と
 `architecture.md` の骨格がまとめて倒れる。** そのため先に確定させる。
 
 ## 調査結果
@@ -266,10 +266,10 @@ Windows の COM コードはその対価として妥当と判断した。
 
 - `architecture.md` は**変更不要**。案 A は既存の記述（全フレーム注入・
   ページ内で絞り込み・注入スクリプト 1 本）とそのまま一致する
-- [ADR-0026](0026-injection-script-build.md) の「型を Rust と共有できるか」は
+- [ADR-0026](archive/0026-injection-script-build.md) の「型を Rust と共有できるか」は
   **本 ADR で確定する。tauri-specta の生成物は使えない**（IPC 経路が UI と違うため）。
   注入スクリプトと Rust の間のメッセージ型は、この 1 種類だけ別に定義する
-- [ADR-0027](0027-repository-layout.md) の `src-tauri/` に、
+- [ADR-0027](archive/0027-repository-layout.md) の `src-tauri/` に、
   プラットフォーム固有のモジュール（`#[cfg(target_os = ...)]`）が 1 つ増える
 - Windows の動作要件に **WebView2 Runtime 1.0.3240.44 以降**（2025-05-05）が加わる。
   Evergreen Runtime は自動更新されるため実質的な障害は小さいが、配布時に明記する

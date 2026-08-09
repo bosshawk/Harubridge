@@ -29,7 +29,7 @@
 - ファイルの単位は機能グループ。**1 FR = 1 ファイルにしない**
   （[docs/spec/README.md](../README.md#ファイルの粒度)）。
 - 技術構成が未決でも書ける。**むしろ先に書くべき**
-  （[ADR-0004](../../adr/0004-defer-tech-stack-decision.md) の保留中に進められる作業）。
+  （[ADR-0004](../../adr/archive/0004-defer-tech-stack-decision.md) の保留中に進められる作業）。
 - 迷ったら書かない。**書いた分だけメンテ義務が増える。**
 
 ## 一覧
