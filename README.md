@@ -5,7 +5,7 @@
 > **現在のフェーズ: 実装（骨格まで）**
 > 技術構成（[Tauri + Rust + React](docs/adr/0016-tech-stack.md)）、
 > 要求（[FR 50 件 / NFR 11 件](docs/spec/requirements.md)）、
-> リポジトリ構成（[ADR-0032](docs/adr/0032-repository-structure.md)）は確定済み。
+> リポジトリ構成は確定済み。
 > 骨格（ビルド・検査が通る空の構成）まで作成済みで、機能は未実装です。
 
 ---
@@ -16,8 +16,7 @@
   人間が担うのは「要求を出す」「意思決定する」「レビューして受け入れる」の 3 つです。
 - したがって **ユーザーに見える振る舞いは、必ず先にドキュメントで決めます**。
   仕様書の曖昧さ・古さはそのまま実装の欠陥になるためです。
-- 一方で **実装の詳細はコードを正とし、文書化しません**
-  （[ADR-0008](docs/adr/0008-code-as-source-of-truth.md)）。二重管理された文書は必ず古くなり、
+- 一方で **実装の詳細はコードを正とし、文書化しません**。二重管理された文書は必ず古くなり、
   古い文書はエージェントにとって誤った前提として作用するためです。
 - エージェントが従うべき規約は [CLAUDE.md](CLAUDE.md) に集約しています。
 
@@ -56,8 +55,7 @@
 
 ## 開発環境の準備
 
-ツールチェインは [mise](https://mise.jdx.dev/) で導入します
-（[ADR-0031](docs/adr/0031-toolchain-management.md)）。
+ツールチェインは [mise](https://mise.jdx.dev/) で導入します。
 
 ```sh
 brew install mise            # macOS。他の OS は mise 公式の手順に従う
@@ -76,8 +74,7 @@ mise install                 # Node / pnpm / Rust 一式が入る
 | Node / pnpm / task | [`mise.toml`](mise.toml) |
 | Rust（rustup / rustc / cargo / rustfmt / clippy） | [`rust-toolchain.toml`](rust-toolchain.toml) |
 
-日常のコマンドは [`Taskfile.yml`](Taskfile.yml) が入口です
-（[ADR-0033](docs/adr/0033-task-runner.md)）。
+日常のコマンドは [`Taskfile.yml`](Taskfile.yml) が入口です。
 
 ```sh
 task --list    # コマンド一覧
@@ -89,7 +86,7 @@ task test      # テスト
 **Rust の版は `mise.toml` ではなく `rust-toolchain.toml` に書いてあります。**
 mise がそのファイルを読むため、rustup を直接使う場合も同じ版が選ばれます。
 逆に `mise.toml` の `[tools]` に `rust` を足すと `rust-toolchain.toml` が無視されるので、
-**両方に書かないでください**（理由は [ADR-0031](docs/adr/0031-toolchain-management.md)）。
+**両方に書かないでください**。
 
 ## 現在の状態
 
@@ -97,9 +94,9 @@ mise がそのファイルを読むため、rustup を直接使う場合も同�
 | --- | --- |
 | ドキュメント基盤 | 構築済み |
 | 要求仕様 | **承認済み**（[docs/spec/requirements.md](docs/spec/requirements.md)。FR 50 件 / NFR 11 件） |
-| 公開方針 | OSS 公開（[ADR-0005](docs/adr/0005-publish-as-oss.md)） / [MIT License](LICENSE) |
-| 技術構成 | **Tauri + Rust + React**（[ADR-0016](docs/adr/0016-tech-stack.md)）。対応は macOS / Windows |
-| リポジトリ構成 | **確定**（[ADR-0032](docs/adr/0032-repository-structure.md)）。骨格作成済み |
+| 公開方針 | OSS 公開 / [MIT License](LICENSE) |
+| 技術構成 | **Tauri + Rust + React**。対応は macOS / Windows |
+| リポジトリ構成 | **確定**。骨格作成済み |
 | 実装 | 骨格のみ（機能は未実装） |
 
 ## 名前について
@@ -111,8 +108,8 @@ mise がそのファイルを読むため、rustup を直接使う場合も同�
 
 - 本プロジェクトは非公式のサードパーティ製ツールであり、DMM.com、株式会社 C2 プレパラート、
   その他「艦隊これくしょん」の権利者とは一切関係ありません。
-- 本プロジェクトは **OSS として公開します**（[ADR-0005](docs/adr/0005-publish-as-oss.md)）。
-  ライセンスは **[MIT License](LICENSE)** です（[ADR-0011](docs/adr/0011-license-mit.md)）。
+- 本プロジェクトは **OSS として公開します**。
+  ライセンスは **[MIT License](LICENSE)** です。
   このライセンスは本リポジトリのコードとドキュメントにのみ及び、
   ゲーム側の権利物には一切関係しません。
 - 利用にあたっての制約・方針は [docs/spec/constraints.md](docs/spec/constraints.md) に定義しています。

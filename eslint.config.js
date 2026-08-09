@@ -1,5 +1,5 @@
-// ESLint 設定（ADR-0019: eslint + prettier / typescript-eslint 型情報つき）。
-// ADR-0032 §3 の境界 3 本をここで強制する:
+// ESLint 設定（eslint + prettier / typescript-eslint 型情報つき）。
+// リポジトリ構成の境界 3 本をここで強制する:
 //   1. features/ どうしの import 禁止
 //   2. shared/ は「ドメインを知らない」— bindings.ts / store/ / ipc/ / features/ / app/ を import 禁止
 //   3. invoke / listen（@tauri-apps/api）は ipc/ の外で import 禁止
@@ -16,7 +16,7 @@ export default tseslint.config(
       "dist/",
       "target/",
       "node_modules/",
-      // tsc の生成物（コミットされるが手で編集しない。ADR-0032 §6）
+      // tsc の生成物（コミットされるが手で編集しない）
       "src-tauri/injected/kcsapi-hook.js",
     ],
   },
@@ -35,7 +35,7 @@ export default tseslint.config(
     files: ["*.js", "*.ts"],
     ...tseslint.configs.disableTypeChecked,
   },
-  // 注入スクリプトは専用の tsconfig で型検査する（ADR-0032 §4）
+  // 注入スクリプトは専用の tsconfig で型検査する
   {
     files: ["src-tauri/injected/**/*.ts"],
     languageOptions: {
@@ -64,20 +64,20 @@ export default tseslint.config(
               target: `./src/features/${name}`,
               from: "./src/features",
               except: [`./${name}`],
-              message: `features どうしは import しない（ADR-0032 §3）`,
+              message: `features どうしは import しない`,
             })),
             // features は app を import しない（合成は app 側の仕事）
             {
               target: "./src/features",
               from: "./src/app",
-              message: "features から app を import しない（ADR-0032 §3）",
+              message: "features から app を import しない",
             },
             // 境界 2: shared/ はドメインを知らない
             ...["./src/features", "./src/app", "./src/store", "./src/ipc", "./src/bindings.ts"].map(
               (from) => ({
                 target: "./src/shared",
                 from,
-                message: "shared/ はドメインを知らないコードだけを置く（ADR-0032 §3）",
+                message: "shared/ はドメインを知らないコードだけを置く",
               }),
             ),
           ],
@@ -96,11 +96,11 @@ export default tseslint.config(
           paths: [
             {
               name: "@tauri-apps/api/core",
-              message: "invoke は src/ipc/ 経由で使う（ADR-0032 §3）",
+              message: "invoke は src/ipc/ 経由で使う",
             },
             {
               name: "@tauri-apps/api/event",
-              message: "listen は src/ipc/ 経由で使う（ADR-0032 §3）",
+              message: "listen は src/ipc/ 経由で使う",
             },
           ],
         },

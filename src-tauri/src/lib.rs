@@ -1,4 +1,4 @@
-//! Tauri アプリの殻。IPC・ウィンドウ・注入・プラグインの配線のみを担う（ADR-0032 §1）。
+//! Tauri アプリの殻。IPC・ウィンドウ・注入・プラグインの配線のみを担う。
 //! ロジックは `harubridge-core` に置くこと。依存の向きは 殻 → コア の一方向のみ。
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]

@@ -1,4 +1,4 @@
-# Rust ツールチェインの定義（ADR-0031）
+# Rust ツールチェインの定義
 #
 # 版の正はこのファイル。mise もこれを読む
 # （mise.toml の idiomatic_version_file_enable_tools = ["rust"]）。

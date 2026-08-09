@@ -41,8 +41,8 @@
 | 項目 | 状態 |
 | --- | --- |
 | 要求定義 | **承認済み**（[requirements.md](requirements.md)。FR 50 件 / NFR 11 件） |
-| 公開方針 | OSS 公開（[ADR-0005](../adr/0005-publish-as-oss.md)） / MIT License（[ADR-0011](../adr/0011-license-mit.md)） |
-| 技術構成 | **Tauri + Rust + React**（[ADR-0016](../adr/0016-tech-stack.md)） |
+| 公開方針 | OSS 公開 / MIT License |
+| 技術構成 | **Tauri + Rust + React** |
 | 対応 OS | **macOS / Windows**（macOS で実測済み。Windows は未検証） |
 | 実装 | 未着手 |
 
@@ -50,5 +50,4 @@
 
 - `TBD`: 要求全般。オーナーとの相談で作成する。
 - `TODO(未確定)`: 正式なアプリケーション名。`Harubridge` はコードネーム。
-- `TODO(未確定)`: 対応 OS。**技術構成の検討時に同時に決定する**
-  （[ADR-0004](../adr/archive/0004-defer-tech-stack-decision.md)）。単独では決めない。
+- `TODO(未確定)`: 対応 OS。**技術構成の検討時に同時に決定する**。単独では決めない。

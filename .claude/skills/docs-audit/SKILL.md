@@ -16,6 +16,7 @@ description: リポジトリのドキュメントの整合性と鮮度を点検�
 - [ ] 番号に欠番・重複が無いか
 - [ ] `Proposed` のまま長期間放置されている ADR が無いか（決めるか捨てるか）
 - [ ] `Superseded by ADR-NNNN` の参照先が実在するか
+- [ ] `docs/adr/` の外に ADR への参照が無いか（`audit-adr-refs` スキルで点検）
 - [ ] `Accepted` な ADR の内容が、あとから書き換えられていないか（git log で確認）
 
 ### 2. 仕様

@@ -1,4 +1,4 @@
-# 開発コマンドの入口（ADR-0033）。
+# 開発コマンドの入口。
 # コマンドは Taskfile 内蔵の sh 解釈系（mvdan/sh）で動くため、Windows でもそのまま動く。
 # ここには「集約」だけを書く。個別の定義は package.json / cargo に置いたまま重複させない。
 version: "3"

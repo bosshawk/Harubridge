@@ -5,7 +5,7 @@ description = "Harubridge のコア。通信データの解釈・状態保持・
 edition = "2021"
 license = "MIT"
 
-# このクレートは tauri に依存しない（ADR-0032 §1）。
+# このクレートは tauri に依存しない。
 # ここに tauri を足してはいけない。IPC・ウィンドウの都合は src-tauri 側に置く。
 [dependencies]
 

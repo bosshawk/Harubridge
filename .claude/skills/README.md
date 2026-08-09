@@ -15,6 +15,7 @@
 | [`capture-issue`](capture-issue/SKILL.md) | 論点を GitHub Issue に残す・ADR 化して閉じる |
 | [`research-kancolle`](research-kancolle/SKILL.md) | 艦これ側の仕様を調べて `docs/kancolle/` に記録する |
 | [`docs-audit`](docs-audit/SKILL.md) | ドキュメントの整合性・鮮度を点検する |
+| [`audit-adr-refs`](audit-adr-refs/SKILL.md) | `docs/adr/` の外に ADR への参照が無いか点検する |
 
 ## サブエージェント
 

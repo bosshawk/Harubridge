@@ -1,4 +1,4 @@
-//! `data/kancolle/*.json` をビルド時に検証する（ADR-0032 §1）。
+//! `data/kancolle/*.json` をビルド時に検証する。
 //! 不正な JSON があればビルドが落ちる。
 //! 現時点では検証のみ。データを使う実装が入った時点で `OUT_DIR` への生成を足す。
 
@@ -6,7 +6,7 @@ use std::fs;
 use std::path::Path;
 
 fn main() {
-    // data/ はパッケージの外にあるため、明示しないと Cargo は変更を検出しない（ADR-0032 §1）
+    // data/ はパッケージの外にあるため、明示しないと Cargo は変更を検出しない
     println!("cargo::rerun-if-changed=../../data/kancolle");
 
     let dir = Path::new(env!("CARGO_MANIFEST_DIR")).join("../../data/kancolle");

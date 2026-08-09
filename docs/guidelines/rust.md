@@ -1,11 +1,10 @@
 # ガイドライン: Rust の書き方
 
 > **ステータス: Draft（承認待ち）。**
-> `docs/guidelines/` の変更には人間の承認が必要（[ADR-0015](../adr/0015-documentation-layout.md)）。
+> `docs/guidelines/` の変更には人間の承認が必要。
 
 - 適用範囲: `crates/` 配下のすべての Rust コード
 - ルール ID の略号: `RS`
-- 関連 ADR: [0003](../adr/0003-agent-driven-development.md)（実装はエージェントが行う）/
   [0008](../adr/0008-code-as-source-of-truth.md)（コードが正）/
   [0018](../adr/0018-dependencies.md)（`thiserror` と `anyhow`）/
   [0022](../adr/0022-observed-data-privacy.md)（観測データとフィクスチャ）/
@@ -16,8 +15,7 @@
 ## 原則
 
 **このガイドラインは「Rust をどう書くか」だけを扱う。**
-どこに置くかは [ADR-0030](../adr/archive/0030-no-named-architecture.md) と
-[ADR-0027](../adr/archive/0027-repository-layout.md)、何と名付けるかは
+どこに置くかは [architecture.md](../spec/architecture.md) とリポジトリの実体、何と名付けるかは
 [glossary.md](../spec/glossary.md) が正である。ここでは繰り返さない。
 
 判断の拠り所は 2 つ。
@@ -26,7 +24,7 @@
    [Rust API Guidelines](https://rust-lang.github.io/api-guidelines/)・`rustfmt` の既定・
    `clippy` の既定に従えばよいことは、ここに書かない。
    **ここに書いてあるルールは、デファクトだけでは決まらないもの**である。
-2. **人間の常時レビューが無い**（[ADR-0003](../adr/0003-agent-driven-development.md)）。
+2. **人間の常時レビューが無い**。
    したがって「気をつける」で守るルールは書かない。
    コンパイラ・`clippy`・CI のいずれかが落とせる形にするか、
    落とせないなら**なぜ落とせないかを添える**。
@@ -50,17 +48,17 @@ ID は `G-RS-<連番>`。連番は主題ごとに桁を分けてある（命名 
 | G-RS-02 | MUST | 略語は 1 つの単語として扱う（`Hp` / `Id` / `Api` / `Los`）。大文字を連ねない（[glossary.md 原則 4](../spec/glossary.md#原則-4-略語は-1-つの単語として扱う)） |
 | G-RS-03 | MUST | 艦これのゲーム概念に付ける英語識別子は [glossary.md](../spec/glossary.md) を正とする。**ここで訳語を決めない。** 用語集に無い語が必要になったら、**用語集に追加してから使う**（`docs/spec/` は人間の承認が要る階層） |
 | G-RS-04 | MUST | 型名は単数、集合を持つ変数は複数形、辞書は `<値>_by_<鍵>`（[glossary.md](../spec/glossary.md) の原則 5） |
-| G-RS-05 | MUST | 艦これの API の語（`api_*` / `deck` / `slotitem` / `cond`）を受信モジュールの外へ出さない（[glossary.md 原則 2](../spec/glossary.md#原則-2-艦これ-api-の語を識別子に持ち込まない)）。これは [ADR-0030](../adr/archive/0030-no-named-architecture.md) により**入れ子の private モジュールでコンパイラが強制する** |
-| G-RS-06 | SHOULD | 型の変換は `From` / `TryFrom` の実装として書く。専用の `convert_*` 関数を作らない（[ADR-0030](../adr/archive/0030-no-named-architecture.md)。「腐敗防止層の実体は `From` / `TryFrom`」） |
+| G-RS-05 | MUST | 艦これの API の語（`api_*` / `deck` / `slotitem` / `cond`）を受信モジュールの外へ出さない（[glossary.md 原則 2](../spec/glossary.md#原則-2-艦これ-api-の語を識別子に持ち込まない)）。これは**入れ子の private モジュールでコンパイラが強制する** |
+| G-RS-06 | SHOULD | 型の変換は `From` / `TryFrom` の実装として書く。専用の `convert_*` 関数を作らない（変換の実体は `From` / `TryFrom` に統一する） |
 
 ### エラー処理
 
 | ID | 強度 | ルール |
 | --- | --- | --- |
-| G-RS-10 | MUST | ライブラリ的な層（パース・変換・計算・永続化）は `thiserror` でエラーを型として定義する。アプリの端（Tauri コマンド・タスクの最上段・`main`）で `anyhow` に集約する（[ADR-0018](../adr/0018-dependencies.md)） |
-| G-RS-11 | MUST NOT | `anyhow::Error` / `anyhow::Result` を `harubridge-core` の公開 API の戻り値や構造体のフィールドに置かない。**型で分岐できなくなると NFR-003 の縮退が書けない**（[ADR-0018](../adr/0018-dependencies.md)） |
+| G-RS-10 | MUST | ライブラリ的な層（パース・変換・計算・永続化）は `thiserror` でエラーを型として定義する。アプリの端（Tauri コマンド・タスクの最上段・`main`）で `anyhow` に集約する |
+| G-RS-11 | MUST NOT | `anyhow::Error` / `anyhow::Result` を `harubridge-core` の公開 API の戻り値や構造体のフィールドに置かない。**型で分岐できなくなると NFR-003 の縮退が書けない** |
 | G-RS-12 | SHOULD | エラーの列挙子は「**呼び出し側が分岐する単位**」で切る。分岐しないものは 1 つにまとめる。逆に、縮退の分かれ目になるもの（未知のフィールド / 型の不一致 / 未知の ID）は必ず別の列挙子にする |
-| G-RS-13 | MUST | `#[from]` は**文脈を足す必要がないとき**だけ使う。どの API パスの・どの位置で失敗したかを持たせる必要があるなら、`#[from]` ではなくフィールドを持つ列挙子にして `map_err` で包む（[ADR-0022](../adr/0022-observed-data-privacy.md) の構造サマリはこの文脈から組み立てる） |
+| G-RS-13 | MUST | `#[from]` は**文脈を足す必要がないとき**だけ使う。どの API パスの・どの位置で失敗したかを持たせる必要があるなら、`#[from]` ではなくフィールドを持つ列挙子にして `map_err` で包む（構造サマリはこの文脈から組み立てる） |
 | G-RS-14 | MUST | `?` は「**呼び出し側がその失敗ごと捨ててよい**」ところまでで止める。要素単位の縮退が要る場所（G-RS-23）では `?` を使わない |
 | G-RS-15 | MUST NOT | エラーを `to_string()` した文字列で分岐しない。分岐が要るなら列挙子を足す |
 
@@ -68,13 +66,13 @@ ID は `G-RS-<連番>`。連番は主題ごとに桁を分けてある（命名 
 
 **この節がこのガイドラインの中心である。**
 「ワイヤ型」とは、艦これの JSON を `serde` で直接受ける型を指す
-（[ADR-0030](../adr/archive/0030-no-named-architecture.md) の「外部モデル」。受信モジュール内の private）。
+（受信モジュール内の private な「外部モデル」）。
 
 | ID | 強度 | ルール |
 | --- | --- | --- |
 | G-RS-20 | MUST | ワイヤ型のフィールドは**すべて `Option<T>`** にし、構造体に `#[serde(default)]` を付ける。「必ず来るはず」のフィールドを非 `Option` にしない。**非公開仕様に「必ず」は無い**（[C-03](../spec/constraints.md)） |
 | G-RS-21 | MUST NOT | ワイヤ型に `#[serde(deny_unknown_fields)]` を付けない。serde の既定は**自己記述的な形式では未知のフィールドを黙って無視する**（[serde 公式](https://serde.rs/container-attrs.html)）。それでよい。**危険なのはフィールドの追加ではなく、削除と型変更のほう**であり、そちらは G-RS-20 が受け止める |
-| G-RS-22 | MUST | ワイヤ型は `#[serde(flatten)] extra: HashMap<String, serde_json::Value>` の受け皿を持ち、**`extra` が空でなければログに出す。これがゲーム更新の検知になる。** ただし出すのは**キー名だけで、値は出さない**（[C-04](../spec/constraints.md) / [ADR-0022](../adr/0022-observed-data-privacy.md)） |
+| G-RS-22 | MUST | ワイヤ型は `#[serde(flatten)] extra: HashMap<String, serde_json::Value>` の受け皿を持ち、**`extra` が空でなければログに出す。これがゲーム更新の検知になる。** ただし出すのは**キー名だけで、値は出さない**（[C-04](../spec/constraints.md)） |
 | G-RS-23 | MUST | 配列は**要素ごとに変換し、失敗した要素だけ落として残りを通す。** `collect::<Result<Vec<_>, _>>()?` でレスポンス全体を捨てない。外部仕様が「解釈できた行だけを表示する」（[timers.md E-03](../spec/external/timers.md)）「一部の項目が欠けても行は表示する」（[fleet-view.md E-04](../spec/external/fleet-view.md)）と約束しているため |
 | G-RS-24 | MUST | 得られなかった項目は `Option` のまま内部モデルへ運ぶ。`0` / `""` / `-1` で埋めない。UI が `—` を出せなくなる（[fleet-view.md E-04](../spec/external/fleet-view.md)） |
 | G-RS-25 | MUST | マスタに無い ID（未知の艦娘・装備・艦種）は**エラーにしない。** ID を保持したまま内部モデルへ通し、名前を解決できなかったことを型で表す（[fleet-view.md E-03](../spec/external/fleet-view.md) の `不明 (ID: 1234)`） |
@@ -93,9 +91,9 @@ ID は `G-RS-<連番>`。連番は主題ごとに桁を分けてある（命名 
 
 | ID | 強度 | ルール |
 | --- | --- | --- |
-| G-RS-40 | MUST NOT | 観測に由来する値を `tracing` のフィールドや `{:?}` にそのまま渡さない。**`#[derive(Debug)]` した構造体を `tracing::debug!(?resp)` で出すと、提督名（`api_nickname`）・`api_member_id`・自由記述（`api_comment`）が丸ごとログに落ちる。** [ADR-0022](../adr/0022-observed-data-privacy.md) が実データで確認した項目である |
+| G-RS-40 | MUST NOT | 観測に由来する値を `tracing` のフィールドや `{:?}` にそのまま渡さない。**`#[derive(Debug)]` した構造体を `tracing::debug!(?resp)` で出すと、提督名（`api_nickname`）・`api_member_id`・自由記述（`api_comment`）が丸ごとログに落ちる。** 実データで確認済みの項目である |
 | G-RS-41 | MUST | ワイヤ型と、観測データを保持する内部モデルには **`Debug` を derive しない。** 必要なら `Debug` を手で実装し、**構造だけ**（型名・件数・ID・キー名）を出す。`derive` は「誰かがうっかり `{:?}` する」経路を作ってしまう |
-| G-RS-42 | MUST | ログに出してよいのは [ADR-0022](../adr/0022-observed-data-privacy.md) の**構造サマリの範囲**に限る。API パス・失敗の種類・失敗位置の JSON パス・その位置の型名と長さ・兄弟キーのキー名。キー名は `^api_[a-z0-9_]+$` に一致するものだけそのまま出し、一致しないものは長さと文字種に落とす |
+| G-RS-42 | MUST | ログに出してよいのは**構造サマリの範囲**に限る。API パス・失敗の種類・失敗位置の JSON パス・その位置の型名と長さ・兄弟キーのキー名。キー名は `^api_[a-z0-9_]+$` に一致するものだけそのまま出し、一致しないものは長さと文字種に落とす |
 | G-RS-43 | MUST NOT | リクエストの URL・クエリ文字列・ボディをログに出さない。`api_token` が入る（[C-04](../spec/constraints.md)） |
 | G-RS-44 | SHOULD | レベルの目安。未知のキーの検出（G-RS-22）と縮退の発生（G-RS-26）は `warn`。**これは異常ではなく「ゲームが更新された可能性がある」という通知**であり、埋もれさせない。通常の観測は `trace` |
 
@@ -103,23 +101,23 @@ ID は `G-RS-<連番>`。連番は主題ごとに桁を分けてある（命名 
 
 | ID | 強度 | ルール |
 | --- | --- | --- |
-| G-RS-50 | MUST NOT | 実測した `/kcsapi/` のレスポンスをテストコード・フィクスチャ・スナップショットに入れない。**一度コミットすれば履歴から消せない**（[C-07](../spec/constraints.md)）。フィクスチャは生成器の出力のみ（[ADR-0022](../adr/0022-observed-data-privacy.md)） |
-| G-RS-51 | MUST | ワイヤ型と変換のテストは、**同じモジュールの中の `#[cfg(test)] mod tests`** に書く。[ADR-0030](../adr/archive/0030-no-named-architecture.md) によりこれらは private な入れ子モジュールであり、**`tests/` からは到達できない**（`tests/` は外部クレートとして public API しか見えない）。`tests/` に置くのは、クレートの公開 API を通した結合テストだけ |
+| G-RS-50 | MUST NOT | 実測した `/kcsapi/` のレスポンスをテストコード・フィクスチャ・スナップショットに入れない。**一度コミットすれば履歴から消せない**（[C-07](../spec/constraints.md)）。フィクスチャは生成器の出力のみ |
+| G-RS-51 | MUST | ワイヤ型と変換のテストは、**同じモジュールの中の `#[cfg(test)] mod tests`** に書く。これらは private な入れ子モジュールであり、**`tests/` からは到達できない**（`tests/` は外部クレートとして public API しか見えない）。`tests/` に置くのは、クレートの公開 API を通した結合テストだけ |
 | G-RS-52 | MUST | 縮退のテストは最低 3 種類を持つ。**(a) フィールドが消えた / (b) 型が変わった（数値のはずが文字列・`null`）/ (c) 未知のキーが増えた。** (c) は `extra` に入ることを検証する |
-| G-RS-53 | SHOULD | 実測データを読むテストは `#[ignore]` を付け、git 管理外のディレクトリ（`.local/`）を読む。CI では走らない（[ADR-0022](../adr/0022-observed-data-privacy.md) 案 B4） |
-| G-RS-54 | MUST | テストで現在時刻を暗黙に読まない。時刻は引数で渡す（[ADR-0025](../adr/0025-clock-handling.md)）。永続化のテストは実際のアプリデータ領域ではなく一時ディレクトリを使う（[ADR-0030](../adr/archive/0030-no-named-architecture.md) 案 D） |
+| G-RS-53 | SHOULD | 実測データを読むテストは `#[ignore]` を付け、git 管理外のディレクトリ（`.local/`）を読む。CI では走らない |
+| G-RS-54 | MUST | テストで現在時刻を暗黙に読まない。時刻は引数で渡す。永続化のテストは実際のアプリデータ領域ではなく一時ディレクトリを使う |
 
 ### `clippy` と静的解析
 
 | ID | 強度 | ルール |
 | --- | --- | --- |
-| G-RS-60 | MUST | `cargo fmt --check` と `cargo clippy --all-targets -- -D warnings` が通ること（[ADR-0018](../adr/0018-dependencies.md)。警告をエラー扱い） |
-| G-RS-61 | MUST | 「この関数を使わない」という規律は、文章ではなく `clippy.toml` の `disallowed-methods` / `disallowed-types` に書く。**書ける規律を文章に留めない**（[ADR-0030](../adr/archive/0030-no-named-architecture.md)。`clippy.toml` は `CARGO_MANIFEST_DIR` から親へ遡って探索されるため、クレートごとに置ける） |
+| G-RS-60 | MUST | `cargo fmt --check` と `cargo clippy --all-targets -- -D warnings` が通ること（警告をエラー扱い） |
+| G-RS-61 | MUST | 「この関数を使わない」という規律は、文章ではなく `clippy.toml` の `disallowed-methods` / `disallowed-types` に書く。**書ける規律を文章に留めない**（`clippy.toml` は `CARGO_MANIFEST_DIR` から親へ遡って探索されるため、クレートごとに置ける） |
 | G-RS-62 | MUST | `#[allow(...)]` は**最小のスコープ**に付け、**必ず理由をコメントで添える。** クレート全体（`#![allow(...)]`）やファイル先頭に付けない |
 
 ### コメントとドキュメントコメント
 
-[ADR-0008](../adr/0008-code-as-source-of-truth.md)（コードが正）の下では、
+「コードが正」の原則の下では、
 **コメントは「コードから読み取れないもの」だけを書く場所**になる。
 
 | ID | 強度 | ルール |
@@ -128,7 +126,7 @@ ID は `G-RS-<連番>`。連番は主題ごとに桁を分けてある（命名 
 | G-RS-71 | MUST | **計算式には出典コメントを必ず書く**（[NFR-009](../spec/requirements.md)）。参照した OSS 名・ファイル・URL・参照日、または `docs/kancolle/formulas/` への参照。出典が無い式には `TODO(要検証)` を付ける |
 | G-RS-72 | MUST | 艦これの非公開仕様に依存する箇所（フィールド名・列挙値・枠数）には、`docs/kancolle/` の該当文書へのリンクを書く（[C-03](../spec/constraints.md)） |
 | G-RS-73 | SHOULD | `pub` な項目には doc コメントを書く。ただし**署名で分かることは書かない。** 書くのは前提条件・失敗する条件・**単位**（ミリ秒か秒か、0 始まりか 1 始まりか） |
-| G-RS-74 | MUST NOT | doc コメントに層構造・モジュールの割り方・ディレクトリ構成の説明を書かない（[ADR-0030](../adr/archive/0030-no-named-architecture.md) / [ADR-0027](../adr/archive/0027-repository-layout.md) の領分）。**同じ説明が 2 箇所にあると必ず片方が古くなる** |
+| G-RS-74 | MUST NOT | doc コメントに層構造・モジュールの割り方・ディレクトリ構成の説明を書かない。**同じ説明が 2 箇所にあると必ず片方が古くなる** |
 | G-RS-75 | MUST NOT | コメント・テスト名・doc の例に、実測の提督名・`api_member_id`・`api_token` を書かない（[C-07](../spec/constraints.md)） |
 
 ## 具体例
@@ -189,7 +187,7 @@ struct ApiShip {
 
 ```rust
 if !wire.extra.is_empty() {
-    // キー名だけを出す。値は出さない（C-04 / ADR-0022）
+    // キー名だけを出す。値は出さない（C-04）
     let keys: Vec<&str> = wire.extra.keys().map(String::as_str).collect();
     tracing::warn!(api = "api_port/port", ?keys, "未知のフィールドを検出した");
 }
@@ -205,8 +203,8 @@ if !wire.extra.is_empty() {
 
 なぜ悪いのか: `extra` は `HashMap<String, Value>` であり、
 **`{:?}` は値をそのまま文字列化する。** 増えたフィールドが自由記述や識別子だった場合、
-それがログファイルに残る。[ADR-0022](../adr/0022-observed-data-privacy.md) が
-poi の実データで確認したとおり、`api_comment`（提督の自由記述）のようなフィールドは実在する。
+それがログファイルに残る。
+poi の実データで確認されたとおり、`api_comment`（提督の自由記述）のようなフィールドは実在する。
 **「増えたフィールドが安全かどうか」は、増えてみるまで分からない。**
 
 ### 3. 要素ごとの縮退（G-RS-14 / G-RS-23 / G-RS-26）
@@ -274,7 +272,7 @@ pub enum ParseError {
   結果として全部を諦める実装になり、NFR-003 の縮退が成立しない
 - `anyhow::Error` を型の内側に置いている（G-RS-11）。
   `anyhow` は「もう分岐しない」ことを表明する道具であり、**分岐する層に持ち込むと型が意味を失う**
-- 失敗位置（`path`）を持たないため、[ADR-0022](../adr/0022-observed-data-privacy.md) の
+- 失敗位置（`path`）を持たないため、
   構造サマリを組み立てられない。**縮退したが原因が分からない**という一番困る状態になる
 
 ### 5. `Debug` の手書き（G-RS-40 / G-RS-41）
@@ -352,12 +350,12 @@ fn fighter_power(gears: &[Gear]) -> u32 {
 
 例外を使うときは、**ルール ID をコメントに書く**（`// G-RS-41 の例外: 観測データを持たない`）。
 レビューで grep できるようにするためであり、
-[ADR-0003](../adr/0003-agent-driven-development.md) の体制では**検索できない合意は存在しないのと同じ**である。
+エージェントが実装するこの体制では**検索できない合意は存在しないのと同じ**である。
 
 ## 未解決事項
 
 - `TODO(未確定)`: **本文書は人間の承認を受けていない**（冒頭のステータス）。
-  `docs/guidelines/` は承認が要る階層である（[ADR-0015](../adr/0015-documentation-layout.md)）。
+  `docs/guidelines/` は承認が要る階層である。
 - `TODO(要検証)`: **Tauri のコマンドハンドラ内で panic したときの挙動。**
   G-RS-33 で確認したのは `tokio::spawn` したタスクの挙動
   （[tokio 公式](https://docs.rs/tokio/latest/tokio/task/struct.JoinError.html)）までで、
@@ -365,14 +363,13 @@ fn fighter_power(gears: &[Gear]) -> u32 {
   プロセスを落とすのか・その呼び出しだけが失敗するのかは実測していない。
   **G-RS-30 の根拠の強さがここで変わる**ため、実装着手時に確かめる。
 - `TODO(要検証)`: `clippy.toml` で禁止する具体的な項目の一覧。
-  [ADR-0030](../adr/archive/0030-no-named-architecture.md) が `std::time::Instant::now` の 1 件を挙げているが、
+  現時点で確定しているのは `std::time::Instant::now` の 1 件だけで、
   `disallowed-methods` に `serde_json::from_str` の直接呼び出しなどを足すかは未決。
   **`clippy` の `restriction` グループ（`unwrap_used` / `expect_used` / `indexing_slicing` など）を
   どこまで有効にするかも含めて、Cargo.toml の `[lints]` 表を作る時点で決める。**
 - `TODO(未確定)`: 構造サマリ（G-RS-42）を組み立てる実装の形。
-  [ADR-0022](../adr/0022-observed-data-privacy.md) の未解決事項「構造サマリに残す情報の粒度」と同じ論点である。
+  「構造サマリに残す情報の粒度」も未決のまま同じ論点に含まれる。
 - `TODO(未確定)`: `serde` のワイヤ型を**手で書くか、マクロで畳むか。**
   G-RS-20 / G-RS-22 は全ワイヤ型に同じ 2 行を要求するため、
-  忘れを機械的に検出したくなる。ただし**マクロは読み解きの面を増やす**
-  （[ADR-0030](../adr/archive/0030-no-named-architecture.md) の決め手 3）ため、
+  忘れを機械的に検出したくなる。ただし**マクロは読み解きの面を増やす**ため、
   最初は手で書き、痛くなってから考える。

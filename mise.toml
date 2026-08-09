@@ -1,4 +1,4 @@
-# 開発ツールチェインの定義（ADR-0031）
+# 開発ツールチェインの定義
 #
 # rust はここに書かない。版の正は rust-toolchain.toml であり、
 # 下の idiomatic_version_file_enable_tools によって mise がそれを読む。
