@@ -1,22 +1,29 @@
-# ADR-0024: Rust コアから UI への状態同期を、ドメイン単位の全量 push と起動時の pull で行う
+# ADR-0024: Rust コアから UI への状態同期の粒度（取り下げ）
 
-- ステータス: **Proposed**
-- 日付: 2026-08-03
-- 決定者: 承認待ち（`Accepted` にする時点で承認者名に書き換える）
-- 関連: [ADR-0016](0016-tech-stack.md)（Tauri + Rust + React）,
-  [ADR-0018](0018-dependencies.md)（`tauri-specta` の型付きイベント / `zustand`）,
-  [ADR-0021](0021-data-persistence.md)（`state/*.json` の読み込み）,
-  [architecture.md](../spec/architecture.md),
-  [external/fleet-view.md](../spec/external/fleet-view.md),
-  [external/timers.md](../spec/external/timers.md),
-  [kancolle/api/api_port_port.md](../kancolle/api/api_port_port.md)
+> **この ADR は決定に至らないまま取り下げられた。実装の根拠にしてはならない。**
+> 状態同期の粒度について、本プロジェクトは**現時点で何も決定していない**。
+> 実装しながら決めるものとして
+> [Issue #8](https://github.com/bosshawk/Harubridge/issues/8) に論点を移してある。
+> 本文に残してあるのは**調査記録だけ**であり、決定・決め手・影響の各節は削除した。
+> 「案 A」以下の比較も、採用も却下も確定していない。
+
+- ステータス: **Withdrawn**（取り下げ。決定に至らず、検討を Issue に戻した）
+- 日付: 2026-08-03（取り下げ 2026-08-09）
+- 決定者: —— （決定していない。取り下げの判断はプロジェクトオーナー）
+- 関連: [ADR-0016](../0016-tech-stack.md)（Tauri + Rust + React）,
+  [ADR-0018](../0018-dependencies.md)（`tauri-specta` の型付きイベント / `zustand`）,
+  [ADR-0021](../0021-data-persistence.md)（`state/*.json` の読み込み）,
+  [architecture.md](../../spec/architecture.md),
+  [external/fleet-view.md](../../spec/external/fleet-view.md),
+  [external/timers.md](../../spec/external/timers.md),
+  [kancolle/api/api_port_port.md](../../kancolle/api/api_port_port.md)
 
 ## 背景と課題
 
-[architecture.md](../spec/architecture.md) の全体構造は
+[architecture.md](../../spec/architecture.md) の全体構造は
 `S -->|IPC| U`（Rust の状態 → UI）と書いているだけで、
 **何を・どの単位で・どちら向きに流すか**を決めていない。
-[ADR-0018](0018-dependencies.md) は「Rust コアから UI へ状態を push する経路が主役である」ことを
+[ADR-0018](../0018-dependencies.md) は「Rust コアから UI へ状態を push する経路が主役である」ことを
 `tauri-specta` 採用の決め手にしたが、その経路の形は未定のままである。実装に入る前に決める。
 
 ### 入力側の実態（実測 2026-08-02）
@@ -28,8 +35,8 @@
 | `api_get_member/require_info` | 188,731 bytes | 1 |
 | `api_get_member/picture_book` | 56,707 bytes | 1 |
 
-出典: [api_port_port.md](../kancolle/api/api_port_port.md) /
-[overview.md](../kancolle/api/overview.md)（本リポジトリの実測、2026-08-02）。
+出典: [api_port_port.md](../../kancolle/api/api_port_port.md) /
+[overview.md](../../kancolle/api/overview.md)（本リポジトリの実測、2026-08-02）。
 
 **`api_port/port` は差分ではなく、母港に戻るたびに全量が飛ぶ。**
 つまり **Rust コアが受け取る入力は、はじめから「スナップショット」の形をしている。**
@@ -38,9 +45,9 @@
 ### 出力側の実態（外部仕様が既に決めていること）
 
 - **パネルごとに「最後に観測した時刻」を個別に表示する**
-  （[fleet-view.md](../spec/external/fleet-view.md)「各パネルは、そのパネルの内容を
+  （[fleet-view.md](../../spec/external/fleet-view.md)「各パネルは、そのパネルの内容を
   最後に観測した時刻を `HH:MM:SS` 形式で表示する」/
-  [timers.md](../spec/external/timers.md) の `最終更新`）。
+  [timers.md](../../spec/external/timers.md) の `最終更新`）。
 - **パネル単位で縮退する。** 1 つのパネルが表示できなくても他のパネルは表示を続ける
   （fleet-view.md E-02 / timers.md E-03）。未観測のパネルは空表ではなく案内を出す（E-01）。
 - **残り時間の毎秒更新は UI 側で行う。**
@@ -52,7 +59,7 @@
 ### イベントの粒度と再描画の粒度は別問題である
 
 「遠征の残り時間だけを再描画したい」は、**イベントを分ける理由にはならない。**
-[ADR-0018](0018-dependencies.md) で採用した `zustand` は selector 単位で購読でき、
+[ADR-0018](../0018-dependencies.md) で採用した `zustand` は selector 単位で購読でき、
 「It detects changes with strict-equality (old === new) by default」であり、
 複数値をまとめて取るときは `useShallow` で不要な再描画を防げる
 （出典: `pmndrs/zustand` README、2026-08-03 参照）。
@@ -196,45 +203,38 @@ const MAX_JSON_DIRECT_EXECUTE_THRESHOLD: usize = 8192;
 
 ## 決定
 
-**真実の情報源（source of truth）は Rust コアに置く。UI 側の store はキャッシュであり、正ではない。
-Rust → UI は「ドメイン単位の型付きイベントで、そのドメインの現在値を全量 push」する。
-差分イベントは送らない。起動直後の初期状態だけは UI から `invoke` で pull する。**
+**無い。取り下げた。**
 
-具体的には次のとおり。
+粒度の判断は、実際に Rust 側の状態を組み立て、UI から購読してみないと決めきれない。
+決めるために要る 2 つの実測（WebView での `emit` の所要時間、Rust で解釈したあとの状態のバイト数）が
+どちらも未了であり、それらの値によって結論が変わりうる。
+提案時点で「実測は決め手にならない」と書いていたが、**決め手にならないと言い切れるだけの実測が無い**。
 
-1. **ドメインの境界は、外部仕様のパネルに合わせる。**
-   判断基準は「**最終更新時刻を別々に表示する単位か**」「**E-02 で片方だけ縮退させる単位か**」。
-   この 2 つが分かれるものは別ドメインにする。それ以外の理由でイベントを増やさない
-2. **各イベントのペイロードは、そのドメインの現在値の全量**（＋そのドメインを観測した時刻）とする。
-   差分・パッチ・変更フラグを送らない
-3. **変化していないドメインは送らない。** `api_port/port` が全量で 7 回来ても、
-   前回送った値と同じドメインは emit しない。
-   これは「差分を送る」ことではなく「**送信を抑止する**」ことである
-4. **初期状態は pull で埋める。** UI はマウント時にドメインごとの取得コマンドを `invoke` する。
-   Rust は起動時に `state/*.json`（[ADR-0021](0021-data-persistence.md)）を読んで
-   メモリ上の状態を組み立てておく。**未観測は「空」ではなく未観測として表現し、
-   E-01 を UI が判定できるようにする**
-5. **マスタデータ（`api_start2/getData`）を UI に渡さない。**
-   艦名・装備名の解決、および制空値などの計算は Rust 側で済ませ、
-   UI には表示に必要な形の状態だけを渡す
-6. **残り時間を状態として持たない。** Rust が渡すのは**絶対完了時刻**であり、
-   残り時間は UI が描画時に計算する。毎秒の tick は UI 側に**アプリ全体で 1 本**だけ置く
-   （既存 3 実装がすべてこの形である。上記「読み取れたこと」2）
-7. **表示都合の派生は UI 側で行う。** 絞り込み・並べ替えは UI 内で完結させ、IPC を挟まない
-8. **Rust 側の状態を更新し終えてから emit する。**
-   イベントを受けた UI が、Rust に問い合わせ直しても矛盾しない状態を保つ
-   （既存 3 実装がすべてこの順序である。上記「読み取れたこと」3）
-9. **`tauri::ipc::Channel` を使わない**（下記 案 E）
+論点は [Issue #8](https://github.com/bosshawk/Harubridge/issues/8) に移した。
+実装で形が固まり、かつ覆すコストが高いと分かった時点で、改めて 1 本書く。
+
+**なお、取り下げによって失われる決定は無い。**
+提案していた内容のうち、真実の情報源を Rust コアに置くことは
+[architecture.md](../../spec/architecture.md) が、
+絶対完了時刻を渡して残り時間を UI が計算することは
+[ADR-0025](../0025-clock-handling.md) の決定 2 が、
+パネル単位の縮退と最終更新時刻は外部仕様（fleet-view / timers の E-01 〜 E-03）が、
+それぞれ既に定めている。本 ADR に固有だったのは
+「全量 push か差分か」「イベントを分けるか」「`Channel` を使うか」の 3 点であり、
+そのすべてが実装で決まるものである。
 
 ## 検討した選択肢
 
-### 案 A: ドメイン単位の全量 push ＋ 起動時 pull（採用）
+> **以下は取り下げ時点の検討である。採用も却下も確定していない。**
+> 一次ソースに当たった調査結果として残す（同じ調査を繰り返さないため）。
+
+### 案 A: ドメイン単位の全量 push ＋ 起動時 pull（当時の第一候補）
 
 - 概要: Rust が状態を持ち、ドメインごとに型付きイベントで全量を push する。
   初期状態のみ `invoke` で取りに行く
 - 利点:
   - **UI 側にマージ処理が生まれない。** 受け取ったものをそのまま置き換えるだけであり、
-    [architecture.md](../spec/architecture.md) の
+    [architecture.md](../../spec/architecture.md) の
     「UI は Rust コアから受け取った状態のみを描画する」がそのまま成り立つ
   - **入力の形（全量スナップショット）と出力の形が一致する。** 変換を挟まない
   - 縮退の単位（E-02）と最終更新時刻の単位が、イベントの単位とそろう
@@ -344,38 +344,17 @@ Rust → UI は「ドメイン単位の型付きイベントで、そのドメ�
   - **2,332,462 bytes（実測 2026-08-02）である。** `emit` で渡せば必ず JS ソース評価を通り、
     `invoke` で渡しても UI 側に 2.3 MB が常駐する
   - E-03（未知の艦娘を `不明 (ID: 1234)` と表示する）はマスタ参照の結果であり、
-    [architecture.md](../spec/architecture.md) は
+    [architecture.md](../../spec/architecture.md) は
     「縮退はパース層で行い、それより内側へ不完全なデータを流さない」としている。
     UI 側で解決すると縮退が UI に移る
-  - [ADR-0016](0016-tech-stack.md) の決め手（信用できない入力を型で扱えることを理由に
+  - [ADR-0016](../0016-tech-stack.md) の決め手（信用できない入力を型で扱えることを理由に
     Rust を選んだ）と逆行する
 
-## 決め手
+## 決めるために要ること
 
-**UI をキャッシュに留め、真実の情報源を Rust に一本化するために、
-IPC のバイト数の最小化（差分送信）を捨てた。**
-
-## 影響
-
-- 実装への影響:
-  - Rust コアはメモリ上に状態を保持し、起動時に `state/*.json` から復元する
-    （[ADR-0021](0021-data-persistence.md) の読み出し経路と同じもの）
-  - ドメインごとに「型 + イベント + 取得コマンド」の 3 点が対になる。
-    `collect_events!` と `collect_commands!` の 2 つのリストに 1 行ずつ足す
-  - UI 側は「取得コマンドで初期化 → イベントで置き換え」の 1 パターンで統一される
-  - 毎秒の tick を UI 側に 1 本だけ置く。個々のコンポーネントが `setInterval` を持たない
-- ドキュメントへの影響:
-  - [architecture.md](../spec/architecture.md) の「全体構造」に、
-    Rust コアと UI の間の粒度の原則を書き足す必要がある。
-    **`architecture.md` の変更には人間の承認が要る**ため、本 ADR が `Accepted` になってから行う
-  - [ADR-0018](0018-dependencies.md) が `tauri-specta` を選んだ理由（型付きイベント）は、
-    本 ADR で初めて具体的な使い方が決まる。**ADR-0018 は書き換えない**
-- 取り消す場合のコスト: **低〜中。** イベントの粒度の変更は
-  Rust の型と UI の購読の付け替えで済み、保存形式（[ADR-0021](0021-data-persistence.md)）や
-  観測方式（[ADR-0016](0016-tech-stack.md)）には波及しない。
-  ただし「真実の情報源を Rust に置く」を覆すと UI 側にマージ処理が必要になり、コストは高い
-
-## 未解決事項
+> 決定を書いていないため、影響の節も置かない。
+> 以下は取り下げ時点で残っていた宿題であり、
+> [Issue #8](https://github.com/bosshawk/Harubridge/issues/8) に引き継いである。
 
 - `TODO(要検証)`: **`emit` の実測。** 上記の 2.3 ms は Node.js 上の代理計測であり、
   WKWebView / WebView2 で 200 KB 級のペイロードを `emit` したときの実測ではない。
@@ -385,19 +364,19 @@ IPC のバイト数の最小化（差分送信）を捨てた。**
 - `TODO(要検証)`: **Rust で解釈したあとの状態が何バイトになるか。**
   `api_port/port` の 271,824 bytes は生の JSON であり、
   不要フィールドを落とせば減り、マスタから名前を埋めれば増える。**どちらに転ぶか未計測**
-- `TODO(未確定)`: ドメインの具体的な割り方。
-  境界の**決め方**は本 ADR で決めたが、実際の一覧はコードが正とする
-  （[ADR-0008](0008-code-as-source-of-truth.md)）
+- `TODO(未確定)`: ドメインの具体的な割り方。**境界の決め方そのものが未決である**
+  （取り下げにより、本 ADR は何も決めていない）。
+  仮に決め方が固まっても、実際の一覧はコードが正とする
+  （[ADR-0008](../0008-code-as-source-of-truth.md)）
 - `TODO(未確定)`: 「未観測」をペイロード上どう表現するか（`Option` か専用の列挙か）。
   E-01 / E-02 / E-03 の区別が UI 側で付けばよく、形は実装で決める
 - `TODO(未確定)`: UI 側が listen を張る前に emit された場合の扱い。
-  採用案では「マウント時に pull してから listen を張る」で埋まる見込みだが、
+  案 A なら「マウント時に pull してから listen を張る」で埋まる見込みだったが、
   その間に起きた更新を取りこぼす窓が残る。実装時に閉じ方を決める
 - `TODO(未確定)`: 大きく、かつ滅多に開かれないパネル（図鑑・保有装備など）を、
   push の対象から外して開いたときだけ pull するかどうか（案 D' の部分適用）。
-  本 ADR は全ドメインを push する前提で書いているが、
+  案 A は全ドメインを push する前提だったが、
   1 ドメインあたりのバイト数が判明した時点で再検討しうる
-- `TODO(未確定)`: 通知（FR-023 〜 FR-025）の判定を Rust と UI のどちらで行うか。
-  本 ADR は「完了時刻は絶対時刻で渡し、残り時間は UI が計算する」までしか決めていない。
-  KancolleSniffer は `TimeStep`（前回 tick と今回 tick の 2 点）で
-  「またぎ」を判定して取りこぼしを防いでいるが、本プロジェクトでどちら側に置くかは未定
+- ~~通知（FR-023 〜 FR-025）の判定を Rust と UI のどちらで行うか~~
+  → **決着済み。** [ADR-0025](../0025-clock-handling.md) の決定 3 が
+  「Rust コアの周期タスクが発火する。UI は発火に関与しない」と定めた

@@ -3,7 +3,7 @@
 - ステータス: **Accepted**
 - 日付: 2026-08-03
 - 決定者: プロジェクトオーナー
-- 関連: [ADR-0016](0016-tech-stack.md)（Tauri v2）/ [ADR-0024](0024-state-sync-granularity.md)（Rust → UI の同期）/
+- 関連: [ADR-0016](0016-tech-stack.md)（Tauri v2）/ [ADR-0024](archive/0024-state-sync-granularity.md)（Rust → UI の同期）/
   [ADR-0026](archive/0026-injection-script-build.md)（注入スクリプトの作り）/
   [architecture.md](../spec/architecture.md)（「境界はページ内に置く」）
 
@@ -25,7 +25,7 @@
 [ADR-0026](archive/0026-injection-script-build.md) の検討中に、Tauri のブートストラップが
 main frame 限定で積まれていることが判明し、前提が成立するか不明になった。
 
-**この前提が崩れると [ADR-0024](0024-state-sync-granularity.md) /
+**この前提が崩れると [ADR-0024](archive/0024-state-sync-granularity.md) /
 [0026](archive/0026-injection-script-build.md) / [0027](archive/0027-repository-layout.md) と
 `architecture.md` の骨格がまとめて倒れる。** そのため先に確定させる。
 

@@ -10,7 +10,7 @@
   （[ADR-0015](0015-documentation-layout.md) が 6 本を統合したのと同じ形式）
 - 関連: [ADR-0016](0016-tech-stack.md)（Tauri + Rust + React）,
   [ADR-0021](0021-data-persistence.md) / [ADR-0022](0022-observed-data-privacy.md)（データとフィクスチャ）,
-  [ADR-0024](0024-state-sync-granularity.md)（状態同期）,
+  [ADR-0024](archive/0024-state-sync-granularity.md)（状態同期。**取り下げ済み。決定は無い**）,
   [ADR-0029](0029-injection-ipc-transport.md)（注入スクリプトからの転送。**統合しない。別論点**）,
   [ADR-0031](0031-toolchain-management.md)（ツールチェイン）
 
@@ -130,7 +130,8 @@ Harubridge/
   重複が 2〜3 箇所で密集した時点で、FSD の `entities/` に相当する
   「ドメイン表示部品」のディレクトリを起こすかを判断する（**今は作らない**。先掘りしない原則）
 - `shared/` にドメインロジック（計算・判定）が現れたら、それは Rust コア行きの誤配置の信号
-  （[ADR-0024](0024-state-sync-granularity.md): 計算は Rust 側で済ませてから渡す）。
+  （[architecture.md](../spec/architecture.md): UI は Rust コアから受け取った状態のみを描画する。
+  計算は Rust 側で済ませてから渡す）。
   機能どうしの連携は `shared/` ではなく store 経由 + `app/` での合成で行う
 - ストアは 1 本にし、ドメインごとのスライスで分ける（zustand 公式推奨。
   再描画は selector で絞れるため分割と挙動は同じ）。
@@ -187,7 +188,8 @@ TS 化は近い一般領域（ブラウザ拡張の main world スクリプト�
   下位 module** に置く。Rust の可視性規則により兄弟 module から到達できず、
   コンパイルが止める（rustc 1.94.1 で実測済み。ADR-0030）
 - 内部モデル（ID を持つ・保存する形）と UI へ出す形（マスタ結合済み）は分ける。
-  理由は `state/*.json` がマスタ無しで復元されるため（[ADR-0024](0024-state-sync-granularity.md)）
+  理由は `state/*.json` がマスタ無しで復元されるため
+  （保存するのは ID を持つ内部モデルであり、艦名・装備名はマスタから結合して初めて付く）
 - 外部モデルと変換は**エンドポイント別**、内部モデルは**ドメイン別**に割る
   （`api_port/port` 1 本が艦隊・入渠・資源などを同時に更新するため、軸が直交する）
 - trait による抽象は実装が 2 つ以上できるまで入れない

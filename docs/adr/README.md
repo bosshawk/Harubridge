@@ -117,7 +117,7 @@
 | [0021](0021-data-persistence.md) | データの持ち方をプレーンファイルにする | Accepted | 2026-08-02 |
 | [0022](0022-observed-data-privacy.md) | 観測データの保存とテストデータの扱い | Accepted | 2026-08-02 |
 | [0023](0023-multi-account-scope.md) | 当面は 1 アカウントのみを扱い、切り替わりの検出だけを実装する | Accepted | 2026-08-03 |
-| [0024](0024-state-sync-granularity.md) | Rust コアから UI への状態同期を、ドメイン単位の全量 push と起動時の pull で行う | **Proposed** | 2026-08-03 |
+| [0024](archive/0024-state-sync-granularity.md) | Rust コアから UI への状態同期の粒度 | **Withdrawn**（決定に至らず取り下げ） | 2026-08-03 |
 | [0025](0025-clock-handling.md) | 時刻の扱い —— 壁時計と単調増加時計の使い分け | Accepted | 2026-08-03 |
 | [0026](archive/0026-injection-script-build.md) | 注入スクリプトは生 JS 1 ファイルのまま持ち、型検査だけを TypeScript に任せる | Superseded by ADR-0032 | 2026-08-03 |
 | [0027](archive/0027-repository-layout.md) | リポジトリのディレクトリ構成をコア／殻の 2 クレート＋機能別フロントエンドにする | Superseded by ADR-0032 | 2026-08-03 |
