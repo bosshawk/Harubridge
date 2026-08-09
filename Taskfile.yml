@@ -1,0 +1,49 @@
+# 開発コマンドの入口（ADR-0033）。
+# コマンドは Taskfile 内蔵の sh 解釈系（mvdan/sh）で動くため、Windows でもそのまま動く。
+# ここには「集約」だけを書く。個別の定義は package.json / cargo に置いたまま重複させない。
+version: "3"
+
+tasks:
+  dev:
+    desc: アプリを開発モードで起動する
+    cmds:
+      - pnpm tauri dev
+
+  build:
+    desc: アプリをビルドする（バンドル出力）
+    cmds:
+      - pnpm tauri build
+
+  check:
+    desc: すべての検査を実行する（CI と同じ内容）
+    deps: [check:fe, check:rust]
+
+  check:fe:
+    desc: フロントエンドの検査（型・リント・整形・注入スクリプトの差分）
+    cmds:
+      - pnpm exec tsc --noEmit
+      - pnpm exec tsc -p tsconfig.injected.json --noEmit
+      - pnpm lint
+      - pnpm format:check
+
+  check:rust:
+    desc: Rust の検査（clippy 警告をエラー扱い・整形）
+    cmds:
+      - cargo clippy --workspace --all-targets -- -D warnings
+      - cargo fmt --check
+
+  test:
+    desc: テストを実行する
+    cmds:
+      - cargo test -p harubridge-core
+
+  fmt:
+    desc: 整形を適用する（TypeScript / Rust）
+    cmds:
+      - pnpm format
+      - cargo fmt
+
+  injected:
+    desc: 注入スクリプトの生成物（kcsapi-hook.js）を再生成する
+    cmds:
+      - pnpm build:injected

@@ -73,8 +73,18 @@ mise install                 # Node / pnpm / Rust 一式が入る
 
 | ツール | 版の正 |
 | --- | --- |
-| Node / pnpm | [`mise.toml`](mise.toml) |
+| Node / pnpm / task | [`mise.toml`](mise.toml) |
 | Rust（rustup / rustc / cargo / rustfmt / clippy） | [`rust-toolchain.toml`](rust-toolchain.toml) |
+
+日常のコマンドは [`Taskfile.yml`](Taskfile.yml) が入口です
+（[ADR-0033](docs/adr/0033-task-runner.md)）。
+
+```sh
+task --list    # コマンド一覧
+task dev       # アプリを開発モードで起動
+task check     # すべての検査（CI と同じ内容）
+task test      # テスト
+```
 
 **Rust の版は `mise.toml` ではなく `rust-toolchain.toml` に書いてあります。**
 mise がそのファイルを読むため、rustup を直接使う場合も同じ版が選ばれます。
