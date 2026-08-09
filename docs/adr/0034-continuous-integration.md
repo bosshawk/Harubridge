@@ -1,4 +1,4 @@
-# ADR-0034: CI を GitHub Actions に置き、検査は ubuntu に集約する。OS 別のジョブは Windows 1 つだけ持つ
+# ADR-0034: CI を GitHub Actions の ubuntu 1 ジョブに置き、OS 別のジョブは必要になるまで作らない
 
 - ステータス: **Proposed**
 - 日付: 2026-08-09
@@ -53,8 +53,9 @@
 
 - **public リポジトリは標準ランナーを無償・無制限で使える**
   （[GitHub Docs: GitHub-hosted runners](https://docs.github.com/en/actions/reference/runners/github-hosted-runners)）。
-  本プロジェクトは public（[ADR-0005](0005-publish-as-oss.md)）であり、**OS 台数は費用の制約にならない。
-  したがって「何台まわすか」は費用ではなく、得られるものだけで決める**
+  本プロジェクトは public（[ADR-0005](0005-publish-as-oss.md)）であり、
+  **OS 台数は費用の制約にならない。したがって「何台まわすか」は費用ではなく、
+  得られるものだけで決める**
 - ラベルの現在の対応: `macos-latest` → arm64 の macOS 15、`windows-latest` → `windows-2025`（同上）
 
 **`jdx/mise-action` の現況。**
@@ -76,74 +77,70 @@
 - `mise registry` に `gitleaks`（`aqua:gitleaks/gitleaks`）が存在する。
   実行環境で `mise registry | grep gitleaks` により確認した
 
-**「どの環境でもビルドできる」は、このアプリには当てはまらない。**
+**ubuntu で回せるもの・回せないもの。**
 
-- `src-tauri` は `tauri` に依存し、Tauri は Linux でだけ
-  `libwebkit2gtk-4.1-dev` / `libappindicator3-dev` / `librsvg2-dev` / `patchelf` / `xdg-utils` を要求する
-  （[Tauri v2: GitHub Actions](https://v2.tauri.app/distribute/pipelines/github/)。
-  macOS / Windows には追加のシステム依存が無い）
-- つまり **ubuntu で `src-tauri` をビルドすることは、対応 OS でない Linux 版を作ることそのもの**であり、
-  ついでに済む作業ではない。**選択肢は「どの OS でビルドするか」ではなく
-  「`src-tauri` を CI でビルドするか、しないか」である**
-- 一方 **`crates/harubridge-core/` は `tauri` に依存しない**（`Cargo.toml` で確認。
+- **`crates/harubridge-core/` は `tauri` に依存しない**（`Cargo.toml` で確認。
   [ADR-0032](0032-repository-structure.md) §1 がコンパイラに強制させている境界）。
   **Linux で追加パッケージ無しに clippy とテストが通る**
-- `tauri build` に **`--no-bundle`**（「`bundle > active` が `true` でもバンドル工程を飛ばす」）がある
-  （[Tauri v2: CLI reference](https://v2.tauri.app/reference/cli/)）
-
-**OS によって結果が変わる検査は、実際には何か。**
-
-- 型検査・リント・整形・秘密情報の走査・リポジトリの形の検査は、**OS で結果が変わらない**
+- **`src-tauri` は `tauri` に依存する。** Tauri は Linux でだけ
+  `libwebkit2gtk-4.1-dev` / `libappindicator3-dev` / `librsvg2-dev` / `patchelf` / `xdg-utils` を要求する
+  （[Tauri v2: GitHub Actions](https://v2.tauri.app/distribute/pipelines/github/)。
+  macOS / Windows には追加のシステム依存が無い）。
+  つまり **ubuntu で `src-tauri` をビルドすることは、対応 OS でない Linux 版を作ることそのもの**である
 - **Linux のファイルシステムは大文字小文字を区別する。**
   macOS と Windows の既定は区別しない。したがって import パスの大小のずれは
   **Linux でだけ検出できる**（`tsc` / `eslint` の検出力が上がる）
-- **`#[cfg(target_os = ...)]` で分岐したコードは、その OS 向けにコンパイルしない限り
-  型検査すらされない。** [ADR-0029](0029-injection-ipc-transport.md)（Proposed）が採ろうとしている実装は
-  macOS（`WKUserContentController` の `addScriptMessageHandler:name:`）と
-  Windows（COM の `ICoreWebView2Frame2::add_WebMessageReceived`）で完全に別のコードである
+- **[ADR-0022](0022-observed-data-privacy.md) が CI に求めている検査は、すべて `tauri` に依存しない。**
+  混入判定・フィクスチャのバイト一致・gitleaks・生成物の差分は、いずれも ubuntu で完結する
+
+**OS 別のジョブを置いたとして、何が得られるか。**
+
 - **実行時の差異（WebView の挙動・通知・ウィンドウ・注入の成否）は、
   どの OS で CI を回しても検証できない。** E2E も GUI テストも存在しないため。
   Windows の実機確認は Issue #6 に残っており、**CI はそれを一切代替しない**
+- 得られるのは**コンパイルの検査だけ**である。そして
+  **`src-tauri/src/lib.rs` は Tauri 雛形そのままの 12 行**であり、
+  `#[cfg(target_os = ...)]` による分岐は **1 行も存在しない**
+- OS 別コードは [ADR-0029](0029-injection-ipc-transport.md) が採ろうとしているが、
+  **同 ADR は Proposed であり承認されていない。** 実装も存在しない
+- **開発機は macOS であり、`task dev` / `task check` により日常的に macOS でビルドされている**
 
-**人間がビルドしている OS はどれか。**
+**Windows のジョブが赤くなったとき、直せるか。**
 
-- 開発機は macOS であり、`task dev` / `task check` により**日常的に macOS でビルドされる**
-- **Windows は一度もビルドされていない。** VM も無く、実機確認は Issue #6 で後回しになっている
-- したがって **CI の 1 ジョブが持つ価値は、人間がその OS でビルドする頻度に反比例する**
+- **手元に Windows の実機も VM も無い**（Issue #6。macOS 環境で VM が要り、
+  その画面はエージェントから見えない）
+- したがって環境起因で落ちた場合、**再現もデバッグもできず、赤が `main` に残り続ける**
 
 ## 決定
 
-**CI を GitHub Actions に置く。ワークフローに書くのは
-「ツールチェインを入れる」と「`task` のタスクを呼ぶ」の 2 つだけとし、
-検査の中身は Taskfile と cargo / package.json 側に置いて CI 固有の記述を作らない。**
+**CI を GitHub Actions に置く。ジョブは `ubuntu-latest` の 1 つだけとし、
+macOS / Windows のジョブは作らない。**
 
-**OS 非依存の検査はすべて `ubuntu-latest` に集約する。
-OS 別のジョブは `windows-latest` の 1 つだけ持ち、macOS のジョブは作らない。**
+ワークフローに書くのは「ツールチェインを入れる」と「`task` のタスクを呼ぶ」の 2 つだけとし、
+検査の中身は Taskfile と cargo / package.json 側に置いて CI 固有の記述を作らない。
 
 - ワークフローは `.github/workflows/ci.yml` の 1 本。
   トリガーは `push`（`main`）/ `pull_request` / `workflow_dispatch`
-- ジョブは 2 つ
-
-| ジョブ | 環境 | 内容 |
-| --- | --- | --- |
-| **検査** | `ubuntu-latest` | 型検査・リント・整形・生成物の差分・観測データの混入判定・gitleaks・`cargo fmt --check`・**`tauri` に依存しないクレート**の clippy とテスト |
-| **Windows ビルド** | `windows-latest` | `src-tauri` を含む `cargo clippy --workspace` / `cargo test` / `tauri build --no-bundle` |
-
-- **macOS のジョブを作らない理由は、開発機が macOS だからである。**
-  macOS のビルドは人間が毎日通しており、CI で二重に確かめても得るものが薄い。
-  **Windows は誰もビルドしていない。CI が唯一のコンパイル機会になる**
-- **今は `src-tauri` に OS 別コードが 1 行も無いため、Windows ジョブは
-  「`src-tauri` がコンパイルできること」の確認も同時に果たす。**
-  [ADR-0029](0029-injection-ipc-transport.md) の実装が入った時点で、
-  本来の目的（Windows 固有コードの型検査）が効き始める
-- バンドル・署名・公証は本 ADR の対象外（`--no-bundle`）
-- **CI から呼ぶコマンドはすべて `task <name>` の形にする。**
-  必要なタスクが無ければ Taskfile に足す。**ワークフローの YAML に生のコマンドを書かない**
+- ジョブの内容は、**`tauri` に依存しないものすべて** ——
+  型検査・リント・整形・生成物の差分・観測データの混入判定・gitleaks・
+  `cargo fmt --check`・`tauri` に依存しないクレートの clippy とテスト
+- **`src-tauri` のビルドは CI で行わない。**
+  開発機（macOS）の `task check` に委ねる
 - ツールチェインは `jdx/mise-action@v4`。Rust のビルドキャッシュに `Swatinem/rust-cache` を使う
 - **観測データの混入判定（[ADR-0022](0022-observed-data-privacy.md) 具体策 3）は、
   ワークスペース内の Rust の実行可能クレートとして実装する。**
-  走査対象は `git ls-files` が返す追跡対象ファイル。判定自体に単体テストを付ける
+  走査対象は `git ls-files` が返す追跡対象ファイル。判定自体に単体テストを付ける。
+  `tauri` に依存させないことで、ubuntu のジョブで完結させる
 - **gitleaks は公式 Action を使わず、mise で CLI を入れて `task` から呼ぶ**
+
+### OS 別のジョブを足す契機
+
+**[ADR-0029](0029-injection-ipc-transport.md) が承認され、`#[cfg(target_os = ...)]` による
+OS 別コードを実装するとき。その実装作業の一部として足す。**
+
+そのときには「書いたコードが一度もコンパイルされないまま `main` に載る」という
+具体的な問題が実在し、**直せない赤を抱えるリスクを取るだけの理由になる。**
+ADR は起こさない（ワークフローに数行足すだけであり、覆すコストが低いため）。
 
 ## 検討した選択肢
 
@@ -155,7 +152,6 @@ OS 別のジョブは `windows-latest` の 1 つだけ持ち、macOS のジョ�
 - 利点:
   - [ADR-0022](0022-observed-data-privacy.md) が「判定の正」と名指しした場所を実際に用意できる。
     ここが無い限り `.local/` を使えず、実装に着手できない
-  - 費用が制約にならないため、**ジョブの構成を費用で妥協せずに決められる**
 - 欠点: [ADR-0014](0014-trunk-based-on-main.md) の下では PR が無いため、
   **検出は常に push のあと**になる（下記「影響」）
 
@@ -171,64 +167,50 @@ OS 別のジョブは `windows-latest` の 1 つだけ持ち、macOS のジョ�
 > リポジトリを GitHub でホストしており（[ADR-0005](0005-publish-as-oss.md)）、
 > public リポジトリでは無償・無制限であるため、他所へ持ち出す理由が無い。
 
-### 論点 2: どの OS で、何を回すか
+### 論点 2: どの OS で回すか
 
-**判断の軸は 2 つある。**
-(1) その検査は OS によって結果が変わりうるか。
-(2) 変わりうるとして、**その OS で人間が既にビルドしているか。**
+費用は判断材料にならない（public リポジトリは無償・無制限）。
+**したがって基準は「そのジョブを置くと、何が新しく分かるか」の一点である。**
 
-(2) を見落とすと「開発機と同じ OS で同じビルドを二重に回すジョブ」が残る。
+#### 案 B1: `ubuntu-latest` の 1 つだけ（採用）
 
-#### 案 B1: 検査は ubuntu に集約し、OS 別ジョブは Windows 1 つだけ（採用）
-
-- 概要: OS で結果が変わらない検査を `ubuntu-latest` に集め、
-  `src-tauri` のビルドは `windows-latest` だけで行う
+- 概要: `tauri` に依存しない検査をすべて ubuntu で回す。`src-tauri` は CI でビルドしない
 - 利点:
-  - **同じ検査を何度も回さない。** 型・リント・整形・秘密情報の走査に OS の意味は無い
+  - **[ADR-0022](0022-observed-data-privacy.md) の関門を完全に満たす。**
+    混入判定・フィクスチャのバイト一致・gitleaks・生成物の差分はすべて `tauri` に依存せず、
+    ubuntu で完結する。**本 ADR の目的（`.local/` を使えるようにする）は 1 ジョブで達成される**
   - **Linux は大文字小文字を区別するため、静的検査の検出力がむしろ上がる**
-  - **人間が見ていない唯一の OS を CI が押さえる。** macOS は開発機で毎日ビルドされ、
-    Windows は誰もビルドしていない。**CI を置く価値が最も高いのは Windows である**
-  - 今は OS 別コードが無いため、**Windows ジョブ 1 つで
-    「`src-tauri` がコンパイルできる」ことの確認も兼ねられる**
-  - ubuntu は 3 つの中で最も速く、**壊れたことに気づくまでの時間が短い**。
+  - 3 つの中で最も速く、**壊れたことに気づくまでの時間が短い**。
     [ADR-0014](0014-trunk-based-on-main.md) の下では検出が常に push のあとになるため、ここは効く
+  - **直せない赤を抱え込まない。** ubuntu で落ちたものは手元でも再現できる
   - 振り分けの線が既存のクレート境界（`tauri` を知っているか）と一致し、迷う余地が無い
 - 欠点:
-  - **「CI が緑 = macOS で通る」が言えない。** macOS は開発機の `task check` に依存する
-  - Windows で落ちたときに手元で再現できない（実機も VM も無い）。
-    ログだけで直すことになる
+  - **`src-tauri` がコンパイルできることを CI が保証しない。** 開発機の `task check` に依存する
   - 対応 OS でない Linux でだけ落ちることが起きうる（例: パスの大小）。
     ただしそれは検出力が上がった結果であり、直す価値のある誤りである
 
-#### 案 B2: 検査は ubuntu、OS 別ジョブは macOS + Windows の 2 つ
+#### 案 B2: ubuntu + `windows-latest`
 
-- 概要: 対応 OS を両方とも CI で押さえる
-- 利点: 「CI が緑 = 対応 OS 両方で通る」と言い切れる。
-  macOS 固有コードが入ったときも CI が型検査する
-- 却下理由: **macOS のビルドは開発機が毎日通しており、CI で二重に確かめて得るものが薄い**ため。
-  必要になるのは開発機が macOS でなくなったとき、または macOS でビルドしない貢献者が現れたときであり、
-  そのとき 1 行足せばよい（**取り消しコストが極めて低い**）。
+- 概要: `src-tauri` のビルドを Windows で行い、誰もビルドしない OS を CI で押さえる
+- 利点: `src-tauri` のコンパイルを CI が保証する。
+  将来 Windows 固有コードが入ったとき、初日から型検査される
+- 却下理由: **いま得られるものが「12 行の Tauri 雛形がコンパイルできる」ことだけ**であり、
+  それに対して**直せない赤を抱えるリスク**（Windows の実機も VM も無い）が釣り合わないため。
+  Windows 固有コードは [ADR-0029](0029-injection-ipc-transport.md) が Proposed の段階で、
+  1 行も存在しない。**存在しないコードのために CI を先に置くのは先掘りである。**
+  実装を書くときに足せばよい（上記「OS 別のジョブを足す契機」）。
 
-#### 案 B3: すべての検査を macOS + Windows の 2 つで回す（初稿の案）
+#### 案 B3: ubuntu + `macos-latest`
+
+- 概要: 開発機と同じ OS でビルドを確認する
+- 却下理由: **macOS のビルドは開発機が毎日通しており、CI を足しても新しい情報が出ない**ため。
+  必要になるのは開発機が macOS でなくなったとき、または macOS でビルドしない貢献者が現れたとき。
+
+#### 案 B4: すべての検査を macOS + Windows の 2 つで回す（初稿の案）
 
 - 概要: 対応 OS と CI の実行環境を完全に一致させ、ジョブを 1 種類に保つ
 - 却下理由: **静的検査には OS の意味が無いのに、実行時間だけが倍になる**ため。
   加えて大文字小文字を区別しない 2 OS だけになり、Linux で回せば見つかる誤りを取り逃がす。
-
-#### 案 B4: `ubuntu-latest` のみ。`src-tauri` は CI でビルドしない
-
-- 概要: 最も速く単純な 1 ジョブに集約する
-- 却下理由: **`src-tauri` がコンパイルできることを CI が一切保証しなくなる**ため。
-  ubuntu で `src-tauri` をビルドするには Linux 用のシステムパッケージが要り、
-  それは**対応 OS でない Linux 版を作ること**にほかならない。
-  「どの環境でもビルドできるはず」はこのアプリには当てはまらない。
-
-#### 案 B5: OS 別ジョブを持たず、[ADR-0029](0029-injection-ipc-transport.md) の実装が入ってから足す
-
-- 概要: いま OS 別コードが無いことを理由に、Windows ジョブを後回しにする
-- 却下理由: OS 別コードが無くても **`src-tauri` 自体は実在するコードであり、
-  それが壊れたことを CI が検出できない状態になる**ため。
-  ジョブの追加コストはワークフロー数行であり、後回しにして得るものが無い。
 
 ### 論点 3: 観測データの混入判定をどう実装するか
 
@@ -243,7 +225,7 @@ OS 別のジョブは `windows-latest` の 1 つだけ持ち、macOS のジョ�
 - 利点:
   - **判定そのものに単体テストを書ける。** 判定が壊れていれば、
     それは「壊れていることに気づけない防御」であり、無いより悪い
-  - `tauri` に依存しないため **ubuntu の検査ジョブでそのまま回る**
+  - **`tauri` に依存しないため、ubuntu の 1 ジョブでそのまま回る**
   - 除外条件である「生成器の出力」は [ADR-0022](0022-observed-data-privacy.md) により
     Rust の生成器が決める。**判定と生成器を同じ言語・同じワークスペースに置けば、
     出力パスの定義を 1 箇所で共有できる**
@@ -293,26 +275,26 @@ OS 別のジョブは `windows-latest` の 1 つだけ持ち、macOS のジョ�
 
 ## 決め手
 
-**「CI で落ちたものは手元でも落ちる」という再現性と、
-「人間が見ていない場所を CI が見る」という補完性を得るために、
-「CI が緑なら対応 OS 両方で通る」と言い切れることを捨てた。**
+**CI が確実に赤くなれる状態を守るために、「対応 OS でビルドが通ることの保証」を捨てた。**
 
-CI にしか無いコマンドは、必ずローカルで再現できない失敗を生む。
-コードを書くのがエージェントであり、人間が全行を見張らない前提
-（[ADR-0003](0003-agent-driven-development.md)）では、
-**「CI で落ちたが手元では再現しない」状態が最も高くつく。**
+本 CI を置く目的は、[ADR-0022](0022-observed-data-privacy.md) が名指しした
+**不可逆な事故（public リポジトリの履歴に個人情報が残る。C-07）を止めること**である。
+その関門は `tauri` に依存せず、ubuntu の 1 ジョブで完全に満たせる。
 
-そのうえで、**CI は人間が既にやっていることを繰り返す場所ではない。**
-macOS のビルドは開発機が毎日通しており、CI を足しても新しい情報が出てこない。
-費用が制約にならない（public リポジトリ）以上、
-ジョブを増やさない理由は費用ではなく**「増やしても何も分からないから」**である。
+一方、**壊れたビルドは可逆である。** push し直せば直る。
+[ADR-0022](0022-observed-data-privacy.md) の「判定の正は CI に置く」は
+不可逆なものについての決定であり、**コンパイルエラーにまで同じ強度を広げる理由は無い。**
+
+そして、**直せない赤は CI を殺す。** Windows で環境起因の失敗が起きても再現手段が無く、
+「どうせ赤いから」で無視する習慣がつけば、本来止めたかった混入判定まで一緒に無視される。
+**赤が必ず意味を持つ状態を保つことのほうが、ジョブの数より重い。**
 
 ## 影響
 
 ### 実装への影響
 
 - 新規に作るもの:
-  - `.github/workflows/ci.yml`（ubuntu の検査ジョブ + Windows のビルドジョブ）
+  - `.github/workflows/ci.yml`（`ubuntu-latest` の 1 ジョブ）
   - 観測データの混入判定を行う実行可能クレート（[ADR-0032](0032-repository-structure.md) の
     ツリーに 1 メンバー追加。**同 ADR の「強制される境界は 3 本」には影響しない**）
 - `mise.toml` の `[tools]` に `gitleaks` を追加する
@@ -321,9 +303,8 @@ macOS のビルドは開発機が毎日通しており、CI を足しても新�
     **`check:fe` の `desc` が「注入スクリプトの差分」と書いているのに実装されていない**穴を埋める
   - 観測データの混入判定
   - gitleaks
-  - `tauri build --no-bundle`
-  - 現在の `check:rust` は `cargo clippy --workspace` であり、これは `src-tauri` を含む
-    （＝ Windows ジョブ側）。**ubuntu 用に「`tauri` に依存しないクレートだけ」の入口を別に用意する。**
+  - 現在の `check:rust` は `cargo clippy --workspace` であり、これは `src-tauri` を含む。
+    **CI（ubuntu）用に「`tauri` に依存しないクレートだけ」の入口を別に用意する。**
     開発者が手元で叩く `task check` は、従来どおり自分の OS で全部を回す
 - `cargo` を回す時点で `crates/harubridge-core/build.rs` が走り、
   `data/kancolle/*.json` の JSON としての妥当性は自動的に検査される（既存の実装）
@@ -342,11 +323,11 @@ CI は push のあとに回る**事後検出**になる。
 ただし **public リポジトリでは、事後検出では取り返しがつかないものがある**（C-07: 履歴から消せない）。
 そこで防止は次の 2 段構えとする。
 
-1. **防止（ローカル）** —— push 前に検査系のタスクを回す。**規約であり、保証ではない**
+1. **防止（ローカル）** —— push 前に `task check` を回す。**規約であり、保証ではない**
 2. **保証（CI）** —— 越えられない場所で必ず落とす。**ただし落ちた時点で既に push されている**
 
 **1 を [CLAUDE.md](../../CLAUDE.md) §5 の完了条件に加える必要がある**（人間の承認が要る）。
-macOS のビルドを CI に置かない判断も、この 1 に寄りかかっている。
+`src-tauri` のビルドを CI に置かない判断は、この 1 に寄りかかっている。
 
 ### ドキュメントへの影響
 
@@ -358,8 +339,8 @@ macOS のビルドを CI に置かない判断も、この 1 に寄りかかっ�
 
 ### 取り消す場合のコスト
 
-**低い。** ワークフローの削除・OS の増減・ジョブの分割はいつでも変えられる。
-とくに **macOS ジョブの追加は数行**であり、開発機が macOS でなくなった時点で足せばよい。
+**低い。** ワークフローの削除・OS の増減はいつでも変えられる。
+**OS 別ジョブの追加はワークフロー数行**であり、必要になった時点で足せばよい。
 検査の中身が Taskfile 側にあるため、CI サービスを移す場合も
 「ツールチェインを入れて `task` を呼ぶ」を書き直すだけで済む。
 
@@ -373,15 +354,10 @@ macOS のビルドを CI に置かない判断も、この 1 に寄りかかっ�
   lefthook / prek などの導入は依存の追加であり、
   [ADR-0018](0018-dependencies.md) の系列で別途決める。
   **判定の正が CI にあることは変わらないため、実装着手は妨げない**
-- `TODO(要検証)`: **`tauri build` が Windows で通るかは未確認。** CI を入れて初めて分かる。
-  **手元に Windows の実機も VM も無いため、落ちた場合はログだけで直すことになる。**
-  直せない場合の扱い（Issue 化するか、ジョブを一時的に外すか）はその時点で判断する
 - `TODO(未確定)`: gitleaks のカスタムルールの具体的な内容。
   `api_token` を検出するルールを足すことは [ADR-0022](0022-observed-data-privacy.md) が決めているが、
   **`api_token` の実際の形式（長さ・文字種）を観測できていない**ため、
   現時点では既定ルールのみで導入し、実測後にカスタムルールを足す
-- **macOS のジョブを足す契機**: 開発機が macOS でなくなったとき、
-  または macOS でビルドしない貢献者が現れたとき。ADR を起こさず、ワークフローに 1 行足せばよい
 - **改行の正規化（`.gitattributes`）は本 ADR では扱わない。**
   リポジトリの設定であり、CI の有無と独立に必要なものだからである
   （Windows は git の `core.autocrlf` が既定で有効であり、
@@ -389,5 +365,5 @@ macOS のビルドを CI に置かない判断も、この 1 に寄りかかっ�
   CRLF 変換で壊れる）。設定 1 行として別に入れる
 - 配布（署名・公証・自動更新）とリリースの自動化は本 ADR の対象外。
   外部仕様と配布方法が決まってから別に起票する
-- CI の実行時間が問題になった場合の追加の分割は、実際に遅くなってから判断する。
+- CI の実行時間が問題になった場合の分割は、実際に遅くなってから判断する。
   **先に最適化しない**
