@@ -1,0 +1,50 @@
+# 検査のための CI。
+#
+# ここに書くのは「道具を入れる」と「task を呼ぶ」の 2 つだけ。検査の中身は Taskfile 側にある。
+# CI にしか無いコマンドを置かないのは、手元で再現できない失敗を作らないためである。
+#
+# 実行環境は ubuntu だけ。型・リント・整形・秘密情報・リポジトリの形の検査は OS で結果が
+# 変わらず、Linux は大文字小文字を区別するぶん検出力が高い。macOS / Windows での振る舞いの
+# 確認には VM か実機が要り、CI では代替できない。配るバイナリを作る工程は配布の話に属する。
+#
+# action は版タグではなくコミットハッシュで固定する。タグは付け替えられるため、
+# タグ指定では取得する内容が後から変わりうる。横のコメントは人間が版を読むためのもの。
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+# 同じ ref に続けて push されたら、古い実行を打ち切る
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+# 既定を読み取りだけに落とす。この CI は何も書き込まない
+permissions:
+  contents: read
+
+jobs:
+  check:
+    name: 検査
+    runs-on: ubuntu-latest
+    steps:
+      - name: リポジトリを取得する
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          # gitleaks が履歴を走査するため、全コミットを取得する
+          fetch-depth: 0
+
+      - name: 道具を入れる（mise.toml と rust-toolchain.toml を読む）
+        uses: jdx/mise-action@7e36c90d9ab29c415a2384db3006f3ec8a8cc654 # v4.2.4
+        with:
+          version: 2026.8.3
+          install: true
+
+      - name: Rust のビルドキャッシュを復元する
+        uses: Swatinem/rust-cache@6323deb102c322ba6fcbdcafc7e3dddab59af2b6 # v2.9.2
+
+      - name: 検査する
+        run: task ci

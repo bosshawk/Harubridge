@@ -14,3 +14,6 @@ idiomatic_version_file_enable_tools = ["rust"]
 node = "26.7.0"
 pnpm = "11.20.0"
 task = "3.52.0"
+# 秘密情報の検出。公式の GitHub Action は独自ライセンスであり手元でも動かせないため、
+# MIT の CLI をここから入れて CI と手元の両方で同じコマンドを叩く。
+gitleaks = "8.30.1"

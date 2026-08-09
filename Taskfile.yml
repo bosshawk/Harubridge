@@ -1,6 +1,12 @@
 # 開発コマンドの入口。
 # コマンドは Taskfile 内蔵の sh 解釈系（mvdan/sh）で動くため、Windows でもそのまま動く。
 # ここには「集約」だけを書く。個別の定義は package.json / cargo に置いたまま重複させない。
+#
+# `ci` と `check` の関係:
+#   ci    = tauri に依存しない検査だけ。CI（ubuntu）が呼ぶ
+#   check = ci に src-tauri の検査を足したもの。手元で push する前に回す
+# CI が src-tauri を検査しないのは、Linux でのビルドが対応 OS でない Linux 版を
+# 作ることになるためで、そのぶんは手元の check が受け持つ。
 version: "3"
 
 tasks:
@@ -14,28 +20,78 @@ tasks:
     cmds:
       - pnpm tauri build
 
+  deps:
+    desc: 依存パッケージを取得する（lockfile どおり）
+    cmds:
+      - pnpm install --frozen-lockfile
+
+  ci:
+    desc: CI と同じ検査を実行する（tauri に依存しないものだけ）
+    cmds:
+      - task: deps
+      - task: check:portable
+      - task: check:rust:portable
+
   check:
-    desc: すべての検査を実行する（CI と同じ内容）
-    deps: [check:fe, check:rust]
+    desc: すべての検査を実行する（ci に src-tauri を加えたもの）
+    cmds:
+      - task: deps
+      - task: check:portable
+      - task: check:rust
+
+  check:portable:
+    desc: tauri にも OS にも依存しない検査
+    internal: true
+    cmds:
+      - task: check:fe
+      - task: check:injected
+      - cargo fmt --check
+      - task: check:observed-data
+      - task: check:secrets
+      - task: test
 
   check:fe:
-    desc: フロントエンドの検査（型・リント・整形・注入スクリプトの差分）
+    desc: フロントエンドの検査（型・リント・整形）
     cmds:
       - pnpm exec tsc --noEmit
       - pnpm exec tsc -p tsconfig.injected.json --noEmit
       - pnpm lint
       - pnpm format:check
 
+  check:injected:
+    desc: 注入スクリプトの生成物がソースと一致していることを確かめる
+    # 実際に注入されるテキスト（.js）をコミットしているのは、監査したい者がいつでも
+    # 「動くものそのもの」を読めるようにするため。ソースとずれていれば意味を失う。
+    # cargo は tsc を実行しないので、ずれは黙って起きる。ここで落とす。
+    cmds:
+      - pnpm build:injected
+      - git diff --exit-code -- src-tauri/injected/kcsapi-hook.js
+
+  check:observed-data:
+    desc: 追跡対象ファイルに観測データが混入していないか検査する
+    cmds:
+      - cargo run --quiet -p repo-guard
+
+  check:secrets:
+    desc: 秘密情報がコミットされていないか検査する
+    # --redact: 検出した値そのものをログに出さない。CI のログは公開されるため
+    cmds:
+      - gitleaks git --redact --no-banner .
+
+  check:rust:portable:
+    desc: tauri に依存しないクレートの検査（clippy 警告をエラー扱い）
+    cmds:
+      - cargo clippy -p harubridge-core -p repo-guard --all-targets -- -D warnings
+
   check:rust:
-    desc: Rust の検査（clippy 警告をエラー扱い・整形）
+    desc: Rust 全体の検査（src-tauri を含む。clippy 警告をエラー扱い）
     cmds:
       - cargo clippy --workspace --all-targets -- -D warnings
-      - cargo fmt --check
 
   test:
     desc: テストを実行する
     cmds:
-      - cargo test -p harubridge-core
+      - cargo test -p harubridge-core -p repo-guard
 
   fmt:
     desc: 整形を適用する（TypeScript / Rust）

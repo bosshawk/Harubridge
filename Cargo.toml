@@ -2,4 +2,4 @@
 # members は glob を使わず完全一致で列挙する（tauri-cli が glob 指定のメンバーを誤認する既知の問題の回避）
 [workspace]
 resolver = "2"
-members = ["src-tauri", "crates/harubridge-core"]
+members = ["src-tauri", "crates/harubridge-core", "crates/repo-guard"]

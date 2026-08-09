@@ -1,8 +1,8 @@
 # ADR-0034: 検査のための CI を GitHub Actions の ubuntu 1 ジョブに置く
 
-- ステータス: **Proposed**
+- ステータス: Accepted
 - 日付: 2026-08-09
-- 決定者: 承認待ち（`Accepted` にする時点で承認者名に書き換える）
+- 決定者: プロジェクトオーナー
 - 関連: [ADR-0022](0022-observed-data-privacy.md)（**判定の正を CI に置くと決めている。本 ADR はその実装**）,
   [ADR-0031](0031-toolchain-management.md)（mise / `jdx/mise-action`）,
   [ADR-0033](0033-task-runner.md)（`task check` は CI と同じ内容にする）,
@@ -325,6 +325,12 @@ macOS / Windows で確かめたいのは振る舞いであり、**それに要�
   - 現在の `check:rust` は `cargo clippy --workspace` であり、これは `src-tauri` を含む。
     **CI（ubuntu）用に「`tauri` に依存しないクレートだけ」の入口を別に用意する。**
     開発者が手元で叩く `task check` は、従来どおり自分の OS で全部を回す
+- **[ADR-0033](0033-task-runner.md) の「`task check` は CI と同じ内容にする」は、
+  本 ADR により「`task check` は CI が回す内容をすべて含み、加えて `src-tauri` も検査する」となる。**
+  包含関係が変わるだけで、両者が別物になるわけではない。ADR-0033 は書き換えない
+- **GitHub Actions で使う action は、版タグではなくコミットハッシュで固定する。**
+  タグは付け替えられるため、タグ指定では取得する内容が変わりうる。
+  人間が版を読めるよう、ハッシュの横に版を注記する
 - `cargo` を回す時点で `crates/harubridge-core/build.rs` が走り、
   `data/kancolle/*.json` の JSON としての妥当性は自動的に検査される（既存の実装）
 - **`bindings.ts` はまだ存在しない**（`tauri-specta` の配線が未実装）。

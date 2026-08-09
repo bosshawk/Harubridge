@@ -1,0 +1,12 @@
+[package]
+name = "repo-guard"
+version = "0.1.0"
+description = "追跡対象ファイルに観測データが混入していないことを検査する"
+edition = "2021"
+license = "MIT"
+publish = false
+
+# アプリの機能ではなくリポジトリの衛生を守るための道具。
+# tauri に依存しない。CI（ubuntu）で完結させるため、ここに tauri を足してはいけない。
+[dependencies]
+serde_json = "1"
