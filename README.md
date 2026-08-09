@@ -3,7 +3,7 @@
 艦隊これくしょん（艦これ）向けの**専用ブラウザ（専ブラ）**を開発するプロジェクトです。
 
 > **現在のフェーズ: 実装（骨格まで）**
-> 技術構成（[Tauri + Rust + React](docs/adr/0016-tech-stack.md)）、
+> 技術構成（[Tauri + Rust + React](docs/spec/architecture.md)）、
 > 要求（[FR 50 件 / NFR 11 件](docs/spec/requirements.md)）、
 > リポジトリ構成は確定済み。
 > 骨格（ビルド・検査が通る空の構成）まで作成済みで、機能は未実装です。
