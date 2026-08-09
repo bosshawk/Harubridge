@@ -128,5 +128,6 @@
 | [0032](0032-repository-structure.md) | リポジトリ構成を確定する（0026 / 0027 / 0030 を統合） | Accepted | 2026-08-09 |
 | [0033](0033-task-runner.md) | 開発コマンドの入口として Taskfile を採用する | Accepted | 2026-08-09 |
 | [0034](0034-continuous-integration.md) | 検査のための CI を GitHub Actions の ubuntu 1 ジョブに置く | Accepted | 2026-08-09 |
+| [0035](0035-multi-window-ui.md) | 情報表示をマルチウィンドウ方式にする | Accepted | 2026-08-09 |
 
 > 新しい ADR を追加したら、この一覧にも 1 行足すこと。
