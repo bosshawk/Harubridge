@@ -103,13 +103,13 @@
 | [0020](0020-kancolle-reference.md) | 艦これ側の仕様を `docs/kancolle/` に記録する | Accepted | 2026-08-02 |
 | [0021](0021-data-persistence.md) | データの持ち方をプレーンファイルにする | Accepted | 2026-08-02 |
 | [0022](0022-observed-data-privacy.md) | 観測データの保存とテストデータの扱い | Accepted | 2026-08-02 |
-| [0023](0023-multi-account-scope.md) | 当面は 1 アカウントのみを扱い、切り替わりの検出だけを実装する | **Proposed** | 2026-08-03 |
+| [0023](0023-multi-account-scope.md) | 当面は 1 アカウントのみを扱い、切り替わりの検出だけを実装する | Accepted | 2026-08-03 |
 | [0024](0024-state-sync-granularity.md) | Rust コアから UI への状態同期を、ドメイン単位の全量 push と起動時の pull で行う | **Proposed** | 2026-08-03 |
 | [0025](0025-clock-handling.md) | 時刻の扱い —— 壁時計と単調増加時計の使い分け | **Proposed** | 2026-08-03 |
 | [0026](archive/0026-injection-script-build.md) | 注入スクリプトは生 JS 1 ファイルのまま持ち、型検査だけを TypeScript に任せる | Superseded by ADR-0032 | 2026-08-03 |
 | [0027](archive/0027-repository-layout.md) | リポジトリのディレクトリ構成をコア／殻の 2 クレート＋機能別フロントエンドにする | Superseded by ADR-0032 | 2026-08-03 |
 | [0028](0028-quest-counter-schema.md) | 任務カウンタのデータ形式と `count` 条件の語彙 | **Proposed** | 2026-08-03 |
-| [0029](0029-injection-ipc-transport.md) | 注入スクリプトから Rust への転送は、Tauri の invoke に相乗りせず自前のハンドラで受ける | **Proposed** | 2026-08-03 |
+| [0029](0029-injection-ipc-transport.md) | 注入スクリプトから Rust への転送は、Tauri の invoke に相乗りせず自前のハンドラで受ける | Accepted | 2026-08-03 |
 | [0030](archive/0030-no-named-architecture.md) | アーキテクチャを名乗らず、関心事ごとの素朴な分割に留める | Superseded by ADR-0032 | 2026-08-08 |
 | [0031](0031-toolchain-management.md) | 開発ツールチェインを mise に統一し、Rust の版は `rust-toolchain.toml` を正として mise に読ませる | Accepted | 2026-08-09 |
 | [0032](0032-repository-structure.md) | リポジトリ構成を確定する（0026 / 0027 / 0030 を統合） | Accepted | 2026-08-09 |

@@ -1,8 +1,8 @@
 # ADR-0029: 注入スクリプトから Rust への転送は、Tauri の invoke に相乗りせず自前のハンドラで受ける
 
-- ステータス: **Proposed**
+- ステータス: **Accepted**
 - 日付: 2026-08-03
-- 決定者: プロジェクトオーナー（承認待ち）
+- 決定者: プロジェクトオーナー
 - 関連: [ADR-0016](0016-tech-stack.md)（Tauri v2）/ [ADR-0024](0024-state-sync-granularity.md)（Rust → UI の同期）/
   [ADR-0026](archive/0026-injection-script-build.md)（注入スクリプトの作り）/
   [architecture.md](../spec/architecture.md)（「境界はページ内に置く」）
