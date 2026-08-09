@@ -1,16 +1,13 @@
 # ガイドライン: Rust の書き方
 
-> **ステータス: Draft（承認待ち）。**
-> `docs/guidelines/` の変更には人間の承認が必要。
+> **ステータス: 運用中。ただし確定版ではなく、実装しながら見直す。**
+> 見直しの進め方は [README](README.md#実装しながら見直す) を読むこと。
+> 変更には人間の承認が必要。
 
-- 適用範囲: `crates/` 配下のすべての Rust コード
+- 適用範囲: `crates/` と `src-tauri/` 配下のすべての Rust コード
 - ルール ID の略号: `RS`
-  [0008](../adr/0008-code-as-source-of-truth.md)（コードが正）/
-  [0018](../adr/0018-dependencies.md)（`thiserror` と `anyhow`）/
-  [0022](../adr/0022-observed-data-privacy.md)（観測データとフィクスチャ）/
-  [0025](../adr/0025-clock-handling.md)（時刻）/
-  [0027](../adr/archive/0027-repository-layout.md)・[0030](../adr/archive/0030-no-named-architecture.md)（**構造。本文書は触れない**）
-- ステータス: ドラフト（承認待ち）
+- **構造（どこに何を置くか）は本文書の対象外。**
+  [architecture.md](../spec/architecture.md) とリポジトリの実体が正である
 
 ## 原則
 
