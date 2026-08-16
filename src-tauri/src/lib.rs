@@ -13,12 +13,24 @@ use tauri_plugin_opener::OpenerExt;
 /// ゲームの入口ページ。観測: `docs/kancolle/api/overview.md`
 const GAME_ENTRY_URL: &str = "https://play.games.dmm.com/game/kancolle";
 
-/// メインウィンドウの初期サイズ。ゲーム画面の実寸に合わせる。
-/// 観測: `docs/kancolle/api/overview.md`
+/// ゲーム画面の大きさ。観測: `docs/kancolle/api/overview.md`
+const GAME_SIZE: (f64, f64) = (1200.0, 720.0);
+
+/// ウィンドウ枠がゲーム画面から奪う高さの見込み。
 ///
-/// ただし実際に描画に使える内側はウィンドウ枠のぶん小さくなる。
-/// その差は注入した CSS が吸収する（`injected/page-style.ts`）。
-const MAIN_WINDOW_SIZE: (f64, f64) = (1200.0, 720.0);
+/// Tauri は内側と外側を同じ大きさとして報告するため、枠の厚みを問い合わせる手段が無い
+/// （`inner_size` / `min_inner_size` / `set_size` のいずれでも内側を指定どおりにできない）。
+/// そのため見込みの定数を足す。**正確である必要はない。**
+/// ずれたぶんは注入した CSS が縮小して吸収する（`injected/page-style.ts`）。
+/// 合っていればゲーム画面が実寸のまま表示され、縮小も余白も生じない。
+#[cfg(target_os = "macos")]
+const WINDOW_CHROME_HEIGHT: f64 = 28.0;
+/// `TODO(要検証)`: Windows（WebView2）での枠の厚み。実機で確認していない。
+#[cfg(not(target_os = "macos"))]
+const WINDOW_CHROME_HEIGHT: f64 = 0.0;
+
+/// メインウィンドウの初期サイズ。
+const MAIN_WINDOW_SIZE: (f64, f64) = (GAME_SIZE.0, GAME_SIZE.1 + WINDOW_CHROME_HEIGHT);
 
 /// アプリ内で開いてよいポップアップのホスト。
 ///
