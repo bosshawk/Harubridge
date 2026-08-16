@@ -51,6 +51,11 @@ html::before {
   border: 0 !important;
   margin: 0 !important;
   transform-origin: top left !important;
+  /* ゲームより下（配信元のリンク帯）を切り落とす。
+     切らずに置くと、ウィンドウの高さが数 px 余ったときにそこへ白い帯として覗く。
+     要素の高さは配信元が決めるため JS で測らず、CSS に自分の高さから計算させる。
+     測った瞬間の値に依存しないので、後から高さが変わってもずれない。 */
+  clip-path: inset(0 0 max(0px, calc(100% - ${GAME_HEIGHT}px)) 0) !important;
 }
 `;
 
