@@ -4,8 +4,9 @@
 // 規律:
 // - 値の import を書かない。npm に依存しない。IIFE として自己完結させる
 //   （型だけは `import type` で参照してよい。コンパイル時に消える）
-// - **`<style>` を 1 枚足す以外のことをしない。** 既存の要素を消したり動かしたり、
-//   ページの関数を差し替えたり、通信に触れたりしない（architecture.md の 1 段目）
+// - **自分が足した `<style>` 1 枚だけを書き換える。** 配信元の要素を消したり、
+//   その `style` 属性を触ったり、ページの関数を差し替えたり、通信に触れたりしない
+//   （architecture.md の 1 段目）
 // - 観測（kcsapi-hook.ts）と混ぜない。役割ごとにファイルを分ける
 //
 // 生成物 page-style.js は `pnpm build:injected` で作り、コミットする。
@@ -15,12 +16,18 @@
     const STYLE_ID = "harubridge-page-style";
     // ゲームを載せている要素の id。観測: docs/kancolle/api/overview.md
     const GAME_FRAME_ID = "game_frame";
-    // 既存の要素を消す代わりに、画面いっぱいの背景で覆い、
-    // その上にゲーム画面だけを載せる。
+    // ゲーム画面の大きさ。観測: docs/kancolle/api/overview.md
+    //
+    // **要素の実寸を測ってはいけない。** この要素はゲームより背が高く、
+    // 下に配信元のリンク帯を含む。要素に合わせて縮めるとゲームが小さくなり、
+    // リンク帯が見えてしまう。ゲームの大きさを基準に縮尺し、余りは切り落とす。
+    const GAME_WIDTH = 1200;
+    const GAME_HEIGHT = 720;
+    // 既存の要素を消す代わりに、画面いっぱいの背景で覆い、その上にゲーム画面だけを載せる。
     // **配信元ページの構造を列挙しない**ので、DMM 側で見出しや広告が増減しても破綻しない。
     // 列挙する方式（消したい要素を id や class で指定する）は、
     // 増えた要素を消し漏らすと画面に出てしまう。こちらは既定が「隠れる」側になる。
-    const CSS = `
+    const BASE_CSS = `
 html, body {
   margin: 0 !important;
   padding: 0 !important;
@@ -36,30 +43,61 @@ html::before {
 }
 #${GAME_FRAME_ID} {
   position: fixed !important;
-  top: 0 !important;
-  left: 0 !important;
   z-index: 2147483647 !important;
   border: 0 !important;
   margin: 0 !important;
+  transform-origin: top left !important;
 }
 `;
-    function apply() {
-        if (document.getElementById(STYLE_ID) !== null) {
-            return true;
+    function styleElement() {
+        const existing = document.getElementById(STYLE_ID);
+        if (existing instanceof HTMLStyleElement) {
+            return existing;
         }
+        const head = document.head;
+        if (head === null) {
+            return null;
+        }
+        const created = document.createElement("style");
+        created.id = STYLE_ID;
+        head.appendChild(created);
+        return created;
+    }
+    // ウィンドウの内側の大きさは、ウィンドウ枠の厚みぶんだけ
+    // アプリが指定した大きさより小さくなることがある。
+    // その差でゲーム画面が欠けないよう、内側に収まる倍率へ縮める。
+    function layout(style) {
+        const viewportWidth = document.documentElement.clientWidth;
+        const viewportHeight = document.documentElement.clientHeight;
+        if (viewportWidth === 0 || viewportHeight === 0) {
+            return;
+        }
+        const scale = Math.min(viewportWidth / GAME_WIDTH, viewportHeight / GAME_HEIGHT);
+        // 余りは上下左右に均等に割り振り、ゲーム画面を中央に置く
+        const left = (viewportWidth - GAME_WIDTH * scale) / 2;
+        const top = (viewportHeight - GAME_HEIGHT * scale) / 2;
+        style.textContent = `${BASE_CSS}
+#${GAME_FRAME_ID} {
+  left: ${left}px !important;
+  top: ${top}px !important;
+  transform: scale(${scale}) !important;
+}
+`;
+    }
+    function apply() {
         // ゲームを載せる要素が無いページ（ログイン画面・配信元のお知らせ等）では
         // 何もしない。素のページがそのまま表示される
         if (document.getElementById(GAME_FRAME_ID) === null) {
             return false;
         }
-        const head = document.head;
-        if (head === null) {
+        const style = styleElement();
+        if (style === null) {
             return false;
         }
-        const style = document.createElement("style");
-        style.id = STYLE_ID;
-        style.textContent = CSS;
-        head.appendChild(style);
+        layout(style);
+        window.addEventListener("resize", () => {
+            layout(style);
+        });
         return true;
     }
     if (apply()) {

@@ -15,6 +15,9 @@ const GAME_ENTRY_URL: &str = "https://play.games.dmm.com/game/kancolle";
 
 /// メインウィンドウの初期サイズ。ゲーム画面の実寸に合わせる。
 /// 観測: `docs/kancolle/api/overview.md`
+///
+/// ただし実際に描画に使える内側はウィンドウ枠のぶん小さくなる。
+/// その差は注入した CSS が吸収する（`injected/page-style.ts`）。
 const MAIN_WINDOW_SIZE: (f64, f64) = (1200.0, 720.0);
 
 /// アプリ内で開いてよいポップアップのホスト。
