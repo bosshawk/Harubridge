@@ -16,21 +16,16 @@ const GAME_ENTRY_URL: &str = "https://play.games.dmm.com/game/kancolle";
 /// ゲーム画面の大きさ。観測: `docs/kancolle/api/overview.md`
 const GAME_SIZE: (f64, f64) = (1200.0, 720.0);
 
-/// ウィンドウ枠がゲーム画面から奪う高さの見込み。
+/// ウィンドウ枠のために余分に確保する高さ。
 ///
-/// Tauri は内側と外側を同じ大きさとして報告するため、枠の厚みを問い合わせる手段が無い
-/// （`inner_size` / `min_inner_size` / `set_size` のいずれでも内側を指定どおりにできない）。
-/// そのため見込みの定数を足す。**正確である必要はない。**
-/// ずれたぶんは注入した CSS が縮小して吸収する（`injected/page-style.ts`）。
-/// 合っていればゲーム画面が実寸のまま表示され、縮小も余白も生じない。
-#[cfg(target_os = "macos")]
-const WINDOW_CHROME_HEIGHT: f64 = 28.0;
-/// `TODO(要検証)`: Windows（WebView2）での枠の厚み。実機で確認していない。
-#[cfg(not(target_os = "macos"))]
-const WINDOW_CHROME_HEIGHT: f64 = 0.0;
+/// タイトルバーの厚みだけ内側はウィンドウより低くなるが、その厚みは OS とテーマで
+/// 変わり、Tauri は内側と外側を同じ値として報告するため問い合わせられない。
+///
+/// **足りないと下端が欠け、多すぎると下に余白が出る。**
+/// 欠けるほうが害が大きいので、確実に足りる側へ倒して多めに取る。
+/// 余った数 px は下端の帯として残るが、ここは操作バーが入る場所である。
+const WINDOW_CHROME_ALLOWANCE: f64 = 40.0;
 
-/// メインウィンドウの初期サイズ。
-const MAIN_WINDOW_SIZE: (f64, f64) = (GAME_SIZE.0, GAME_SIZE.1 + WINDOW_CHROME_HEIGHT);
 
 /// アプリ内で開いてよいポップアップのホスト。
 ///
@@ -114,11 +109,7 @@ pub fn run() {
             let main_handle = app.handle().clone();
             let main = WebviewWindowBuilder::new(app, "main", WebviewUrl::External(entry))
                 .title("Harubridge")
-                .inner_size(MAIN_WINDOW_SIZE.0, MAIN_WINDOW_SIZE.1)
-                // ゲーム画面より内側が小さくなると下端が欠ける。
-                // ウィンドウ枠の厚みは OS とテーマで変わるため、自分で計算せず
-                // 「内側がこれを下回らない」と宣言して OS に守らせる
-                .min_inner_size(MAIN_WINDOW_SIZE.0, MAIN_WINDOW_SIZE.1)
+                .inner_size(GAME_SIZE.0, GAME_SIZE.1 + WINDOW_CHROME_ALLOWANCE)
                 // ゲームを載せる要素は入口ページ（トップフレーム）にあるため、
                 // 表示調整は全フレームに配る必要がない
                 .initialization_script(PAGE_STYLE_SCRIPT)
@@ -143,7 +134,7 @@ pub fn run() {
                     return;
                 };
                 let size = size.to_logical::<f64>(scale);
-                let wanted = size.width * aspect + WINDOW_CHROME_HEIGHT;
+                let wanted = size.width * aspect + WINDOW_CHROME_ALLOWANCE;
                 // 自分で起こしたリサイズに反応して振動しないよう、ずれが小さければ触らない
                 if (size.height - wanted).abs() > 1.0 {
                     let _ = resizing.set_size(LogicalSize::new(size.width, wanted));

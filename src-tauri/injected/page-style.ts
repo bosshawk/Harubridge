@@ -82,9 +82,10 @@ html::before {
       viewportWidth / GAME_WIDTH,
       viewportHeight / GAME_HEIGHT,
     );
-    // 余りは上下左右に均等に割り振り、ゲーム画面を中央に置く
+    // 横の余りは左右に均等に割り振る。縦の余りは下に寄せる。
+    // 下端はいずれ操作バーが入る場所であり、上に隙間を作るより収まりが良い。
     const left = (viewportWidth - GAME_WIDTH * scale) / 2;
-    const top = (viewportHeight - GAME_HEIGHT * scale) / 2;
+    const top = 0;
 
     style.textContent = `${BASE_CSS}
 #${GAME_FRAME_ID} {
