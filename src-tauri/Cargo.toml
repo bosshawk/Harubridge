@@ -19,5 +19,7 @@ tauri-build = { version = "2", features = [] }
 [dependencies]
 harubridge-core = { path = "../crates/harubridge-core" }
 tauri = { version = "2", features = [] }
+# ゲーム画面から開かれた外部サイトを OS の既定ブラウザへ渡すために使う
+tauri-plugin-opener = "2"
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
