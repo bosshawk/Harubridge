@@ -8,8 +8,9 @@ Thumbs.db
 *.swp
 *~
 
-# Claude Code のローカル設定（個人環境依存のため共有しない）
+# Claude Code のローカル設定・ローカル運用メモ（個人環境依存のため共有しない）
 .claude/settings.local.json
+CLAUDE.local.md
 
 # 開発中のアプリデータ
 # release では OS のアプリデータ領域を使う。ここは debug ビルド専用。
