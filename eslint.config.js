@@ -17,7 +17,7 @@ export default tseslint.config(
       "target/",
       "node_modules/",
       // tsc の生成物（コミットされるが手で編集しない）
-      "src-tauri/injected/kcsapi-hook.js",
+      "src-tauri/injected/*.js",
     ],
   },
   js.configs.recommended,

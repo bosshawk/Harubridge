@@ -12,5 +12,8 @@
     "verbatimModuleSyntax": false,
     "noEmit": false
   },
-  "include": ["src-tauri/injected/kcsapi-hook.ts"]
+  "include": [
+    "src-tauri/injected/kcsapi-hook.ts",
+    "src-tauri/injected/page-style.ts"
+  ]
 }

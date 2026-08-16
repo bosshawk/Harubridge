@@ -13,9 +13,9 @@ use tauri_plugin_opener::OpenerExt;
 /// ゲームの入口ページ。観測: `docs/kancolle/api/overview.md`
 const GAME_ENTRY_URL: &str = "https://play.games.dmm.com/game/kancolle";
 
-/// メインウィンドウの初期サイズ。
-/// ゲーム画面の実寸が未実測のため暫定値であり、実測後に置き換える。
-const MAIN_WINDOW_SIZE: (f64, f64) = (1280.0, 800.0);
+/// メインウィンドウの初期サイズ。ゲーム画面の実寸に合わせる。
+/// 観測: `docs/kancolle/api/overview.md`
+const MAIN_WINDOW_SIZE: (f64, f64) = (1200.0, 720.0);
 
 /// アプリ内で開いてよいポップアップのホスト。
 ///
@@ -26,6 +26,11 @@ const IN_APP_POPUP_HOSTS: [&str; 3] = ["dmm.com", "dmm.co.jp", "kancolle-server.
 
 /// ポップアップウィンドウのラベルを一意にするための連番。
 static POPUP_SEQUENCE: AtomicUsize = AtomicUsize::new(0);
+
+/// 配信元ページに当てる表示調整スクリプト。
+///
+/// 生成物（`.js`）を埋め込む。ソース（`.ts`）とのずれは `task check:injected` が落とす。
+const PAGE_STYLE_SCRIPT: &str = include_str!("../injected/page-style.js");
 
 fn is_in_app_popup_host(url: &Url) -> bool {
     url.host_str().is_some_and(|host| {
@@ -95,6 +100,13 @@ pub fn run() {
             WebviewWindowBuilder::new(app, "main", WebviewUrl::External(entry))
                 .title("Harubridge")
                 .inner_size(MAIN_WINDOW_SIZE.0, MAIN_WINDOW_SIZE.1)
+                // ゲーム画面より内側が小さくなると下端が欠ける。
+                // ウィンドウ枠の厚みは OS とテーマで変わるため、自分で計算せず
+                // 「内側がこれを下回らない」と宣言して OS に守らせる
+                .min_inner_size(MAIN_WINDOW_SIZE.0, MAIN_WINDOW_SIZE.1)
+                // ゲームを載せる要素は入口ページ（トップフレーム）にあるため、
+                // 表示調整は全フレームに配る必要がない
+                .initialization_script(PAGE_STYLE_SCRIPT)
                 .on_new_window(move |url, features| handle_new_window(&main_handle, url, features))
                 .build()?;
 

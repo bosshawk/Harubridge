@@ -65,7 +65,7 @@ tasks:
     # cargo は tsc を実行しないので、ずれは黙って起きる。ここで落とす。
     cmds:
       - pnpm build:injected
-      - git diff --exit-code -- src-tauri/injected/kcsapi-hook.js
+      - git diff --exit-code -- src-tauri/injected/
 
   check:observed-data:
     desc: 追跡対象ファイルに観測データが混入していないか検査する
