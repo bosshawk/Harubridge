@@ -6,7 +6,7 @@ use std::sync::atomic::{AtomicUsize, Ordering};
 use tauri::{
     menu::{Menu, MenuItemBuilder, SubmenuBuilder},
     webview::{NewWindowFeatures, NewWindowResponse},
-    AppHandle, Manager, Url, WebviewUrl, WebviewWindowBuilder, Wry,
+    AppHandle, LogicalSize, Manager, Url, WebviewUrl, WebviewWindowBuilder, WindowEvent, Wry,
 };
 use tauri_plugin_opener::OpenerExt;
 
@@ -112,7 +112,7 @@ pub fn run() {
                 .expect("GAME_ENTRY_URL は定数であり、常に URL として解釈できる");
 
             let main_handle = app.handle().clone();
-            WebviewWindowBuilder::new(app, "main", WebviewUrl::External(entry))
+            let main = WebviewWindowBuilder::new(app, "main", WebviewUrl::External(entry))
                 .title("Harubridge")
                 .inner_size(MAIN_WINDOW_SIZE.0, MAIN_WINDOW_SIZE.1)
                 // ゲーム画面より内側が小さくなると下端が欠ける。
@@ -124,6 +124,31 @@ pub fn run() {
                 .initialization_script(PAGE_STYLE_SCRIPT)
                 .on_new_window(move |url, features| handle_new_window(&main_handle, url, features))
                 .build()?;
+
+            // ウィンドウの縦横比をゲーム画面に合わせて保つ。
+            //
+            // 幅だけを広げるとゲーム画面は縦に収まる大きさのままなので、
+            // 余った幅が左右の余白として出る。リサイズのたびに幅から高さを決め直し、
+            // 余白が生じない形に矯正する。
+            let aspect = GAME_SIZE.1 / GAME_SIZE.0;
+            let resizing = main.clone();
+            main.on_window_event(move |event| {
+                if !matches!(event, WindowEvent::Resized(_)) {
+                    return;
+                }
+                let Ok(scale) = resizing.scale_factor() else {
+                    return;
+                };
+                let Ok(size) = resizing.outer_size() else {
+                    return;
+                };
+                let size = size.to_logical::<f64>(scale);
+                let wanted = size.width * aspect + WINDOW_CHROME_HEIGHT;
+                // 自分で起こしたリサイズに反応して振動しないよう、ずれが小さければ触らない
+                if (size.height - wanted).abs() > 1.0 {
+                    let _ = resizing.set_size(LogicalSize::new(size.width, wanted));
+                }
+            });
 
             // ゲーム画面には戻る手段が無いため、遷移を間違えると入口へ戻れなくなる。
             // 操作バー（FR-001）ができるまでの代わりとして、メニューに置く
