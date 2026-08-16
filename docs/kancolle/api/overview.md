@@ -30,7 +30,8 @@ macOS の WKWebView に XHR フックを注入し、実際にプレイした 1 �
 | 事実 | 確度 |
 | --- | --- |
 | ゲームの入口は `https://play.games.dmm.com/game/kancolle` | 実測 2026-08-16（HTTP 200 を確認） |
-| 入口ページは `x-frame-options: SAMEORIGIN` を返す（別オリジンの `iframe` に埋め込めない） | 実測 2026-08-16 |
+| 入口ページは `x-frame-options: SAMEORIGIN` を返す | 実測 2026-08-16（HTTP ヘッダ） |
+| 入口ページは別オリジンのページの `iframe` 内に描画されない。同じページ・同じ WebView に並べた `example.com` は描画される | 実測 2026-08-16（macOS / WKWebView） |
 | ゲーム本体は `osapi.dmm.com` 配下の iframe で動作する | 実測 2026-08-02 |
 | iframe 内のゲームサーバは `w00g` / `w13b.kancolle-server.com` | 実測 2026-08-02 |
 | 2025-10-17 に稼働全 20 サーバ群が HTTPS(SSL) へ移行した | 参照（公式告知） |
